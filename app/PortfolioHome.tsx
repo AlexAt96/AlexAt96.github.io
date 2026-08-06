@@ -42,6 +42,16 @@ const collections = [
     href:"/methods",
     tags:["AI", "Leadership", "Governance"],
   },
+  {
+    number:"05",
+    key:"library",
+    eyebrow:"Complete catalogue",
+    title:"Component & Pattern Library",
+    line:"Every part. Properly connected.",
+    copy:"Browse every implementation-level component and the reusable patterns behind each project from one searchable index.",
+    href:"/library",
+    tags:["96 components", "Project patterns", "Searchable"],
+  },
 ] as const;
 
 const strengths = [
@@ -113,12 +123,12 @@ export default function PortfolioHome() {
 
         <section className="portfolio-home-work" id="selected-work" aria-labelledby="selected-work-title">
           <header>
-            <div><p>SELECTED WORK / FOUR WAYS IN</p><h2 id="selected-work-title">Pick a puzzle.</h2></div>
+            <div><p>SELECTED WORK / FIVE WAYS IN</p><h2 id="selected-work-title">Pick a puzzle.</h2></div>
             <p>Each collection has its own character. The thinking behind them is the same: clear systems, useful interfaces and work that survives contact with reality.</p>
           </header>
           <div className="portfolio-home-collections">
             {collections.map((collection) => (
-              <Link className={`portfolio-home-card portfolio-home-card-${collection.key}`} href={collection.href} key={collection.key}>
+              <Link className={`portfolio-home-card portfolio-home-card-${collection.key}`} href={collection.href} key={collection.key} style={collection.key === "library" ? {gridColumn:"1 / -1"} : undefined}>
                 <header><span>{collection.number}</span><small>{collection.eyebrow}</small><b aria-hidden="true">↗</b></header>
                 <div><h3>{collection.title}</h3><strong>{collection.line}</strong><p>{collection.copy}</p></div>
                 <footer>{collection.tags.map((tag) => <span key={tag}>{tag}</span>)}</footer>
