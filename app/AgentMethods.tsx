@@ -1,0 +1,1178 @@
+"use client";
+
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import Link from "next/link";
+import { usePersistentDarkMode } from "./usePersistentTheme";
+
+export type ProjectKey = "compass" | "tracker" | "mar";
+export type Category = "Governance" | "Evidence" | "Delivery" | "Safety" | "Quality";
+export type Maturity = "Operational" | "Implemented foundation" | "Defined" | "Proposed" | "Roadmap";
+export type EvidenceState = Maturity;
+
+export type Method = {
+  id: string;
+  name: string;
+  category: Category;
+  summary: string;
+  scenario: string;
+  outcome: string;
+  whenToUse: string[];
+  projects: ProjectKey[];
+  maturity: Partial<Record<ProjectKey,Maturity>>;
+  controls: string[];
+  workflow: { label:string; owner:string; detail:string; gate:string }[];
+  roles: string[];
+  inputs: string[];
+  outputs: string[];
+  measures: string[];
+  projectEvidence: Partial<Record<ProjectKey,string>>;
+  evidence: string;
+  adoption: "Core" | "Proven" | "Specialist";
+};
+
+export const projects: Record<ProjectKey, { name:string; short:string; colour:string; description:string }> = {
+  compass: { name:"Migration Compass", short:"MC", colour:"#e31937", description:"Human-governed AI engineering and migration discovery" },
+  tracker: { name:"PoC Tracker", short:"PT", colour:"#6554c0", description:"AI-assisted delivery control plane and reporting" },
+  mar: { name:"Meter Reconciliation", short:"MAR", colour:"#0c66e4", description:"Regulated, approval-gated Azure delivery framework" },
+};
+
+export const methods: Method[] = [
+  {
+    id:"govern-change", name:"Name the Authority", category:"Governance",
+    summary:"Every AI-assisted change names who requested it, who owns the outcome, who accepts the risk and who can approve the tested result.",
+    scenario:"A team wants AI to accelerate analysis or implementation without allowing the assistant to expand scope, accept risk, approve its own output or treat a merge as completion.",
+    outcome:"A reviewable change with explicit authority, current evidence and a recorded human decision.",
+    whenToUse:["Any repository-changing AI task","Changes affecting business behaviour or risk","Work that will be demonstrated, merged or released"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Operational",tracker:"Implemented foundation",mar:"Defined"},
+    controls:["Named business and technical authority","Separated AI and human decisions","Independent review and acceptance","Approval tied to the tested version","Explicit limitations and residual risk"],
+    workflow:[
+      {label:"Authorise",owner:"Human owner",detail:"State the need, scope, acceptance criteria and risk boundary.",gate:"Approved outcome and accountable owner"},
+      {label:"Prepare",owner:"Delivery lead",detail:"Confirm design, dependencies, branch, test route, reviewers and rollback.",gate:"Readiness evidence is complete"},
+      {label:"Implement",owner:"Bounded AI agent",detail:"Change only the approved task and stop on missing authority or new scope.",gate:"Diff, tests and findings recorded"},
+      {label:"Assure",owner:"Reviewer / tester",detail:"Run proportionate checks and disposition every material finding.",gate:"Passing evidence and known limitations"},
+      {label:"Accept",owner:"Named approver",detail:"Approve, reject or return the exact tested outcome; AI cannot self-approve.",gate:"Human decision attached to the tested version"},
+    ],
+    roles:["Business or product owner","Delivery / Tech Lead","Implementation agent","Independent reviewer or tester","Human acceptance authority"],
+    inputs:["Authorised request","Acceptance criteria","Approved design or constraints","Risk and data classification"],
+    outputs:["Traceable change set","Validation evidence","Findings disposition","Human approval record","Residual-risk statement"],
+    measures:["Changes with named approval","Readiness failures caught before build","Findings closed before acceptance","Approvals linked to current commit"],
+    projectEvidence:{compass:"Explicit acceptance gate and tested-branch approval before merge.",tracker:"Approve, edit or reject boundaries across the 23-stage governed process.",mar:"Prompt E readiness, human risk authority and evidence-backed Definition of Done."},
+    evidence:"Human gates, pre-build readiness, evidence-first completion and maturity boundaries across all three models", adoption:"Core"
+  },
+  {
+    id:"prebuild-gate", name:"Stop Before Build", category:"Governance",
+    summary:"A hard readiness gate prevents implementation until the task, dependencies, branch, reviewers, tests, rollback and evidence route are current.",
+    scenario:"An agent is ready to start coding, but the team needs to prove that the work is authorised, bounded and actually ready before any repository change is made.",
+    outcome:"No code starts on stale approval, missing context or an unowned delivery route.",
+    whenToUse:["Before every repository-changing task","After a material scope or contract change","When dependent work or reviewers may be unavailable"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Operational",tracker:"Defined",mar:"Defined"},
+    controls:["Approved task and acceptance criteria","Named branch and owner","Completed predecessors and frozen contracts","Tests, rollback and reviewers available","Fail closed on missing readiness"],
+    workflow:[
+      {label:"Load",owner:"Task owner",detail:"Reload the current requirement, design, task and decision baseline.",gate:"Authoritative context is current"},
+      {label:"Check",owner:"Delivery lead",detail:"Confirm dependencies, ownership, branch, worktree and protected boundaries.",gate:"Execution route is unambiguous"},
+      {label:"Plan proof",owner:"Test / assurance owner",detail:"Name the checks, fixtures, reviewers, evidence and rollback route.",gate:"Assurance can actually be performed"},
+      {label:"Decide",owner:"Human authority",detail:"Issue a current go or stop decision for this exact task boundary.",gate:"Named readiness approval"},
+      {label:"Bind",owner:"Task owner",detail:"Attach the decision to the task, branch and implementation packet.",gate:"Agent receives one approved route"},
+    ],
+    roles:["Task owner","Delivery / Tech Lead","Test or assurance owner","Human readiness authority"],
+    inputs:["Approved task and design","Dependency state","Branch and ownership plan","Test and rollback route"],
+    outputs:["Readiness packet","Go / stop decision","Bound implementation context","Named evidence plan"],
+    measures:["Tasks stopped before unsafe build","Readiness approvals tied to current scope","Missing predecessors caught","Rework caused by stale context"],
+    projectEvidence:{compass:"Workspace rules and task-to-branch enforcement require current, bounded implementation context.",tracker:"Prompt E is the explicit hard stop before the one-task Prompt F route.",mar:"Prompt E checks authority, dependencies, branch, reviewers, tests and evidence before code."},
+    evidence:"Compass branch enforcement plus the Tracker and MAR Prompt E readiness gate", adoption:"Core"
+  },
+  {
+    id:"orchestrate-pods", name:"Run Parallel Pods", category:"Governance",
+    summary:"A central lead decomposes an outcome into independently owned work packets, routes the minimum useful specialists and consolidates their evidence.",
+    scenario:"A change is too broad for one agent, but parallel work must not fragment design authority, duplicate decisions or create overlapping file ownership.",
+    outcome:"Faster parallel delivery with one accountable integration point and durable handoffs.",
+    whenToUse:["Several independently approvable workstreams","Specialist implementation, test or review roles","Long-running work exposed to context loss or interruption"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Operational",tracker:"Defined",mar:"Proposed"},
+    controls:["One lead control plane","One outcome and write boundary per pod","Minimum useful specialist set","Hub-and-spoke communication","Context capsule and completion packet"],
+    workflow:[
+      {label:"Decompose",owner:"Tech Lead",detail:"Split the outcome by dependency, contract and approval boundary.",gate:"No overlapping primary ownership"},
+      {label:"Commission",owner:"Tech Lead",detail:"Give each pod its task, context, files, exclusions and measurable checks.",gate:"Work packet is self-contained"},
+      {label:"Execute",owner:"Pod lead",detail:"Coordinate bounded specialists and retain responsibility for the combined pod output.",gate:"Specialist work remains inside scope"},
+      {label:"Handoff",owner:"Pod lead",detail:"Return commit, changed files, checks, risks, blockers and approval still required.",gate:"Completion packet is current and reproducible"},
+      {label:"Converge",owner:"Tech Lead",detail:"Sequence dependencies, review the combined diff and run integration assurance.",gate:"One consolidated readiness decision"},
+    ],
+    roles:["AI Tech Lead / delivery lead","Feature or task pod lead","Implementation specialist","Test specialist","Independent reviewer"],
+    inputs:["Dependency map","Frozen shared contracts","Pod briefs","File ownership map","Common acceptance criteria"],
+    outputs:["Bounded pod deliverables","Context capsules","Completion packets","Consolidated status and risks"],
+    measures:["Pods with non-overlapping scope","Handoffs with complete evidence","Blocked dependencies surfaced early","Integration rework caused by ownership overlap"],
+    projectEvidence:{compass:"Operational specialist roles coordinated through a lead and isolated feature work.",tracker:"Optional delivery cells and one-task implementation cycles are defined in the operating model.",mar:"T0-T4 hub-and-pod routing is owner-approved but remains proposed pending activation."},
+    evidence:"Compass specialist roles, Tracker delivery cells and MAR hub-and-pod operating model", adoption:"Core"
+  },
+  {
+    id:"context-handoffs", name:"Package Every Handoff", category:"Evidence",
+    summary:"Every agent or pod starts from a compact context capsule and finishes with the same completion packet, so work survives interruption and consolidation.",
+    scenario:"Several AI conversations or specialist agents contribute to one outcome and the lead needs a reliable way to commission, pause, resume and integrate their work.",
+    outcome:"Durable handoffs that state exactly what was assigned, changed, checked, blocked and still needs human approval.",
+    whenToUse:["Any delegated agent or pod task","Work likely to span context compaction or interruption","Specialist review feeding a lead integrator"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Operational",tracker:"Defined",mar:"Proposed"},
+    controls:["Self-contained context capsule","Owned and prohibited paths","Required checks and stopping conditions","Standard completion packet","Lead-owned convergence"],
+    workflow:[
+      {label:"Pack context",owner:"Lead",detail:"Provide task, decisions, branch, worktree, dependencies, owned files and exclusions.",gate:"Recipient can start without guessing"},
+      {label:"State proof",owner:"Lead",detail:"Name acceptance criteria, checks, evidence and approval still required.",gate:"Done has an observable meaning"},
+      {label:"Execute",owner:"Agent / pod",detail:"Work inside the capsule and record any new decision or boundary pressure.",gate:"No silent scope expansion"},
+      {label:"Complete",owner:"Agent / pod",detail:"Return commit, changed files, tests, findings, blockers, risks and limitations.",gate:"Packet is reproducible"},
+      {label:"Converge",owner:"Lead",detail:"Compare the packet with the commission and decide integrate, remediate or stop.",gate:"One accountable handoff decision"},
+    ],
+    roles:["Commissioning lead","Agent or pod owner","Specialist reviewer","Lead integrator"],
+    inputs:["Approved task","Current decisions","Workspace identity","Acceptance and evidence requirements"],
+    outputs:["Context capsule","Completion packet","Decision and blocker log","Convergence decision"],
+    measures:["Handoffs complete on first review","Tasks resumed without rediscovery","Boundary changes explicitly escalated","Missing evidence at convergence"],
+    projectEvidence:{compass:"Specialist prompts carry branch, worktree, prerequisites, paths, acceptance criteria and checks.",tracker:"Optional cells report through a central lead and separated DevOps integration thread.",mar:"Context capsules and completion packets are named artefacts in the hub-and-pod model."},
+    evidence:"Named context and handoff protocols across all three operating models", adoption:"Core"
+  },
+  {
+    id:"isolate-build", name:"Isolate Every Workspace", category:"Safety",
+    summary:"Every repository-changing task receives its own branch, worktree, runtime state, test application and safe fixture boundary.",
+    scenario:"Multiple agents need to work at the same time without sharing a checkout, port, mutable dataset or uncommitted state.",
+    outcome:"Concurrent work remains reproducible, attributable and protected from accidental overwrite.",
+    whenToUse:["Two or more repository-changing tasks","Feature-specific demonstrations or test environments","Work involving uploads, fixtures or persistent local state"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Operational",tracker:"Defined",mar:"Defined"},
+    controls:["One branch, worktree and owner","Current-main ancestry check","Separate ports and runtime directories","Synthetic, masked or copied fixtures","No silent stash, overwrite or shared mutation"],
+    workflow:[
+      {label:"Create",owner:"Delivery tooling",detail:"Create the named branch and sibling worktree from current protected main.",gate:"Clean ancestry and unique ownership"},
+      {label:"Bind",owner:"Task owner",detail:"Attach the worktree to its approved task, file boundary and prohibited paths.",gate:"Scope and write boundary recorded"},
+      {label:"Provision",owner:"Test tooling",detail:"Allocate branch-specific port, application state and temporary fixture directory.",gate:"No shared mutable runtime"},
+      {label:"Validate",owner:"Task owner",detail:"Run checks inside the isolated environment and record exact dataset and URL.",gate:"Evidence points to the correct branch"},
+      {label:"Retire",owner:"Integrator",detail:"Stop the test app and remove temporary state only after the outcome is accepted.",gate:"Evidence retained; disposable state closed"},
+    ],
+    roles:["Task owner","Workspace / repository tooling","Test environment owner","Integrator"],
+    inputs:["Current protected baseline","Task ID and branch name","Allowed file boundary","Approved test fixture"],
+    outputs:["Isolated worktree","Feature test URL","Runtime-state record","Dataset and validation provenance"],
+    measures:["Concurrent tasks with unique workspaces","Port or fixture collisions","Stale-branch blocks","Tests tied to the intended commit"],
+    projectEvidence:{compass:"Executable branch hook, worktree helper and branch-specific feature test apps.",tracker:"Governed target paths and isolated execution are defined, with repository automation still maturing.",mar:"One pod per branch/worktree/file boundary and explicit concurrent-work conflict controls."},
+    evidence:"Branch, worktree, environment and fixture isolation patterns across all three models", adoption:"Core"
+  },
+  {
+    id:"feature-test-apps", name:"Prove the Feature Alone", category:"Quality",
+    summary:"Each meaningful feature is demonstrated in a branch-specific application with its own URL, running commit and safe dataset before integration.",
+    scenario:"A reviewer needs to accept the behaviour that was actually built without confusing it with the combined main application or another agent's runtime.",
+    outcome:"Direct, reproducible feature evidence tied to the exact branch and data used for acceptance.",
+    whenToUse:["UI or workflow changes","API and persistence behaviour","Human acceptance before merge"],
+    projects:["compass","tracker"], maturity:{compass:"Operational",tracker:"Implemented foundation"},
+    controls:["Branch-specific application instance","Unique URL and port","Health metadata names branch and dataset","Safe isolated fixture","Human test handoff"],
+    workflow:[
+      {label:"Prepare",owner:"Task owner",detail:"Select the accepted feature commit and representative safe fixture.",gate:"Version and data are explicit"},
+      {label:"Launch",owner:"Test-app tooling",detail:"Start a separate application on a unique port and state directory.",gate:"Health check passes"},
+      {label:"Register",owner:"Test-app tooling",detail:"Record URL, PID, branch, commit, dataset and start time.",gate:"Runtime identity is inspectable"},
+      {label:"Hand off",owner:"Task owner",detail:"Give the reviewer the URL, route, scenario, expected result and limitations.",gate:"Acceptance route is clear"},
+      {label:"Retire",owner:"Integrator",detail:"Preserve the evidence, then stop the feature instance after acceptance or return.",gate:"No orphaned runtime"},
+    ],
+    roles:["Task owner","Test-app tooling","Human reviewer","Integrator"],
+    inputs:["Feature commit","Safe fixture","Expected behaviour","Known limitations"],
+    outputs:["Feature test URL","Runtime identity record","Human test handoff","Acceptance evidence"],
+    measures:["Feature reviews tied to correct commit","Runtime collisions","Health-check failures","Acceptance returns caused by wrong data"],
+    projectEvidence:{compass:"Operational feature test-app lifecycle records PID, URL, branch, dataset and data directory.",tracker:"Browser integration testing uses copied data, a separate server and disabled external AI."},
+    evidence:"Compass feature test applications and Tracker isolated browser-test runtime", adoption:"Proven"
+  },
+  {
+    id:"scale-assurance", name:"Match Assurance to Risk", category:"Quality",
+    summary:"Intake classifies the change, then validation expands from a fast baseline into browser, API, persistence, security, migration and release proof only where needed.",
+    scenario:"The team needs fast feedback for small changes without allowing high-impact work to pass on the same lightweight checks.",
+    outcome:"Proportionate confidence: the smallest safe route, with deeper proof triggered by blast radius.",
+    whenToUse:["Every implementation route","UI, API, data-model or infrastructure changes","Changes with security, privacy, accessibility or release impact"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Operational",tracker:"Implemented foundation",mar:"Implemented foundation"},
+    controls:["Fail-closed work classification","Fast mandatory baseline","Risk-triggered specialist suites","Isolated server and data checks","Unrun checks never reported as passed"],
+    workflow:[
+      {label:"Classify",owner:"Intake owner",detail:"Identify surfaces, data, contracts, NFRs and deployment impact.",gate:"Unambiguous route and risk tier"},
+      {label:"Baseline",owner:"Implementation owner",detail:"Run formatting, static, contract and focused unit checks first.",gate:"Fast gate passes"},
+      {label:"Expand",owner:"Test lead",detail:"Add browser, API, persistence, migration, security or performance suites by risk.",gate:"All triggered suites named"},
+      {label:"Prove",owner:"Test environment",detail:"Use isolated fixtures and production-relevant checks for material paths.",gate:"Evidence is current and reproducible"},
+      {label:"Decide",owner:"Human reviewer",detail:"Accept evidence, record limitations or return the change for remediation.",gate:"Risk-informed human disposition"},
+    ],
+    roles:["Intake owner","Implementation owner","Test lead","Security / data specialist","Human reviewer"],
+    inputs:["Change classification","Affected components","Risk triggers","Test strategy and quality thresholds"],
+    outputs:["Selected assurance route","Triggered test manifest","Results and evidence links","Limitations and residual risk"],
+    measures:["Route accuracy","Triggered checks completed","Time to fast feedback","Escaped defects by risk tier"],
+    projectEvidence:{compass:"Tier 1-3 validation expands by blast radius and uses isolated test applications.",tracker:"A-G delivery routes select proportionate checks and fail closed on missing evidence.",mar:"Seven-stage risk-based CI and four levels of delivery proof cover code through release."},
+    evidence:"Compass tiered validation, Tracker proportional routes and MAR risk-based CI", adoption:"Core"
+  },
+  {
+    id:"independent-assurance", name:"Separate Build from Review", category:"Quality",
+    summary:"The agent that creates a change does not provide its only assurance; testing, specialist review and remediation remain separately owned.",
+    scenario:"AI can generate code and tests quickly, but the team needs an independent view of correctness, security, architecture and residual risk.",
+    outcome:"Findings are surfaced and dispositioned without allowing the authoring agent to certify its own work.",
+    whenToUse:["Every material implementation","Security or architecture-sensitive work","Changes requiring formal acceptance"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Operational",tracker:"Defined",mar:"Defined"},
+    controls:["Non-author review","Specialist assurance by risk","Findings retained until disposition","Remediation returned to owner","Human acceptance remains separate"],
+    workflow:[
+      {label:"Submit",owner:"Implementation owner",detail:"Provide the exact diff, tests, evidence, assumptions and known risks.",gate:"Review packet is complete"},
+      {label:"Inspect",owner:"Independent reviewer",detail:"Review behaviour, code quality, architecture and evidence without relying on author claims.",gate:"Material findings are recorded"},
+      {label:"Deepen",owner:"Specialist",detail:"Add security, data, accessibility or performance review where classification requires it.",gate:"Risk specialists have responded"},
+      {label:"Remediate",owner:"Original owner",detail:"Fix, explain or escalate each finding and rerun affected checks.",gate:"No undispositioned blocker"},
+      {label:"Recommend",owner:"Reviewer",detail:"Provide an evidence-backed recommendation to the human acceptance authority.",gate:"Review and approval remain distinct"},
+    ],
+    roles:["Implementation owner","Independent reviewer","Security / architecture specialist","Human acceptance authority"],
+    inputs:["Exact change set","Validation evidence","Risk classification","Known limitations"],
+    outputs:["Review findings","Remediation evidence","Specialist disposition","Acceptance recommendation"],
+    measures:["Material changes with non-author review","Findings closed by owner","Reopened findings","Escaped issues after acceptance"],
+    projectEvidence:{compass:"Specialist testing, security/architecture review and original-owner remediation are operational roles.",tracker:"Human assurance roles remain accountable while AI prepares code, tests and evidence.",mar:"Protected workflow requires an independent non-author reviewer and resets approval after source changes."},
+    evidence:"Independent review and remediation boundaries across all three models", adoption:"Core"
+  },
+  {
+    id:"safe-integration", name:"Control Integration and Convergence", category:"Delivery",
+    summary:"A separate integration authority applies the project’s convergence control, blocks stale or conflicting work and returns design resolution to the accountable owner.",
+    scenario:"Several branches are ready to converge, but feature-generating agents must not silently resolve conflicts or mutate the stable baseline.",
+    outcome:"A simple, attributable integration history with conflicts resolved by the people or pods who own the design.",
+    whenToUse:["Any merge to the protected baseline","Parallel work touching shared contracts","Branches whose approval may have become stale"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Operational",tracker:"Defined",mar:"Defined"},
+    controls:["Separated integration authority","Project-specific queue or convergence plan","Current-lineage and protected-branch checks","Original-owner conflict resolution","Reapproval after material behaviour change"],
+    workflow:[
+      {label:"Request",owner:"Feature owner",detail:"Submit the tested commit, task, approval, test URL and supporting evidence.",gate:"Complete merge provenance"},
+      {label:"Route",owner:"Integrator",detail:"Use the project’s defined convergence route: Migration Compass’s serial queue, Tracker’s DevOps integration thread or MAR’s protected pull-request controls.",gate:"One accountable integration route"},
+      {label:"Verify",owner:"Integrator",detail:"Check clean worktrees, ancestry, approvals, contracts and fast-forward safety.",gate:"No stale or ambiguous state"},
+      {label:"Resolve",owner:"Original task owner",detail:"If blocked, refresh from main, resolve the design conflict and rerun affected checks.",gate:"Changed behaviour is reapproved"},
+      {label:"Integrate",owner:"Integrator",detail:"Advance the baseline, rerun post-merge checks and refresh combined evidence.",gate:"Stable baseline remains green"},
+    ],
+    roles:["Feature / pod owner","Code Management Agent or integrator","Human approver","Shared-contract owner"],
+    inputs:["Approved feature commit","Test evidence","Current baseline SHA","Dependency and contract state"],
+    outputs:["Integration or queue record","Blocked-item handback","Integrated commit","Post-integration quality evidence"],
+    measures:["Blocked stale integrations","Non-fast-forward attempts","Conflict rework by owner","Post-merge regression rate"],
+    projectEvidence:{compass:"Operational serialized merge queue, filesystem lock and fast-forward-only integration.",tracker:"DevOps integration thread and conflict controls are defined as the governed convergence route.",mar:"Protected Git / Azure DevOps lineage and Tech Lead integration boundaries are defined."},
+    evidence:"Separated integration authority and fail-closed conflict recovery across all three models", adoption:"Proven"
+  },
+  {
+    id:"conflict-handback", name:"Return Conflict to Its Owner", category:"Safety",
+    summary:"Merge, contract and approval conflicts are blocked and returned to the person or pod that owns the design instead of being silently resolved by the integrator.",
+    scenario:"Parallel work has diverged, a shared contract changed or an approval became stale after implementation began.",
+    outcome:"Conflict resolution stays attributable, retested and reapproved whenever behaviour or risk changes.",
+    whenToUse:["Non-fast-forward or overlapping changes","Changed shared contracts","Material changes after approval"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Operational",tracker:"Defined",mar:"Defined"},
+    controls:["Fail-closed conflict detection","Original-owner resolution","One reconciliation owner","Affected validation rerun","Stale approval retained but not reused"],
+    workflow:[
+      {label:"Detect",owner:"Integrator / tooling",detail:"Stop on stale ancestry, overlapping ownership, changed contract or invalid approval.",gate:"Conflict is explicit"},
+      {label:"Return",owner:"Integrator",detail:"Send the branch, reason and required evidence back to the original accountable owner.",gate:"No hidden merge choice"},
+      {label:"Reconcile",owner:"Original owner",detail:"Refresh from main and resolve the design or scope decision in the feature branch.",gate:"One coherent resolution"},
+      {label:"Reprove",owner:"Test / reviewer",detail:"Rerun affected checks and reassess any approval made stale by the change.",gate:"Evidence matches new behaviour"},
+      {label:"Requeue",owner:"Owner / integrator",detail:"Submit a fresh merge request with current provenance and approval.",gate:"Integration may resume"},
+    ],
+    roles:["Integrator","Original task or pod owner","Shared-contract owner","Reviewer / approver"],
+    inputs:["Blocked merge record","Current main","Original approval","Affected contract and tests"],
+    outputs:["Conflict handback","Reconciliation decision","Updated evidence","Fresh approval and queue item"],
+    measures:["Conflicts resolved by accountable owner","Approvals correctly invalidated","Repeat queue blocks","Regressions after reconciliation"],
+    projectEvidence:{compass:"Blocked queue items return to the owning task and changed behaviour must be retested and reapproved.",tracker:"Instruction, dependency, parallel-work and import conflicts have explicit governance routes.",mar:"One reconciliation owner retains both branches, reruns validation and refreshes Prompt E after material change."},
+    evidence:"Fail-closed conflict ownership and stale-approval controls across all three models", adoption:"Core"
+  },
+  {
+    id:"prove-lineage", name:"Trace Need to Release", category:"Evidence",
+    summary:"Stable identifiers connect the original need to design, tasks, agent activity, code, tests, approvals, builds and release evidence.",
+    scenario:"A client, reviewer or delivery lead needs to explain what changed, why it was authorised, how it was proven and which version was accepted.",
+    outcome:"An auditable chain that makes every delivered outcome explainable without retaining unsafe prompt content.",
+    whenToUse:["Regulated or client-facing delivery","Portfolio demonstrations and governance reviews","Multi-stage delivery with several tools or agents"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Operational",tracker:"Operational",mar:"Implemented foundation"},
+    controls:["Stable trace identifiers","Requirements and acceptance links","Commit, test and build provenance","Privacy-safe AI activity summary","Approval tied to current version"],
+    workflow:[
+      {label:"Identify",owner:"Product / analyst",detail:"Assign stable IDs to source needs, requirements and acceptance criteria.",gate:"No orphaned delivery intent"},
+      {label:"Propagate",owner:"Delivery lead",detail:"Carry IDs into design, tasks, prompts, branches and pull requests.",gate:"Every work unit has authority"},
+      {label:"Capture",owner:"Build and test tooling",detail:"Attach checks, findings, build outputs and safe AI activity metadata.",gate:"Evidence names the exact source version"},
+      {label:"Approve",owner:"Human authority",detail:"Record acceptance and risk disposition against the tested commit or artefact.",gate:"Approval is current and attributable"},
+      {label:"Report",owner:"Delivery control plane",detail:"Present outcome, evidence, maturity and limitations without overstating completion.",gate:"Portfolio-safe claim boundary"},
+    ],
+    roles:["Product or business analyst","Delivery lead","Implementation owner","Build / test tooling","Human approver"],
+    inputs:["Source need","Requirement and acceptance IDs","Task and branch metadata","Evidence schema"],
+    outputs:["Traceability chain","Evidence index","Safe AI activity ledger","Approval record","Portfolio-safe status"],
+    measures:["Orphaned requirements","Acceptance criteria with current evidence","Builds linked to source commits","Activities with safe provenance"],
+    projectEvidence:{compass:"Task, branch, worktree, test URL, approval and merge provenance form one operational chain.",tracker:"The control plane records stage, task, evidence, AI-mode and metric snapshots across delivery.",mar:"Source-to-ADO-to-design-to-task-to-test-to-approval lineage is a primary governed control."},
+    evidence:"End-to-end lineage, safe activity recording and evidence-backed claims across all three models", adoption:"Core"
+  },
+  {
+    id:"activity-ledger", name:"Record AI Activity Safely", category:"Evidence",
+    summary:"AI activity is recorded as a privacy-safe delivery event with tool, model family, phase, references, confidence and limitations—not as raw prompt history.",
+    scenario:"The team needs to explain where AI contributed and measure outcomes without retaining secrets, personal data or unverifiable usage claims.",
+    outcome:"Useful AI provenance that can be linked to delivery evidence without turning the audit trail into a sensitive transcript store.",
+    whenToUse:["AI-assisted analysis or implementation","Client reporting and portfolio evidence","Prompt or capability-mode comparison"],
+    projects:["tracker","mar"], maturity:{tracker:"Operational",mar:"Operational"},
+    controls:["One safe row per acted-on activity","Non-sensitive summary only","Tool and model family where known","Linked delivery references","Confidence, limitations and capability mode"],
+    workflow:[
+      {label:"Trigger",owner:"User / delivery route",detail:"Record that an authorised AI-assisted action was started.",gate:"Purpose and phase are known"},
+      {label:"Summarise",owner:"AI capability layer",detail:"Create a non-sensitive account of the task and result without storing raw content.",gate:"No secrets, PII or production extracts"},
+      {label:"Link",owner:"Delivery control plane",detail:"Attach requirement, task, evidence, build or decision references.",gate:"Activity has delivery context"},
+      {label:"Qualify",owner:"Task owner",detail:"Record model family where known, capability mode, confidence and limitations.",gate:"Uncertainty remains visible"},
+      {label:"Measure",owner:"Delivery lead",detail:"Use accepted outcomes, rework and lineage—not invented token or cost numbers—to assess value.",gate:"Claims stay evidence-backed"},
+    ],
+    roles:["Authorised user","AI capability layer","Task owner","Delivery lead / reporting owner"],
+    inputs:["Activity ID and time","Tool and capability mode","Linked delivery references","Safe outcome summary"],
+    outputs:["AI activity ledger row","Traceability link","Confidence and limitation record","Safe measurement input"],
+    measures:["Acted-on activity with complete references","Activities linked to accepted outcomes","Rework by prompt version","Unsafe content rejected"],
+    projectEvidence:{tracker:"Prompt versions, capability modes, AI usage and delivery measurements are retained in the control plane.",mar:"The activity ledger records safe metadata and explicitly excludes raw prompts, responses, PII, secrets and invented cost figures."},
+    evidence:"PoC Tracker measurement model and MAR privacy-safe AI activity ledger", adoption:"Proven"
+  },
+  {
+    id:"review-ai-evidence", name:"Review AI Evidence", category:"Evidence",
+    summary:"AI-generated findings remain explicit drafts with source links, confidence and reversible human decisions before they become governed records.",
+    scenario:"Uploaded architecture or delivery evidence can accelerate discovery, but model interpretation must remain inspectable and subordinate to professional review.",
+    outcome:"Faster evidence analysis without hiding uncertainty or converting suggestions into facts automatically.",
+    whenToUse:["Architecture-document ingestion","OCR or evidence extraction","Suggested mappings, risks or structured discovery records"],
+    projects:["compass","tracker"], maturity:{compass:"Operational",tracker:"Operational"},
+    controls:["Explicit user-triggered AI action","Source excerpt or evidence relationship","Confidence and processing status","Draft / approved / declined state","Audit event for every decision"],
+    workflow:[
+      {label:"Trigger",owner:"Human analyst",detail:"Select the evidence and explicitly request a bounded analysis action.",gate:"Approved source and purpose"},
+      {label:"Extract",owner:"AI review service",detail:"Create candidate findings with source location, confidence and limitations.",gate:"Every suggestion retains provenance"},
+      {label:"Present",owner:"Product UI",detail:"Keep raw model output distinguishable from edited or accepted records.",gate:"Draft status remains visible"},
+      {label:"Decide",owner:"Professional reviewer",detail:"Approve, edit or decline each suggestion individually.",gate:"Named human disposition"},
+      {label:"Record",owner:"Application",detail:"Create or update governed records and retain an audit event for the decision.",gate:"Accepted value remains linked to evidence"},
+    ],
+    roles:["Human analyst","AI review service","Professional reviewer","Application audit layer"],
+    inputs:["Approved evidence file","Selected analysis purpose","Extraction schema","Data-use policy"],
+    outputs:["Draft findings","Confidence and source links","Review decisions","Approved structured records","Audit events"],
+    measures:["Suggestions with source evidence","Approval / edit / decline rate","Low-confidence review time","Accepted records with audit lineage"],
+    projectEvidence:{compass:"Architecture review surfaces evidence-linked draft insights for human confirmation or decline.",tracker:"Evidence import and review keeps generated findings visible, editable and approval gated."},
+    evidence:"Migration Compass architecture review and PoC Tracker evidence-ingestion workflow", adoption:"Proven"
+  },
+  {
+    id:"constrain-mutation", name:"Bound Every Write", category:"Safety",
+    summary:"The application accepts only schema-valid, allow-listed and reviewable AI proposals; unknown targets and disallowed fields are removed before save.",
+    scenario:"AI is allowed to propose structured updates inside the product, but arbitrary model output must never write directly into governed delivery state.",
+    outcome:"Useful structured automation with a narrow, testable mutation boundary and a human preview.",
+    whenToUse:["AI-generated status or forecast proposals","Structured record updates","Any feature where model output could change governed application data"],
+    projects:["tracker"], maturity:{tracker:"Operational"},
+    controls:["Strict versioned JSON schema","Record and field allow-list","Validated target identifiers","Proposal and payload caps","Preview and explicit human confirmation"],
+    workflow:[
+      {label:"Request",owner:"Human operator",detail:"Choose the bounded action and records the AI may consider.",gate:"Action and record scope are explicit"},
+      {label:"Generate",owner:"AI capability layer",detail:"Return only the declared schema and capability-mode response.",gate:"Schema validation passes"},
+      {label:"Sanitise",owner:"Application boundary",detail:"Remove unknown IDs, forbidden fields, extra records and oversized values.",gate:"Only allow-listed mutations remain"},
+      {label:"Preview",owner:"User interface",detail:"Show the exact proposed changes, source context and limitations.",gate:"No write before confirmation"},
+      {label:"Commit",owner:"Human user",detail:"Approve selected changes; store validation and decision evidence.",gate:"Named user authorises the mutation"},
+    ],
+    roles:["Human operator / record owner","AI capability layer","Schema validator","Application mutation service","Audit recorder"],
+    inputs:["Allowed record IDs","Allowed fields","Versioned response schema","Capability mode and limits"],
+    outputs:["Sanitised proposal","Human-readable preview","Approved field updates","Validation and audit evidence"],
+    measures:["Rejected invalid outputs","Unknown targets removed","Proposals edited before save","Unauthorised write attempts"],
+    projectEvidence:{tracker:"The PoC Tracker implements strict structured output, field allow-lists, target validation, caps and preview-before-save controls."},
+    evidence:"PoC Tracker structured-output and AI safety boundary", adoption:"Specialist"
+  },
+  {
+    id:"immutable-release", name:"Release Once. Roll Back Fast.", category:"Delivery",
+    summary:"The exact reviewed source produces an immutable artefact that is promoted through controlled environments with readiness proof and a named recovery target.",
+    scenario:"A team needs to demonstrate that production promotion and rollback use known artefacts rather than rebuilding or improvising during release and recovery.",
+    outcome:"Releases and rollbacks remain tied to reviewed source, protected evidence and a repeatable decision process.",
+    whenToUse:["Container or hosted application delivery","Database or infrastructure promotion","Changes requiring auditable rollback and release identity"],
+    projects:["compass","mar"], maturity:{compass:"Defined",mar:"Implemented foundation"},
+    controls:["Protected source commit","Immutable digest or artefact ID","No-mutation deployment defaults","Environment readiness and smoke checks","Named known-good rollback target"],
+    workflow:[
+      {label:"Build",owner:"CI pipeline",detail:"Build once from the exact protected commit using locked dependencies.",gate:"Source and build provenance verified"},
+      {label:"Attest",owner:"Supply-chain tooling",detail:"Resolve immutable identity, scan the artefact and produce safe SBOM evidence.",gate:"Digest-bound assurance passes"},
+      {label:"Approve",owner:"Release authority",detail:"Review readiness, migration, support and rollback evidence.",gate:"Named production decision"},
+      {label:"Promote",owner:"Deployment pipeline",detail:"Move the same artefact through the target environment without rebuilding.",gate:"Health, readiness and release identity agree"},
+      {label:"Recover",owner:"Release owner",detail:"Redeploy the known-good artefact or follow the approved data/schema runbook.",gate:"Post-rollback health and audit review"},
+    ],
+    roles:["CI / build pipeline","Supply-chain assurance","Release authority","Deployment owner","Rollback / support owner"],
+    inputs:["Protected commit SHA","Locked build inputs","Release readiness checklist","Known-good artefact","Migration and rollback runbook"],
+    outputs:["Immutable artefact identity","SBOM and scan summary","Promotion record","Deployment evidence","Rollback decision trail"],
+    measures:["Promotions using the original artefact","Release identity mismatches","Rollback readiness coverage","Post-deployment health failures"],
+    projectEvidence:{compass:"Hosted promotion and rollback contracts are defined as the path from local framework to production.",mar:"Protected image digests, SBOMs, three-root deployment controls and rollback evidence are operational controls."},
+    evidence:"Migration Compass hosted release contract and MAR immutable supply-chain controls", adoption:"Specialist"
+  },
+  {
+    id:"prompt-pack", name:"Use a Governed Prompt Pack", category:"Governance",
+    summary:"A reusable starter pack creates one approved delivery baseline, then a project-specific A–G pack guides each change from intake to release readiness.",
+    scenario:"A team wants every AI conversation to use the same project facts, rules, checks, approval points and evidence requirements instead of relying on whoever writes the next prompt.",
+    outcome:"A repeatable AI delivery route that reloads the facts, exposes assumptions and stops when authority or evidence is missing.",
+    whenToUse:["Starting an AI-assisted software project","Turning project material into a controlled delivery baseline","Running repeatable changes across several AI conversations"],
+    projects:["tracker","mar"], maturity:{tracker:"Defined",mar:"Operational"},
+    controls:["Versioned prompts held with the code","One approved baseline for every conversation","Prompt E hard stop before implementation","Facts kept separate from assumptions","Fail closed on missing authority or evidence"],
+    workflow:[
+      {label:"Set context",owner:"Delivery lead",detail:"Capture the project, constraints, roles and authoritative source material.",gate:"The team agrees which facts and documents control delivery"},
+      {label:"Build baseline",owner:"Lead and specialists",detail:"Use prompts 01–11 to discover the starting point and agree architecture, standards, testing, governance, security and traceability.",gate:"One joined-up Functional Specification and delivery baseline"},
+      {label:"Create A–G",owner:"Prompt 12",detail:"Generate the active project prompts for intake, impact, design, tasks, readiness, implementation and release.",gate:"The active pack reflects the approved baseline"},
+      {label:"Check readiness",owner:"Prompt 13 / human owner",detail:"Validate the pack, install Phase 2 context and confirm that delivery can start.",gate:"Named human approval and complete Phase 2 context"},
+      {label:"Deliver changes",owner:"Delivery team",detail:"Run A–G for each change, reloading context and stopping whenever approval or evidence is missing.",gate:"Evidence-backed demo, acceptance or release decision"},
+    ],
+    roles:["Central prompter or delivery lead","Business analyst","Architect / technical lead","Tester / QA","Security specialist","Human approval authority"],
+    inputs:["Project context and constraints","Approved architecture and decisions","Coding, testing and security standards","Governance and Definition of Done","Source requirements and trace identifiers"],
+    outputs:["Reusable generic starter pack","Project-specific A–G prompts","Approved delivery baseline","Readiness record","Traceable prompt and delivery evidence"],
+    measures:["Prompts using the current approved baseline","Readiness failures caught before code","Changes following the selected A–G route","Prompt versions linked to delivery evidence"],
+    projectEvidence:{tracker:"Phase 1 defines creation of a project-specific A–G pack with hard stops, standards, tests and provenance rules before Phase 2 delivery begins.",mar:"The repository contains 15 generic prompts and 22 active prompts. Prompts 01–13 establish the delivery system; A–G then control each change."},
+    evidence:"PoC Tracker Phase 1 prompt-pack definition and Meter Reconciliation’s operational 15-plus-22 governed prompt pack", adoption:"Core"
+  },
+];
+
+const additionalMethods: Method[] = [
+  {
+    id:"establish-baseline", name:"Establish the Approved Baseline", category:"Governance",
+    summary:"Capture the project context, business objectives, technical starting point, constraints, authoritative sources, open questions and accountable owners before delivery authority is issued.",
+    scenario:"A project is about to use AI-assisted delivery and needs one approved starting point so separate people, prompts and agents do not work from different assumptions.",
+    outcome:"A controlled baseline that makes facts, decisions, constraints, unknowns and ownership visible before implementation planning begins.",
+    whenToUse:["Starting or resetting a project","Onboarding a new delivery team or agent route","After material business, technical or source change"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Operational",tracker:"Implemented foundation",mar:"Operational"},
+    controls:["Authoritative source register","Business and technical baseline","Facts separated from assumptions","Open-question and decision ownership","Human approval before use"],
+    workflow:[
+      {label:"Collect",owner:"Delivery lead",detail:"Gather the source documents, objectives, constraints, existing system evidence and known decisions.",gate:"Authoritative sources are named"},
+      {label:"Separate",owner:"Analyst / architect",detail:"Distinguish evidenced facts, assumptions, gaps and questions rather than smoothing uncertainty away.",gate:"Unknowns remain visible"},
+      {label:"Assign",owner:"Business and technical owners",detail:"Name an accountable owner and due route for each open question, constraint and decision.",gate:"No unowned material gap"},
+      {label:"Approve",owner:"Human authority",detail:"Review the joined context and approve it as the current delivery baseline.",gate:"Baseline approval is recorded"},
+      {label:"Refresh",owner:"Delivery lead",detail:"Invalidate and republish the baseline when a material source, decision or constraint changes.",gate:"Agents receive only the current baseline"},
+    ],
+    roles:["Business owner","Delivery lead","Analyst","Architect / technical lead","Human baseline approver"],
+    inputs:["Project objectives","Source documents","Technical inventory","Constraints and regulations","Known decisions and questions"],
+    outputs:["Approved context baseline","Source register","Constraint and assumption log","Open-question register","Named owners"],
+    measures:["Material claims with an authoritative source","Open questions with owners","Agents using current baseline","Baseline refreshes after material change"],
+    projectEvidence:{compass:"Repository workflow and platform documentation provide the current local engineering baseline and explicit maturity boundary.",tracker:"Phase 1 creates the approved project baseline before the Phase 2 A–G route is used.",mar:"Prompts 01–13 establish project context, discovery, decisions, standards, traceability and readiness before A–G delivery."},
+    evidence:"Migration Compass workspace controls, PoC Tracker Phase 1 and MAR prompts 01–13", adoption:"Core"
+  },
+  {
+    id:"architecture-standards", name:"Govern Architecture and Standards", category:"Governance",
+    summary:"Record architecture decisions, coding conventions, test strategy, security-review triggers, accessibility, privacy, regulatory duties and the Definition of Done as one governed delivery contract.",
+    scenario:"AI can produce plausible implementation quickly, but the project needs a stable technical and assurance contract that every task must follow.",
+    outcome:"A repeatable engineering route in which design choices, quality thresholds and specialist review triggers are explicit and reviewable.",
+    whenToUse:["Before task decomposition","When shared contracts or standards change","For regulated, security-sensitive or client-facing work"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Operational",tracker:"Defined",mar:"Implemented foundation"},
+    controls:["Architecture decision records","Coding and repository conventions","Risk-based test strategy","Security, privacy and accessibility triggers","Evidence-backed Definition of Done"],
+    workflow:[
+      {label:"Decide",owner:"Architect / technical lead",detail:"Record the architecture, boundaries, data flows and trade-offs that govern implementation.",gate:"Material decisions have named owners"},
+      {label:"Standardise",owner:"Engineering lead",detail:"Set coding, repository, dependency, documentation and review conventions.",gate:"Rules are versioned with delivery context"},
+      {label:"Map assurance",owner:"Quality and security leads",detail:"Attach test, security, privacy, accessibility and regulatory checks to clear triggers.",gate:"Risk selects the assurance route"},
+      {label:"Define done",owner:"Delivery authority",detail:"State the evidence, approvals, limitations and operational checks required for completion.",gate:"Done is observable and cannot be self-declared by AI"},
+      {label:"Maintain",owner:"Technical governance",detail:"Refresh dependent tasks and approvals when the governed contract changes.",gate:"Stale standards do not authorise new work"},
+    ],
+    roles:["Architect / technical lead","Engineering lead","Quality lead","Security / privacy specialist","Human governance authority"],
+    inputs:["Approved baseline","Architecture constraints","Engineering standards","Risk classification","Regulatory and client requirements"],
+    outputs:["Decision records","Coding and test standards","Specialist review map","Definition of Done","Change-impact record"],
+    measures:["Tasks using current standards","Triggered reviews completed","Decision changes propagated","Completion claims with required evidence"],
+    projectEvidence:{compass:"Workspace rules, tiered validation, specialist reviews and human acceptance govern the operational local workflow.",tracker:"Phase 1 defines hard stops, standards, tests, provenance rules and the Definition of Done before A–G delivery.",mar:"Prompts 03–09 and repository controls define architecture, conventions, tests, governance, security and traceability."},
+    evidence:"Architecture, standards, assurance and Definition-of-Done controls across the three operating models", adoption:"Core"
+  },
+  {
+    id:"select-route", name:"Select the Delivery Route", category:"Delivery",
+    summary:"Classify the change and decide which impact assessment, technical design, task decomposition, readiness, implementation and integration or release checks are required.",
+    scenario:"Not every change needs the same path, but a shorter route must be an explicit classification decision rather than an informal bypass.",
+    outcome:"The smallest defensible delivery route, with every required gate and omitted step explained before work begins.",
+    whenToUse:["At change intake","For no-functional-change or documentation work","When risk or scope changes during delivery"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Operational",tracker:"Defined",mar:"Defined"},
+    controls:["Functional-impact decision","Technical and data-impact classification","Required A–G stages","Risk-triggered assurance","Route refresh after material change"],
+    workflow:[
+      {label:"Classify",owner:"Intake owner",detail:"Identify functional, technical, data, infrastructure, security and release impact.",gate:"Change class is explicit"},
+      {label:"Choose",owner:"Delivery lead",detail:"Select the full, no-functional-change or constrained short route supported by the project model.",gate:"Omitted steps have a reason"},
+      {label:"Attach",owner:"Technical and quality leads",detail:"Name required design, task, readiness, test, integration and release controls.",gate:"The route is executable"},
+      {label:"Authorise",owner:"Human authority",detail:"Approve the route for the exact change boundary and current evidence.",gate:"Route cannot approve itself"},
+      {label:"Recheck",owner:"Task owner",detail:"Return to classification when scope, risk, contract or deployment impact changes.",gate:"Material change invalidates the old route"},
+    ],
+    roles:["Change requester","Intake owner","Delivery lead","Technical / quality lead","Human route approver"],
+    inputs:["Change intent","Impact evidence","Current baseline","Risk triggers","Release context"],
+    outputs:["Route decision","Required stage list","Assurance plan","Named readiness gate","Route-change history"],
+    measures:["Changes with an explicit route","Short routes with recorded rationale","Material changes reclassified","Late discovery caused by missing route checks"],
+    projectEvidence:{compass:"Blast-radius classification selects focused checks and tiered validation within the local change lifecycle.",tracker:"Phase 2 defines full A–G, no-functional-change and tightly constrained short routes.",mar:"The A–G prompt model separates impact, design, task planning, readiness, implementation and integration/release decisions."},
+    evidence:"Risk- and impact-based route selection across Migration Compass validation tiers and the Tracker and MAR A–G models", adoption:"Core"
+  },
+  {
+    id:"baseline-forecast-change", name:"Baseline, Forecast and Control Change", category:"Governance",
+    summary:"Compare conventional and AI-assisted estimates, build three-point work-package forecasts, freeze an approved baseline and control every later change against explicit time, cost and readiness evidence.",
+    scenario:"A delivery lead needs a defensible plan and forecast without allowing optimistic AI estimates, missing values or silent scope changes to distort the approved baseline.",
+    outcome:"A transparent delivery forecast with uncertainty, earned-value signals, reserve and formal change decisions kept separate from the original baseline.",
+    whenToUse:["Portfolio planning and reforecasting","AI-assisted versus conventional estimate comparison","Any material scope, schedule or cost change"],
+    projects:["tracker"], maturity:{tracker:"Operational"},
+    controls:["Conventional and AI-assisted estimates kept distinct","Three-point work-package estimates","Dependency-aware P50 and P80 forecasts","Immutable approved baseline","Formal change request and reserve decision","Missing values remain missing"],
+    workflow:[
+      {label:"Estimate",owner:"Work-package owners",detail:"Capture conventional and AI-assisted optimistic, most-likely and pessimistic estimates with assumptions.",gate:"Estimate basis is visible"},
+      {label:"Model",owner:"Planning owner",detail:"Use dependencies and deterministic scenarios to produce P50 and P80 schedule views.",gate:"Uncertainty is represented, not hidden"},
+      {label:"Baseline",owner:"Human authority",detail:"Approve and freeze scope, dates, cost and work packages as the comparison point.",gate:"Baseline becomes immutable"},
+      {label:"Measure",owner:"Delivery control plane",detail:"Track PV, EV, AC, SPI, CPI and EAC without converting unavailable values to zero.",gate:"Metrics preserve their evidence state"},
+      {label:"Control",owner:"Change authority",detail:"Record change request, impact, decision, management-reserve use and readiness warning.",gate:"Forecast change never rewrites history"},
+    ],
+    roles:["Delivery / planning lead","Work-package owner","Finance or cost owner","Change authority","Reporting owner"],
+    inputs:["Work packages and dependencies","Three-point estimates","Approved scope and dates","Actual effort and cost","Change requests"],
+    outputs:["Immutable baseline","P50 / P80 forecast","PV / EV / AC metrics","SPI / CPI / EAC view","Scenario and change-decision history"],
+    measures:["Baseline changes with formal decisions","Forecast variance by confidence level","Readiness warnings resolved","Missing values preserved as unavailable"],
+    projectEvidence:{tracker:"The working control plane contains 42 EVM work packages and four forecast runs, supports deterministic scenarios and keeps unavailable evidence missing rather than inventing zero."},
+    evidence:"PoC Tracker planning, EVM, forecasting, scenario and formal change-control model", adoption:"Specialist"
+  },
+  {
+    id:"report-evidence", name:"Freeze and Report the Evidence", category:"Evidence",
+    summary:"Freeze the measurement snapshot behind each report and publish the same governed evidence through weekly, executive and export formats while keeping limitations and archived history visible.",
+    scenario:"Portfolio reporting needs to be repeatable and explainable across audiences without silently refreshing numbers, hiding RAID exposure or presenting imported evidence as live telemetry.",
+    outcome:"Client-ready reports whose numbers, evidence gaps, limitations and source snapshot can be reconstructed after publication.",
+    whenToUse:["Weekly and executive reporting","Governance or assurance review","Portfolio handover, export or backup"],
+    projects:["tracker"], maturity:{tracker:"Implemented foundation"},
+    controls:["Frozen measurement snapshot","Source template retained","Evidence gaps and limitations shown","Findings and RAID exposure included","Archived report history","Format-consistent export"],
+    workflow:[
+      {label:"Freeze",owner:"Reporting owner",detail:"Create the point-in-time measurement snapshot and retain its source template and evidence references.",gate:"Numbers cannot drift after publication"},
+      {label:"Qualify",owner:"Delivery assurance",detail:"Add evidence gaps, limitations, findings, RAID exposure and claim boundaries.",gate:"Unknowns remain visible"},
+      {label:"Publish",owner:"Reporting service",detail:"Generate weekly PDF and PowerPoint, executive PowerPoint and the Excel governance workbook from the governed record.",gate:"Formats use the same snapshot"},
+      {label:"Export",owner:"Control-plane owner",detail:"Create JSON export and backup without converting it into a claim of live integration.",gate:"Portable evidence retains provenance"},
+      {label:"Archive",owner:"Governance owner",detail:"Retain report history, snapshot identity, template and publication time for later explanation.",gate:"Historic reports remain reproducible"},
+    ],
+    roles:["Reporting owner","Delivery assurance","Executive / client reviewer","Control-plane owner","Archive owner"],
+    inputs:["Governed delivery records","Metric snapshot","Findings and RAID","Report template","Claim limitations"],
+    outputs:["Weekly PDF","Weekly PowerPoint","Executive PowerPoint","Excel governance workbook","JSON export and backup","Archived report history"],
+    measures:["Reports with frozen snapshots","Formats reconciled to one source","Evidence gaps shown","Archived reports reproducible"],
+    projectEvidence:{tracker:"The demonstrator supports frozen measurement snapshots, weekly PDF and PowerPoint, executive PowerPoint, Excel governance workbook, JSON export and backup, and archived report history."},
+    evidence:"PoC Tracker reporting and export controls", adoption:"Proven"
+  },
+  {
+    id:"separate-environments", name:"Separate Environments and Data", category:"Safety",
+    summary:"Keep development, test, UAT or staging and production boundaries explicit, with isolated stores, environment-specific configuration and synthetic or masked non-production data.",
+    scenario:"A change must move between environments without sharing mutable data, credentials or configuration, and without treating a local test instance as production proof.",
+    outcome:"Controlled promotion with clear data provenance and fewer ways for non-production work to affect client or production state.",
+    whenToUse:["Any persistent or hosted application","Integration and UAT testing","Changes involving uploads, databases or environment configuration"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Implemented foundation",tracker:"Defined",mar:"Implemented foundation"},
+    controls:["Named environment boundaries","Isolated stores and runtime state","Synthetic, masked or copied non-production data","Environment-specific configuration","Controlled promotion and production limits"],
+    workflow:[
+      {label:"Define",owner:"Platform owner",detail:"Name each environment, purpose, owner, data class and allowed integrations.",gate:"Environment contract is explicit"},
+      {label:"Isolate",owner:"Engineering",detail:"Separate runtime state, stores, ports, configuration and credentials.",gate:"No shared mutable boundary"},
+      {label:"Provision data",owner:"Data owner",detail:"Use synthetic, masked or approved copied fixtures outside production.",gate:"Client and production data remain protected"},
+      {label:"Promote",owner:"Release authority",detail:"Move only approved configuration, schema and immutable artefact identity through the route.",gate:"Promotion does not rebuild or leak data"},
+      {label:"Verify",owner:"Environment owner",detail:"Record readiness, smoke checks, data boundary and any production limitation.",gate:"Environment evidence is current"},
+    ],
+    roles:["Platform / environment owner","Engineering owner","Data owner","Release authority","Assurance reviewer"],
+    inputs:["Environment inventory","Data classification","Configuration contract","Promotion plan","Approved fixtures"],
+    outputs:["Environment map","Isolated stores","Safe fixture set","Promotion record","Readiness evidence"],
+    measures:["Cross-environment data incidents","Non-production stores isolated","Promotions using approved configuration","Production limitations recorded"],
+    projectEvidence:{compass:"Local feature and combined applications use separate ports, data directories and test fixtures; hosted production separation remains partly foundational or roadmap.",tracker:"Browser integration uses copied data, a separate server and disabled external AI, while a full dev/test/UAT/production model remains defined rather than operational.",mar:"Terraform roots, environment-specific parameters and non-personal fixture rules form an implemented platform foundation; live Azure traffic promotion is not claimed."},
+    evidence:"Environment, runtime and non-production data boundaries across the three operating models", adoption:"Core"
+  },
+  {
+    id:"protect-identity-data", name:"Protect Identity, Secrets and Client Data", category:"Safety",
+    summary:"Set explicit authentication and authorization boundaries, manage secrets and credentials separately, classify data, constrain uploads and document what production access is not yet available.",
+    scenario:"AI-assisted delivery touches files, repositories, credentials or client information and the team must distinguish implemented safeguards from identity and production capabilities still to be built.",
+    outcome:"Sensitive access and data use stay bounded without implying that local demonstrators already provide enterprise identity or role-based access control.",
+    whenToUse:["User or service access","Secrets and deployment credentials","Uploads, evidence ingestion and client data"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Implemented foundation",tracker:"Defined",mar:"Implemented foundation"},
+    controls:["Authentication and authorization boundary","Secret and credential handling","Data classification","Synthetic or masked fixtures","Upload validation and explicit AI trigger","Production limitations recorded"],
+    workflow:[
+      {label:"Classify",owner:"Data / security owner",detail:"Classify identities, records, files, credentials and environments before access is granted.",gate:"Protection level is known"},
+      {label:"Separate",owner:"Platform owner",detail:"Keep secrets and credentials out of source, prompts, fixtures and ordinary evidence.",gate:"Sensitive values use the approved store"},
+      {label:"Constrain",owner:"Application owner",detail:"Validate uploads, limit types and sizes, and require an explicit action before evidence is sent to an AI capability.",gate:"No implicit external processing"},
+      {label:"Authorise",owner:"Human access owner",detail:"Apply only the identity boundary the product actually implements and record missing enterprise controls.",gate:"No invented RBAC claim"},
+      {label:"Review",owner:"Security / privacy reviewer",detail:"Check logs, fixtures, exports and evidence for client data, PII or credentials before sharing.",gate:"Unsafe content is blocked"},
+    ],
+    roles:["Identity / access owner","Security and privacy owner","Application owner","Data owner","Human reviewer"],
+    inputs:["Data classification","Identity model","Secret inventory","Upload policy","Production access limitations"],
+    outputs:["Access boundary","Secret-handling record","Safe fixture set","Upload decision evidence","Explicit limitation statement"],
+    measures:["Secrets detected outside approved stores","Uploads rejected by policy","AI actions with explicit user trigger","Identity gaps tracked to roadmap"],
+    projectEvidence:{compass:"Local and hosted contracts separate permissions, safe uploads and explicit AI review triggers, while hosted identity remains partly foundational or roadmap.",tracker:"The demonstrator has schema, allow-list, target-validation, preview and confirmation controls; general authentication, RBAC, multi-user persistence and production deployment are not claimed.",mar:"Credential, fixture, private execution and client-data rules are part of the implemented platform and governed framework, without claiming complete live production use."},
+    evidence:"Identity, credential, data-classification, fixture and upload boundaries across the source documents", adoption:"Core"
+  },
+  {
+    id:"backup-restore-audit", name:"Back Up, Restore, Retain and Audit", category:"Evidence",
+    summary:"Create backups, test restoration, set retention and disposal rules, preserve audit evidence and name the person who owns recovery.",
+    scenario:"A project needs evidence that important state can be recovered and retained appropriately without mistaking a local copy for off-device disaster recovery.",
+    outcome:"A recoverable and explainable data lifecycle with the limits of current backup arrangements stated plainly.",
+    whenToUse:["Persistent delivery or product records","Before migration or destructive change","Client, regulatory or audit retention"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Defined",tracker:"Implemented foundation",mar:"Defined"},
+    controls:["Named backup scope and frequency","Restore test and evidence","Retention and disposal schedule","Audit trail preservation","Recovery owner","Off-device gap stated explicitly"],
+    workflow:[
+      {label:"Scope",owner:"Data / service owner",detail:"Name which application, configuration, evidence and audit data must be recoverable.",gate:"Critical state is identified"},
+      {label:"Back up",owner:"Operations owner",detail:"Create the backup with source, time, location, protection and retention metadata.",gate:"Backup identity is recorded"},
+      {label:"Restore",owner:"Recovery owner",detail:"Test restoration into an isolated target and verify integrity and access.",gate:"Recovery works, not just backup creation"},
+      {label:"Retain",owner:"Governance owner",detail:"Apply retention, archive and secure-disposal rules to data and audit evidence.",gate:"Lifecycle duties are explicit"},
+      {label:"Review",owner:"Assurance reviewer",detail:"Record recovery gaps, ownership and any roadmap dependency such as off-device disaster recovery.",gate:"Limitations remain visible"},
+    ],
+    roles:["Data / service owner","Backup operator","Recovery owner","Governance / retention owner","Assurance reviewer"],
+    inputs:["Data inventory","Recovery requirement","Retention policy","Backup location","Audit schema"],
+    outputs:["Backup record","Restore-test evidence","Retention schedule","Disposal record","Recovery ownership and gap log"],
+    measures:["Backups with successful restore tests","Recovery time achieved","Retention exceptions","Critical state without off-device protection"],
+    projectEvidence:{compass:"Hosted recovery and data/schema restore contracts are defined, while local quality snapshots provide evidence rather than full disaster recovery.",tracker:"JSON export and local backup are implemented in the demonstrator, but local backups are not equivalent to off-device disaster recovery.",mar:"Backup, retention, audit and recovery responsibilities are defined in the governed platform model; complete live production recovery is not claimed."},
+    evidence:"Backup, restore, retention, audit and recovery controls across the operating models", adoption:"Proven"
+  },
+  {
+    id:"observe-recover", name:"Observe Health and Recover Safely", category:"Quality",
+    summary:"Use health and readiness checks, logs, metrics, traces, alerts and correlation identifiers to decide whether to continue, roll back or recover to a known-good target, then verify the result.",
+    scenario:"A release or running service changes state and the team needs observable evidence and a bounded decision window instead of diagnosing or rolling back from memory.",
+    outcome:"Faster, safer recovery with the release identity, decision owner, service signals and post-recovery verification kept in one chain.",
+    whenToUse:["Environment readiness and release","Service incidents or failed smoke checks","Rollback and post-recovery assurance"],
+    projects:["compass","tracker","mar"], maturity:{compass:"Implemented foundation",tracker:"Defined",mar:"Implemented foundation"},
+    controls:["Health and readiness endpoints","Logs, metrics and traces","Alerts and correlation identifiers","Rollback owner and decision window","Known-good artefact or restore target","Post-recovery verification"],
+    workflow:[
+      {label:"Instrument",owner:"Service owner",detail:"Define health, readiness, log, metric, trace and correlation evidence for critical paths.",gate:"Signals identify the affected version"},
+      {label:"Observe",owner:"Operations owner",detail:"Monitor the release window and route alerts with the relevant correlation and artefact identity.",gate:"Failure is attributable"},
+      {label:"Decide",owner:"Named recovery authority",detail:"Use the agreed window and thresholds to continue, pause, roll back or restore.",gate:"One accountable recovery decision"},
+      {label:"Recover",owner:"Release / data owner",detail:"Redeploy the known-good artefact or execute the approved data and schema restore route.",gate:"Recovery follows the runbook"},
+      {label:"Verify",owner:"Assurance owner",detail:"Repeat health, smoke, integrity and business checks and retain the incident evidence.",gate:"Service and data are proven after recovery"},
+    ],
+    roles:["Service owner","Operations / support owner","Release authority","Data / recovery owner","Assurance reviewer"],
+    inputs:["Health and readiness contract","Observability signals","Release identity","Rollback thresholds","Known-good target and runbook"],
+    outputs:["Health and readiness evidence","Correlated incident record","Rollback or restore decision","Recovery execution record","Post-recovery verification"],
+    measures:["Signals carrying release identity","Alert-to-decision time","Recoveries using known-good targets","Post-recovery checks completed"],
+    projectEvidence:{compass:"Feature and combined applications expose health metadata locally; hosted monitoring and production recovery remain partly foundational or roadmap.",tracker:"The operating model defines health, recovery and reporting responsibilities, but production observability and deployment are not yet operational.",mar:"Pipeline, deployment and supply-chain controls provide implemented readiness foundations; complete live Azure traffic observation and promotion are not claimed."},
+    evidence:"Health, readiness, observability, rollback and recovery contracts across the three source portfolios", adoption:"Core"
+  },
+];
+
+const azureDevOpsAssuranceMethods: Method[] = [
+  {
+    id:"boards-delivery-spine", name:"Run Boards as the Delivery Spine", category:"Governance",
+    summary:"Use Azure DevOps as the operational lineage hub: authorised work, design, tasks, branches, pull requests, builds, tests, approvals and release evidence stay connected through stable identifiers and evidence-gated states.",
+    scenario:"A delivery team needs more than a ticket board. It must show who authorised a change, which approved design and task control it, what version was tested and why the work is—or is not—complete.",
+    outcome:"One inspectable delivery record from intake to release, with incomplete mappings and missing evidence shown honestly instead of hidden in a Done state.",
+    whenToUse:["Managing governed work in Azure DevOps","Connecting requirements, design and implementation","Reviewing completion or release readiness"],
+    projects:["mar"], maturity:{mar:"Implemented foundation"},
+    controls:["Epic, story, task, bug and evidence hierarchy","Stable M-*, AC-M-*, REQ-*, TASK-* and TEST-* identifiers","Approved design and task-list links before build","Evidence-gated state transitions","Explicit fallback when the target ADO process is not configured"],
+    workflow:[
+      {label:"Anchor",owner:"Delivery manager",detail:"Create or find the authorised ADO item, name its stream, owner, route and stable trace identities.",gate:"Authority and delivery route are explicit"},
+      {label:"Link",owner:"Analyst / technical lead",detail:"Attach requirements, acceptance criteria, approved design, shared decisions and the approved task list.",gate:"No design or build from an orphan item"},
+      {label:"Decompose",owner:"Task owner",detail:"Create focused child tasks or bugs exactly from the approved task list, including dependencies, tests and specialist triggers.",gate:"Every work unit has bounded scope"},
+      {label:"Propagate",owner:"Implementation and CI owners",detail:"Add branch, PR, commit, build, tests, findings and approval evidence as the change moves.",gate:"Evidence names the exact delivery version"},
+      {label:"Close",owner:"Human acceptance authority",detail:"Move the item to Done only when children, criteria, findings, lineage and the applicable human approvals agree.",gate:"Merge alone never means complete"},
+    ],
+    roles:["Delivery manager","Business analyst","Technical lead","Task owner","QA / security reviewers","Human acceptance authority"],
+    inputs:["Authorised ADO item","Stable trace identifiers","Approved requirement and design","Approved task list","Definition of Done"],
+    outputs:["Connected work-item hierarchy","Current state and ownership","Branch-to-build provenance","Criterion-level acceptance evidence","Explicit remediation gaps"],
+    measures:["Work items with complete parent and trace links","Tasks with approved design and task-list authority","Done items with complete child and acceptance proof","Orphaned or duplicate identifiers"],
+    projectEvidence:{mar:"The retained operating records include 66 imported ADO records, 24 primary M-* stories and 20 cross-item relations, with remaining type, field and link remediation tracked rather than presented as complete."},
+    evidence:"Azure DevOps Boards lineage, work-item hierarchy and evidence-gated state-transition model reviewed 5 August 2026", adoption:"Specialist"
+  },
+  {
+    id:"pr-proof-pack", name:"Make Every PR a Proof Pack", category:"Evidence",
+    summary:"Treat the pull request as the reviewable evidence packet for one governed change: scope, lineage, checks, impacts, AI provenance, reviewer dispositions, residual risk and recovery route travel together.",
+    scenario:"A short-lived branch is ready for review, but a diff and a green badge cannot explain the authority, risk, evidence or human judgement behind the change.",
+    outcome:"A protected merge decision that can be reconstructed later and automatically becomes stale when the reviewed source changes.",
+    whenToUse:["Every change entering protected master","AI-generated or materially AI-changed output","Changes with security, data, accessibility or release impact"],
+    projects:["mar"], maturity:{mar:"Implemented foundation"},
+    controls:["One focused change per short-lived branch","Implementation PRs kept under roughly 400 changed lines where practical","Linked ADO work item and trace identities","Independent non-author review","Approval reset after source changes","All active comments resolved","Actual checks, unavailable evidence and rollback route recorded"],
+    workflow:[
+      {label:"Branch",owner:"Task owner",detail:"Start from the latest approved master baseline and keep one focused task or governed change on the branch.",gate:"Branch identity and scope match the ADO task"},
+      {label:"Assemble",owner:"Change author",detail:"Describe exact scope and exclusions; link decisions, requirements, tasks, tests, AI contribution and recovery intent.",gate:"The PR can explain why the change exists"},
+      {label:"Validate",owner:"CI and specialists",detail:"Run the routed checks and publish results, coverage, scans, build links and every skipped or unavailable item without claiming it passed.",gate:"Evidence is current and version-bound"},
+      {label:"Review",owner:"Non-author reviewers",detail:"Record separate peer, QA, security, SME and delivery dispositions where each role is required.",gate:"Findings and active comments are resolved"},
+      {label:"Converge",owner:"Integration authority",detail:"Merge only the current approved source, record build and merge provenance, then reassess Definition of Done.",gate:"Protected policy and human authority agree"},
+    ],
+    roles:["Change author","Peer / Tech Lead","QA lead proxy","Security lead proxy","Business SME","Delivery manager","Integration authority"],
+    inputs:["Focused task branch","Structured PR template","Traceability references","Risk-triggered test route","Rollback or forward-fix plan"],
+    outputs:["Structured PR evidence pack","Review dispositions","Current approval state","Protected merge provenance","Residual-risk and follow-up record"],
+    measures:["PRs linked to governed work","Approvals reset after source changes","Active comments resolved before merge","Required checks reported accurately","Implementation PRs kept reviewable"],
+    projectEvidence:{mar:"Three master policies are live: linked work items, one independent non-author reviewer with author vote excluded, and approval reset after source push. Build-validation and direct-push enforcement still require administrator confirmation."},
+    evidence:"Azure DevOps PR template, protected-branch policy record and structured reviewer authority model reviewed 5 August 2026", adoption:"Proven"
+  },
+  {
+    id:"assurance-ladder", name:"Prove from Task to Release", category:"Quality",
+    summary:"Build confidence at four separate levels: prove the task, satisfy every story criterion, show streams and contracts work together, then evidence the complete functional and non-functional release journey.",
+    scenario:"A task passes its unit tests, but the programme still needs to know whether the story, integrated stream and release commitments are actually satisfied.",
+    outcome:"Completion claims match the level of evidence available, so local success is never mistaken for integrated or release acceptance.",
+    whenToUse:["Planning test and acceptance evidence","Closing stories or delivery streams","Making demo or release-readiness decisions"],
+    projects:["mar"], maturity:{mar:"Defined"},
+    controls:["Task-level implementation proof","Criterion-to-TEST-* story mapping","Stream contract and schema compatibility","Release functional and NFR evidence","Separate human acceptance at each applicable level"],
+    workflow:[
+      {label:"Task",owner:"Task owner",detail:"Prove the focused change with build, unit or integration checks, review and task evidence.",gate:"The approved task outcome works"},
+      {label:"Story",owner:"QA / business owner",detail:"Map every AC-M-* criterion to TEST-* evidence and QA or SME disposition.",gate:"No uncovered acceptance criterion"},
+      {label:"Stream",owner:"Integration lead",detail:"Exercise components, shared contracts, schemas, dependencies and representative journeys together.",gate:"The stream works as one outcome"},
+      {label:"Release",owner:"Release assurance",detail:"Assess end-to-end behaviour, parity, accessibility, security, performance, deployment and rollback.",gate:"Functional and NFR commitments are evidenced"},
+      {label:"Decide",owner:"Named human authority",detail:"Accept, return or defer at the level actually proven and retain any limitation or residual risk.",gate:"Evidence level and claim level agree"},
+    ],
+    roles:["Task owner","QA lead","Business SME","Integration lead","Security / accessibility specialists","Release authority"],
+    inputs:["Task acceptance criteria","Story AC-M-* mapping","TEST-* evidence","Contract and schema checks","Release and NFR expectations"],
+    outputs:["Task proof","Story criterion coverage","Stream integration evidence","Release assurance pack","Level-specific human decision"],
+    measures:["Tasks with current proof","Acceptance criteria with TEST-* evidence","Streams with compatibility evidence","Release commitments explicitly passed, failed or unavailable"],
+    projectEvidence:{mar:"The delivery model defines four assurance levels with representative proof for task, story, stream and release; declared tests and pipeline structure are kept separate from evidence that those checks actually ran and passed."},
+    evidence:"Four-level assurance model and post-merge requirement-satisfaction route reviewed 5 August 2026", adoption:"Specialist"
+  },
+  {
+    id:"source-stat-pack", name:"Build Stat Packs from Source Facts", category:"Evidence",
+    summary:"Pin repository and Azure DevOps facts to a known point in time, normalise and reconcile them through an explicit metric contract, then publish a dated stat pack with source, denominator, confidence and caveat.",
+    scenario:"Management needs delivery statistics, but manual copying, mixed denominators and missing values converted to zero would create a confident-looking report that cannot be audited.",
+    outcome:"A reproducible reporting snapshot whose numbers can be traced, recalculated and challenged without becoming a shadow source of truth.",
+    whenToUse:["Weekly or governance stat packs","Repository and ADO portfolio reporting","Any metric assembled from several delivery systems"],
+    projects:["mar"], maturity:{mar:"Implemented foundation"},
+    controls:["Pinned as-of time, branch and commit","Read-only APIs, approved exports and deterministic scans","Normalised identifiers, states, dates and unavailable values","Flow, stock, rate or point-in-time metric contract","Explicit denominator, link method, confidence and caveat","Independent reconciliation, version and hash"],
+    workflow:[
+      {label:"Freeze",owner:"Reporting owner",detail:"Record collection time, reporting period, branch or ref and exact commit before counting.",gate:"Every fact belongs to one snapshot"},
+      {label:"Collect",owner:"Source-data owner",detail:"Use read-only APIs, approved exports and deterministic repository scans; retain safe source references.",gate:"Facts are source-backed and repeatable"},
+      {label:"Normalise",owner:"Data assurance",detail:"Standardise dates, item types, states, outcomes, IDs, units and unavailable values.",gate:"Missing information never becomes zero"},
+      {label:"Reconcile",owner:"Delivery assurance",detail:"Match ADO items, PRs, branches, commits, builds and traceability IDs; classify metric type and denominator.",gate:"Duplicates and link uncertainty are explicit"},
+      {label:"Publish",owner:"Reporting and governance owners",detail:"Aggregate deterministically, generate the stat pack, compare independent totals, review exceptions and retain a hashed dated output.",gate:"Published figures can be reconstructed"},
+    ],
+    roles:["Reporting owner","Repository / ADO data owner","Data assurance","Delivery assurance reviewer","Governance publisher"],
+    inputs:["Pinned Git ref","ADO Boards, PR and Build facts","Repository matrices","Test and code inventories","Metric contract"],
+    outputs:["Normalised atomic facts","Reconciliation exceptions","Metric definitions and denominators","Source-backed stat pack","Versioned inspection evidence"],
+    measures:["Metrics with source and denominator","Unmatched or duplicate delivery records","Unavailable values with reason","Published totals independently reconciled","Snapshots reproducible from pinned facts"],
+    projectEvidence:{mar:"Retained source-backed snapshots include an illustrative 30 July view of 118 merged PRs, 227 recorded builds, 177 successful builds and 152 safe AI activity rows. The universal scheduled collector remains approval-gated rather than claimed as operational automation."},
+    evidence:"Repository-intelligence workflow, normalised metric contract and retained stat-pack snapshots reviewed 5 August 2026", adoption:"Proven"
+  },
+  {
+    id:"delivery-system-alignment", name:"Reconcile the Delivery System", category:"Governance",
+    summary:"At a pinned point in time, compare approved policy, prompts and designs with Azure DevOps, source, CI, evidence and reporting; contain discrepancies and route correction through the same governed change process as product work.",
+    scenario:"The documented operating model looks complete, but live configuration, work items, code, pipelines or statistics may have drifted from the authority they are supposed to implement.",
+    outcome:"Drift, stale approval, missing evidence and orphan work become owned remediation instead of silently weakening the delivery claim.",
+    whenToUse:["Every material pull request or release gate","Weekly delivery assurance","After policy, prompt, architecture or pipeline change","Periodic governance review"],
+    projects:["mar"], maturity:{mar:"Defined"},
+    controls:["Pinned eight-layer alignment review","Missing, orphan and duplicate trace checks","Documented policy compared with live API evidence","Pipeline and architecture contract checks","Fail-closed discrepancy containment","Historic approval preserved but never reused after material change"],
+    workflow:[
+      {label:"Pin",owner:"Assurance lead",detail:"Freeze the approved sources, repository ref, ADO view, pipeline state and reporting snapshot to compare.",gate:"All layers share one as-of point"},
+      {label:"Compare",owner:"Automated checks and specialists",detail:"Reconcile authority, instructions, prompts, ADO, source, CI, evidence and reporting; distinguish design from administrator configuration.",gate:"Every discrepancy has supporting evidence"},
+      {label:"Classify",owner:"Governance owner",detail:"Label documentation drift, missing evidence, configuration gap, defect, new requirement or material contradiction.",gate:"The correction route is unambiguous"},
+      {label:"Contain",owner:"Delivery authority",detail:"Block affected items, PRs or release claims when authority or evidence is unreliable while preserving the historic record.",gate:"Stale evidence cannot authorise new scope"},
+      {label:"Correct",owner:"Accountable change owner",detail:"Route approved updates, synchronise dependent branches, rerun affected checks and close only when ADO, lineage, evidence and caveats agree.",gate:"Alignment is restored with fresh proof"},
+    ],
+    roles:["Delivery assurance lead","Governance owner","ADO / repository administrator","Architecture and CI specialists","Accountable remediation owner","Human release authority"],
+    inputs:["Approved governance records","AI instruction and prompt mirrors","Pinned ADO and Git facts","Pipeline design and live configuration","Evidence and stat-pack snapshots"],
+    outputs:["Alignment report","Missing, orphan and drift exceptions","Contained delivery claims","Owned remediation backlog","Fresh approval and reconciled snapshot"],
+    measures:["Layers reconciled at the current ref","Stale approvals blocked","Orphan and duplicate identifiers","Done items with incomplete evidence","Published totals matching source facts"],
+    projectEvidence:{mar:"The model is defined and repeatedly applied across eight layers—authority, instructions, prompts, ADO, source, CI, evidence and reporting—with automation expanded only through approved designs and tasks."},
+    evidence:"Delivery-system alignment layers, repeatable checks, assurance cadence and discrepancy-handling route reviewed 5 August 2026", adoption:"Specialist"
+  },
+];
+
+methods.push(...additionalMethods, ...azureDevOpsAssuranceMethods);
+
+export type ProjectDetail = {
+  status: string;
+  evidenceState?: EvidenceState;
+  snapshot?: string;
+  evidence: string[];
+  artefacts: string[];
+  caveat: string;
+};
+
+export type DeepDive = {
+  operatingQuestion: string;
+  decisions: string[];
+  failureModes: string[];
+  project: Partial<Record<ProjectKey,ProjectDetail>>;
+};
+
+export const deepDiveById: Record<string,DeepDive> = {
+  "govern-change": {
+    operatingQuestion:"How do we let AI perform meaningful delivery work while keeping scope, risk, acceptance and release authority with named people?",
+    decisions:["Who owns the outcome and can accept it?","Which design, task and risk decisions must exist before code?","What evidence proves the exact tested version?","Which limitations or residual risks remain visible?"],
+    failureModes:["Implementation starts before an approved task, design or reviewer exists.","Automated test success is mistaken for permission to merge.","A historic approval is reused after behaviour, contract or risk changed.","A merge is reported as completion without criterion-level evidence."],
+    project:{
+      compass:{status:"Operational",evidence:["Automated tests explicitly do not authorise merge.","The merge request captures branch, feature worktree, feature-head SHA, main SHA at request, approver, approval time, owning task ID/title, test URL and validation notes.","Human handoff names the route, fixture, expected behaviour and known limitations."],artefacts:["request-merge.ps1","Merge-queue record","Branch-specific test URL","Human acceptance notes"],caveat:"The local engineering controls are operational; the hosted production deployment pipeline remains roadmap work."},
+      tracker:{status:"Implemented foundation / working demonstrator",evidenceState:"Implemented foundation",evidence:["The 23-stage model combines Phase 1 baseline controls with Phase 2 Prompts A-G.","Prompt E is the hard stop before code; Prompt F implements one task; Prompt G governs integration and release readiness.","Humans retain intent, judgement, approval and assurance while AI performs analysis, drafting, code, tests and evidence preparation."],artefacts:["Approved task and design","A-G prompt record","Review decision","Delivery evidence entry"],caveat:"The operating model is stronger than the repository governance currently applied to the tracker itself: its own Git/CI, multi-user persistence, general identity and production deployment remain incomplete."},
+      mar:{status:"Defined governed framework",evidenceState:"Defined",evidence:["Prompt E confirms authority, dependencies, branch, reviewers, tests and evidence before implementation.","A merge cannot complete a task or story without passing evidence, current lineage, findings disposition and applicable human approvals.","Decision Records begin Proposed and become approved only through named human review and PR merge."],artefacts:["Prompt E readiness packet","Decision Record","Definition-of-Done evidence","Approval workflow record"],caveat:"The framework is mature, but the complete MAR business product and formal live release are not claimed."},
+    }
+  },
+  "orchestrate-pods": {
+    operatingQuestion:"How can several AI specialists work in parallel without fragmenting ownership, context, shared contracts or the final integration decision?",
+    decisions:["Can the outcome be split into independently approvable slices?","Which pod owns each file and shared contract?","What is the minimum useful specialist set?","Who consolidates status, risks and the final diff?"],
+    failureModes:["Two pods become writers for the same file or unresolved contract.","Specialists receive tasks without prerequisites, prohibited files or measurable checks.","Pods communicate laterally and create conflicting sources of truth.","Context is lost at handoff, compaction or interruption."],
+    project:{
+      compass:{status:"Operational process",evidence:["Specialist roles cover lead, implementation, testing, security/architecture review and documentation.","Each specialist receives branch, worktree, prerequisite branch, owned/prohibited files, acceptance criteria and required checks.","The lead integrator remains accountable for architecture, remediation and readiness."],artefacts:["Named Codex task","Specialist prompt","Worktree brief","Context and handoff packet"],caveat:"Parallelism is bounded by responsibility and dependency order; shared-module changes may still need serial sequencing."},
+      tracker:{status:"Defined optional model",evidence:["A central prompter or delivery lead owns scope, prompt consistency, dependencies, decision lineage and client narrative.","Optional delivery cells include pod lead, AI developer/tester/documenter threads and a separated DevOps integration thread.","The model describes coordinated AI conversations, not Kubernetes or permanently autonomous workers."],artefacts:["Pod brief","Dependency view","Integration handoff","Client-facing consolidated status"],caveat:"Scaled allocation and cross-pod automation are positioned as later productionisation after the governance controls are proven."},
+      mar:{status:"Prepared, pending activation",evidence:["Routing spans T0 read-only central work, T1 single-agent task, T2 bounded specialist pod, T3 parallel approvable pods and T4 convergence/release coordination.","One AI Tech Lead owns intake, priorities, dependencies, routing, integration and consolidated reporting.","A completion packet states evidence, findings, risks and the exact human approval still required."],artefacts:["DR-AI-001","Context capsule","Pod completion packet","T0-T4 routing decision"],caveat:"The model is owner-approved and trial-ready but remains proposed until the activation PR is reviewed and merged."},
+    }
+  },
+  "isolate-build": {
+    operatingQuestion:"How do we prevent concurrent agents from sharing an editing surface, runtime state, test data or ambiguous branch provenance?",
+    decisions:["Which current baseline creates the worktree?","Which paths can this task write or must it avoid?","Which port, dataset and temporary state belong to the feature?","When can disposable state be retired?"],
+    failureModes:["Agents edit the same worktree or silently stash another task's changes.","A test app uses the wrong branch, dataset or port.","Runtime files, uploads or coverage output cross into tracked source.","A resumed legacy branch bypasses current-main ancestry checks."],
+    project:{
+      compass:{status:"Operational",evidence:["Every changing task receives a sibling worktree under CGI Databricks Migration Discovery Exp.worktrees/<task>.","The helper validates naming, rejects duplicate branches, confirms main and leaves the controlled checkout untouched.","Feature test state records PID, URL, branch, dataset, data directory and timestamp after /api/health succeeds."],artefacts:["start-feature-worktree.ps1","Branch enforcement hook","Feature test-app state record","Temporary tier-3 data directory"],caveat:"Older work should resume in a fresh feature worktree rather than reuse legacy folders."},
+      tracker:{status:"Defined",evidence:["The delivery path expects a task-specific branch, code and tests together, local gates, PR evidence and DevOps-controlled merge.","Pod boundaries and target paths are described as part of the operating model."],artefacts:["Task-specific branch","Implementation evidence","Pod write boundary","Backup and recovery records"],caveat:"The inspected tracker workspace did not yet operate under the mature Git model it describes and contained untracked files with no CI/PR history."},
+      mar:{status:"Defined workspace-isolation contract",evidenceState:"Defined",evidence:["The proposed pod contract assigns one primary outcome, branch/worktree and file boundary.","Concurrent work is designed around separate branches/worktrees and one writer per file or artefact at a time.","Frontend, backend, database, infrastructure, tests, prompts and evidence remain versioned together in the monorepo."],artefacts:["TASK-* branch","File-ownership boundary","Context capsule","Synthetic or approved non-personal fixture"],caveat:"The monorepo and safe-fixture rules are evidenced, but pod workspace isolation remains part of the trial-ready model pending formal activation."},
+    }
+  },
+  "scale-assurance": {
+    operatingQuestion:"How do we keep small changes fast while ensuring UI, API, data, security, migration and release risks trigger deeper proof?",
+    decisions:["Which surfaces and contracts changed?","Which assurance tier is mandatory?","Which fixtures and environment make the result representative?","Which unrun checks must remain explicitly unclaimed?"],
+    failureModes:["A high-impact change takes the short route because classification is ambiguous.","Unrun checks are reported as passed or missing metrics are treated as zero.","Tests modify normal developer or client data.","Declared test volume is presented as current pass evidence."],
+    project:{
+      compass:{status:"Operational",evidence:["Tier 1 covers repository hygiene, syntax, dependencies, API security, documentation, system map and consistency.","Tier 2 adds browser/UI behaviour, navigation, responsiveness, state and visual drift checks.","Tier 3 starts an isolated server/data directory for API, persistence, upload, import/export and workflow changes."],artefacts:["npm run test:tier1","npm run test:tier2","npm run test:tier3","Focused validation commands"],caveat:"Tiers 2 and 3 are selected by blast radius rather than run in every CI execution."},
+      tracker:{status:"Implemented automation foundation with gaps",evidenceState:"Implemented foundation",evidence:["A-G routing selects the full route, no-functional-change route or tightly constrained short route.","Selected checks cover EVM, measurement, contrast, process, timeline, import approval, critical path, repository scanning, planning and time views.","Evidence distinguishes local deterministic fallback from model-backed AI execution."],artefacts:["Route decision","Selected quality checks","Evidence import result","Capability-mode record"],caveat:"The repository had no aggregate CI gate and retained three visible browser regressions; it must not be presented as fully green."},
+      mar:{status:"Implemented pipeline foundation",evidenceState:"Implemented foundation",evidence:["The Azure pipeline contains seven stages, eleven jobs/deployments and 2,682 lines of YAML.","The repository declares at least 639 automated test methods/specs across xUnit, Vitest, Python and Playwright.","Assurance includes SQL/Testcontainers, SQLFluff, Playwright/axe, k6, Terraform validation, non-root containers and image scanning."],artefacts:["Azure Pipeline","TEST-* evidence IDs","Coverage reports","Security and supply-chain summaries"],caveat:"639+ is a declared-test inventory count, not proof every test passed; seven CI stages are implemented pipeline control, not proof of a complete live Azure release."},
+    }
+  },
+  "safe-integration": {
+    operatingQuestion:"How do we converge approved branches without allowing feature agents to hide stale history, invent conflict decisions or mutate the stable baseline?",
+    decisions:["Is the approval attached to the current feature head?","Is fast-forward integration still possible?","Who owns any conflict or changed shared contract?","Which baseline checks run after integration?"],
+    failureModes:["A feature agent also controls merge authority.","Dirty worktrees or stale main ancestry are ignored.","An integrator silently chooses between competing design outcomes.","Post-merge baseline checks fail after the branch has already been pushed."],
+    project:{
+      compass:{status:"Operational",evidence:["Queue states are pending, processing, completed and blocked, protected by a filesystem merge lock.","The Code Management Agent checks naming, branch/worktree existence, cleanliness, ancestry and fast-forward safety.","Blocked items return to the original owner; successful integration refreshes quality evidence, reruns tier 1, pushes main and restarts the combined app."],artefacts:["request-merge.ps1","process-merge-queue.ps1","merge-tested-feature.ps1","Generated quality snapshot"],caveat:"Conflicts are never resolved by the queue; changed behaviour requires the original owner to rerun checks and reconfirm approval."},
+      tracker:{status:"Defined",evidence:["The delivery model separates pod work from a DevOps integration lead responsible for branch sequencing, merge coordination, build evidence and release hygiene.","The intended delivery path ends with independent review, DevOps-controlled merge and an integration/release gate."],artefacts:["Integration thread handoff","Branch sequence","PR and build evidence","Release-hygiene record"],caveat:"The tracker repository itself did not yet provide the CI/CD and PR history needed to demonstrate this control operationally."},
+      mar:{status:"Designed and governed",evidence:["Protected-branch policy requires linked work, an independent non-author reviewer, reset after source changes and resolution of active comments.","Material changes make affected approvals stale while retaining historic approval as evidence.","Conflict recovery routes coherent change through Prompts A-D, refreshes branches and repeats Prompt E."],artefacts:["Azure DevOps PR","Stale-approval record","Shared-contract owner","Prompt G readiness evidence"],caveat:"Administrator-controlled branch enforcement must be verified rather than assumed from repository documentation alone."},
+    }
+  },
+  "prove-lineage": {
+    operatingQuestion:"How can a reviewer trace a delivered outcome from the original need through AI activity, design, code, tests, approval and release without retaining unsafe content?",
+    decisions:["Which stable identifiers link each stage?","Which evidence proves the current version?","What AI activity can be recorded safely?","Which portfolio claims are supported—and which are not?"],
+    failureModes:["Requirements or acceptance criteria become orphaned from delivery tasks.","Evidence points to a different commit than the approved outcome.","Raw prompts, PII, secrets or unverifiable cost figures enter the ledger.","Activity counts are presented as proof of release completion."],
+    project:{
+      compass:{status:"Operational",evidence:["Task, matching branch, isolated worktree, commit, test URL, approval and merge record form one chain.","Generated repository review and timestamped snapshots make quality movement and remaining risk visible."],artefacts:["WORKSPACE_RULES.md","Task/branch provenance","Test handoff","Quality snapshot history"],caveat:"Operational local controls are separated from foundational and roadmap production capabilities in the maturity table."},
+      tracker:{status:"Operational control plane",evidence:["The tracker joins requirements, scope, plans, RAID, evidence, human effort, AI usage, forecasts, repository activity, tests, builds, PRs, security signals and approval history.","The imported snapshot contains 497 metric rows, 30 scope decisions, 42 EVM work packages / 4 forecast runs and 13 system-map evidence items.","Missing values remain missing; unavailable AI cost or test evidence is never fabricated as zero."],artefacts:["Metric snapshot","EVM baseline and forecast","Epic timeline import","Executive report evidence"],caveat:"The snapshot is point-in-time imported evidence, not live telemetry; Prompt G and story/epic closure had not been observed."},
+      mar:{status:"Implemented lineage foundation",evidenceState:"Implemented foundation",evidence:["The chain runs Source → M-* story → AC-M-* → REQ-* → SPEC-REQ-* → ADO → TD/DES-* → TL/TASK-* → branch/PR → TEST-* → approval → release evidence.","Repository evidence records 24 stories, 140 current acceptance IDs, 185 referenced TEST-* IDs, 37 prompt artefacts and 111 PR merge-message commits.","ADO import evidence includes 10 epics, 56 issues, 66 imported records and 20 cross-item links."],artefacts:["Traceability-Scheme.md","Azure DevOps Boards lineage","Acceptance row","Safe AI activity ledger"],caveat:"Counts describe repository content and lineage, not automatic completion, approval or proof that all PR merges were feature implementations."},
+    }
+  },
+  "review-ai-evidence": {
+    operatingQuestion:"How do we use AI to accelerate evidence review while keeping model interpretation visibly provisional, source-linked and reversible?",
+    decisions:["Which evidence and analysis purpose did the user approve?","Can each suggestion point back to a source location?","How is confidence or OCR status shown?","Who can confirm, edit or decline the proposed record?"],
+    failureModes:["Uploaded evidence is sent to AI without an explicit user action.","Generated material loses its source relationship or confidence status.","Raw model output becomes indistinguishable from edited or approved records.","A suggestion silently creates a final mapping, report or client decision."],
+    project:{
+      compass:{status:"Operational product pattern",evidence:["AI-assisted review exposes evidence-linked draft insights, confidence and OCR status.","A human confirms or declines individual suggestions; approval and decline create audit events.","Hosted AI review remains disabled until policy approval, and uploaded files are not sent unless the user explicitly triggers the action."],artefacts:["Review run","Evidence excerpt","Confidence / OCR state","Approval or decline audit event"],caveat:"AI does not autonomously create final mappings, full reports or client decisions; Engagement Lead approval remains required."},
+      tracker:{status:"Operational demonstrator",evidence:["Voice intake, assistant proposals, bulk review, timeline import, evidence import, duplicate detection and report drafting follow the same trust pattern.","Generated or imported content is reviewed before it alters the governed record.","Structured drafts preserve capability mode so local deterministic fallback is distinguishable from model-backed output."],artefacts:["Evidence import draft","Duplicate proposal","Human review decision","Change-history event"],caveat:"Imported evidence and generated insight must remain visibly separate from live operational telemetry and accepted truth."},
+    }
+  },
+  "constrain-mutation": {
+    operatingQuestion:"How can an AI feature propose useful structured changes without gaining arbitrary write access to governed application state?",
+    decisions:["Which record types and fields are writable?","Which identifiers may the proposal target?","What schema and payload caps apply?","What exact preview must a human see before save?"],
+    failureModes:["Free-form model text is trusted as an application mutation.","The proposal invents owners, dates, approvals, evidence, costs or impact.","Unknown record IDs or forbidden fields survive validation.","The application saves before the user can inspect and edit the diff."],
+    project:{
+      tracker:{status:"Operational local specialist control",evidenceState:"Operational",evidence:["AI output is constrained by strict JSON schemas rather than arbitrary free text.","Writable record types and mutable fields are allow-listed, target IDs are validated and proposals are capped.","The controlled mutation flow is input/import → structured draft → schema and allow-list validation → preview/edit/confirm or reject → governed state and change history."],artefacts:["Versioned JSON schema","Record and field allow-list","Sanitised proposal","Preview and confirmation event"],caveat:"This is a local controlled-mutation boundary; the wider Tracker does not yet have general authentication, user identity or RBAC and must not be presented as if it does."},
+    }
+  },
+  "immutable-release": {
+    operatingQuestion:"How do we prove that the artefact promoted or rolled back is the same reviewed source, with controlled infrastructure and evidence-bound recovery?",
+    decisions:["Which commit and digest identify the release?","Which environment and migration gates apply?","Who owns the rollback window and known-good target?","Which post-deployment health signals decide success?"],
+    failureModes:["Production rebuilds a different artefact from the one reviewed.","Deployment parameters mutate infrastructure by default.","Rollback improvises destructive schema or data changes during an incident.","Supply-chain counts or pipeline activity are overstated as proof of live release."],
+    project:{
+      compass:{status:"Defined hosted contract",evidence:["The release identity combines human-readable version, Git SHA and hosting-platform deployment ID.","Dashboard static assets and APIs are intended to ship in the same artefact and origin.","Rollback names an owner/window, redeploys the prior immutable artefact and uses an approved restore runbook for data/schema recovery."],artefacts:["Deployment environment runbook","Readiness checklist","Immutable release identity","Rollback target and decision window"],caveat:"Promotion and rollback contracts are defined, but the production deployment pipeline remains roadmap capability."},
+      mar:{status:"Implemented pipeline foundation",evidenceState:"Implemented foundation",evidence:["The three Terraform state roots separate foundation, schema and workload; cross-root outputs are explicit and allow-listed.","Images resolve to immutable ACR @sha256 digests; Trivy checks archives and SPDX SBOMs bind source and digest evidence.","Fourteen typed deployment parameters default to no mutation; schema execution is private, temporary-secret scoped and proven idempotent."],artefacts:["foundation/schema/workload state roots","ACR digest","SPDX SBOM","Supply-chain assurance summary"],caveat:"The controls do not prove a complete live Azure deployment or traffic promotion, and targeted scanning is not equivalent to universal SAST/DAST/IaC coverage."},
+    }
+  },
+  "prompt-pack": {
+    operatingQuestion:"How do we give every AI conversation the same project facts, delivery rules, approval points and stopping conditions?",
+    decisions:["Which source documents form the approved baseline?","Which roles and people can approve design, readiness and release?","Which standards, tests and security checks must the pack enforce?","How will prompt versions remain linked to the work they produced?"],
+    failureModes:["Different AI conversations work from different versions of the project context.","A generic prompt is used without adapting it to the project and its risks.","Prompt E is bypassed and implementation starts without current authority or evidence.","Prompt inventory counts are presented as proof that every delivery route has completed."],
+    project:{
+      tracker:{status:"Defined operating model",evidenceState:"Defined",evidence:["Phase 1 creates the project baseline before implementation delivery begins.","Phase 1 includes creation of a project-specific A–G pack with hard stops, engineering standards, tests and provenance rules.","Phase 2 uses A–G to route impact, design, task planning, readiness, one-task implementation and integration or release readiness."],artefacts:["Phase 1 baseline","Project-specific A–G prompt pack","Prompt E hard-stop record","Standards, test and provenance rules"],caveat:"The Tracker document defines this operating model; it does not claim the same 37 versioned prompt artefacts evidenced in Meter Reconciliation."},
+      mar:{status:"Operational governed pack",evidence:["The repository contains 15 generic starter prompts plus 22 active project prompts, giving 37 governed prompt artefacts.","Prompts 01–13 capture context, discovery, decisions, conventions, standards, testing, governance, security, traceability, repository setup, the Functional Specification, A–G generation and readiness.","A–G cover intake, impact, design, task planning, pre-build readiness, one-task implementation and integration/release readiness.","Every prompt reloads authoritative context, separates facts from assumptions and fails closed when approval or evidence is missing."],artefacts:["generic-starter-pack/prompts/*.prompt.md",".github/prompts/*.prompt.md","Prompt E readiness record","Prompt/version activity evidence"],caveat:"The 37 artefacts prove that the governed pack exists and is versioned; they do not by themselves prove that every prompt completed successfully or that the full product was released."},
+    }
+  },
+  "prebuild-gate": {
+    operatingQuestion:"How do we stop an AI agent from starting implementation before the exact task, dependencies, workspace, reviewers, tests and rollback route are ready?",
+    decisions:["Is the task and design currently approved?","Are predecessors complete and shared contracts frozen?","Are the branch, owner and write boundary named?","Can the required tests, reviewers and rollback actually be performed?"],
+    failureModes:["A plausible prompt is treated as implementation authority.","An agent starts from stale requirements or an old branch.","A dependency or reviewer is discovered only after code is written.","Urgency is used to bypass the hard stop."],
+    project:{
+      compass:{status:"Operational control",evidence:["Task titles and feature branches must match before repository edits.","The pre-tool hook blocks detached HEAD, non-feature branches and branches missing current main.","Human acceptance remains separate from automated success."],artefacts:["WORKSPACE_RULES.md","Pre-tool branch hook","Named task / feature branch","Acceptance handoff"],caveat:"The executable hook proves repository readiness controls, while business readiness remains a named human decision."},
+      tracker:{status:"Defined operating gate",evidence:["Prompt E is the hard stop before code in the A-G lifecycle.","It requires an approved task, branch and owner, completed predecessors, frozen contracts, tests, rollback and available reviewers."],artefacts:["Prompt E record","Approved task","Dependency state","Reviewer and test plan"],caveat:"The operating model is defined more strongly than the tracker repository automation currently demonstrates."},
+      mar:{status:"Defined governed gate",evidenceState:"Defined",evidence:["Prompt E defines the authority, dependency, branch, reviewer, test and evidence checks required before implementation.","Material scope, contract or risk changes make approvals stale and require readiness to be refreshed."],artefacts:["Prompt E readiness packet","Approval workflow","Task / branch link","Rollback and evidence route"],caveat:"The governed gate is defined in the prompt pack; a readiness decision authorises only the current task boundary and does not prove every route has run."},
+    }
+  },
+  "context-handoffs": {
+    operatingQuestion:"How does a lead give an agent enough context to work independently and receive a completion packet that can be reviewed without reconstructing the conversation?",
+    decisions:["What minimum authoritative context must travel with the task?","Which paths and decisions are owned or prohibited?","Which checks and stopping conditions define completion?","What evidence must return to the lead?"],
+    failureModes:["A delegated agent guesses missing context or authority.","Owned and prohibited files are omitted from the brief.","A handoff reports activity but not the exact commit, checks or risks.","Context disappears after compaction or interruption."],
+    project:{
+      compass:{status:"Operational protocol",evidence:["Specialist prompts name task, branch, worktree, prerequisite branch, owned and prohibited files, acceptance criteria and checks.","The lead integrator remains accountable for consolidation and remediation."],artefacts:["Specialist task brief","Worktree identity","Required-check list","Completion and findings packet"],caveat:"The packet supports accountability; it does not transfer human approval authority to the agent."},
+      tracker:{status:"Defined optional protocol",evidence:["The central lead owns prompt consistency, dependencies, decisions and client narrative.","Pod work returns through a separated DevOps integration thread."],artefacts:["Pod brief","Consolidated status","Integration handoff","Decision lineage"],caveat:"Automated cross-pod routing remains a productionisation step rather than a claimed live capability."},
+      mar:{status:"Proposed and trial-ready",evidenceState:"Proposed",evidence:["Context capsules are a named part of commissioning one pod per outcome and file boundary.","Completion packets state evidence, findings, risks and the exact human approval still required."],artefacts:["Context capsule","Pod completion packet","T0-T4 routing decision","Human approval outstanding"],caveat:"The pod model is owner-approved but still proposed pending formal activation; it is not mandatory governance."},
+    }
+  },
+  "feature-test-apps": {
+    operatingQuestion:"How do we prove a feature in the exact branch and dataset a human is being asked to accept?",
+    decisions:["Which commit is being demonstrated?","Which fixture makes the scenario representative and safe?","Which URL and runtime metadata identify the feature instance?","When can the temporary instance be retired?"],
+    failureModes:["The reviewer sees main instead of the feature branch.","Two features share a port or mutable data.","The test URL cannot identify its commit or dataset.","The runtime is removed before acceptance evidence is retained."],
+    project:{
+      compass:{status:"Operational lifecycle",evidence:["Feature applications run on separate ports and branch-specific data directories.","State records PID, URL, branch, dataset, data directory and timestamp after health succeeds.","Human handoff names route, fixture, expected behaviour and limitations."],artefacts:["Feature test-app state","/api/health metadata","Branch-specific URL","Human test handoff"],caveat:"Feature proof is followed by separate combined-baseline validation after integration."},
+      tracker:{status:"Implemented test-isolation foundation",evidence:["Browser integration tests copy data to a temporary directory, start another server port and disable external AI.","The isolated fixture protects normal tracker data."],artefacts:["Temporary data directory","Separate browser-test server","Local deterministic AI mode","Integration-test result"],caveat:"This is a test-isolation pattern, not yet a full formal dev/test/stage environment model."},
+    }
+  },
+  "independent-assurance": {
+    operatingQuestion:"How do we prevent the agent that created a change from being its only reviewer and risk authority?",
+    decisions:["Which reviewer is independent of authorship?","Which specialist review is triggered by the risk?","Who owns remediation?","Which findings block acceptance?"],
+    failureModes:["AI-authored tests are treated as independent assurance.","The same agent authors, reviews and approves the change.","Findings are summarised away instead of dispositioned.","Remediation changes behaviour without renewed review."],
+    project:{
+      compass:{status:"Operational process",evidence:["Implementation, testing, security/architecture review and documentation are distinct specialist roles.","Findings and remediation return to the accountable task owner before human acceptance."],artefacts:["Independent review task","Finding record","Remediation commit","Acceptance recommendation"],caveat:"Specialist AI review supports but does not replace named human acceptance."},
+      tracker:{status:"Defined human assurance model",evidence:["Humans retain intent, judgement, approval and assurance while AI handles high-volume analysis, code, tests and evidence preparation."],artefacts:["Human assurance role","Review decision","Finding disposition","Approval history"],caveat:"The tracker demonstrates approval boundaries but does not claim a fully green repository assurance pipeline."},
+      mar:{status:"Defined protected-review policy",evidenceState:"Defined",evidence:["Protected workflow requires an independent non-author reviewer.","Approval resets after source changes and active comments must be resolved."],artefacts:["Azure DevOps review policy","Non-author review","Reset approval","Finding disposition"],caveat:"Repository documentation defines the policy; administrator-controlled enforcement must be verified in the live project."},
+    }
+  },
+  "conflict-handback": {
+    operatingQuestion:"When parallel work conflicts, how do we preserve accountability and prevent an integrator from inventing a design resolution?",
+    decisions:["What condition blocked the change?","Who owns the affected behaviour or contract?","Which evidence and approvals became stale?","What must be rerun before requeue?"],
+    failureModes:["The queue or integrator silently resolves a semantic conflict.","One branch is discarded without an accountable decision.","Historic approval is reused after behaviour changes.","Only the conflict is tested, not its downstream effects."],
+    project:{
+      compass:{status:"Operational fail-closed route",evidence:["The merge queue blocks stale, dirty or non-fast-forward items.","Conflicts return to the original owner for refresh, resolution, validation and reapproval."],artefacts:["Blocked queue record","Owner handback","Revalidated feature branch","Fresh merge request"],caveat:"The Code Management Agent never resolves the design conflict itself."},
+      tracker:{status:"Defined control set",evidence:["Instruction, dependency, parallel-work and import conflicts have explicit routes.","Stable identifiers and pending review prevent imports from silently overwriting governed state."],artefacts:["Conflict or change-control record","Dependency decision","Pending import review","Owner disposition"],caveat:"Repository-level merge automation remains less mature than the operating-model definition."},
+      mar:{status:"Designed and governed",evidence:["Conflicting edits retain both branches and one reconciliation owner integrates them.","Material change routes through A-D, updates dependent branches and repeats Prompt E."],artefacts:["Reconciliation owner","Retained branches","Updated design / task pack","Refreshed Prompt E"],caveat:"Historic approvals remain as evidence but cannot authorise changed scope."},
+    }
+  },
+  "activity-ledger": {
+    operatingQuestion:"How do we evidence AI contribution without storing raw prompts, sensitive data or unverifiable usage claims?",
+    decisions:["Which acted-on activity deserves a ledger row?","Which metadata is safe and useful?","Which delivery references prove context?","Which measures can be supported without invention?"],
+    failureModes:["Raw prompts or responses become an audit store.","PII, secrets or production extracts enter activity evidence.","Unknown token or cost values are represented as zero.","Activity volume is mistaken for accepted delivery value."],
+    project:{
+      tracker:{status:"Operational measurement model",evidence:["Prompt versions, capability modes, AI usage, effort comparison and delivery metrics are captured.","Missing evidence stays missing and local fallback remains distinguishable from model-backed execution."],artefacts:["Prompt-version record","Capability-mode record","Metric snapshot","Accepted-change lineage"],caveat:"The snapshot is point-in-time evidence, not live telemetry or proof of outcome completion."},
+      mar:{status:"Operational governance artefact",evidence:["Each acted-on repository prompt creates a safe row with time, activity ID, tool, model family where known, phase, summary, references, confidence and limitations.","Raw prompts, responses, secrets, PII, production extracts and invented token/cost figures are excluded."],artefacts:["AI activity ledger","Linked trace IDs","Confidence / limitations","Prompt version reference"],caveat:"The ledger proves recorded activity and provenance, not that every activity produced an accepted or released outcome."},
+    }
+  },
+};
+
+Object.assign(deepDiveById, {
+  "establish-baseline": {
+    operatingQuestion:"How do we create one approved source of project context before people or agents make delivery decisions?",
+    decisions:["Which documents and records are authoritative?","Which statements are facts, assumptions or open questions?","Who owns each material constraint and gap?","What change invalidates the current baseline?"],
+    failureModes:["Separate agents start from different source versions.","Assumptions are rewritten as facts.","Open questions have no accountable owner.","A material change occurs without refreshing downstream context."],
+    project:{
+      compass:{status:"Operational local baseline",evidenceState:"Operational",evidence:["The operating model was generated from repository workflow and platform documentation dated 5 August 2026.","Workspace rules, task identity and current-main controls define the local engineering baseline.","Generated quality snapshots keep changes and remaining risks visible."],artefacts:["WORKSPACE_RULES.md","Current protected main","Repository quality snapshot","Task and decision context"],caveat:"This is an operational local engineering baseline; hosted production services and deployment remain partly foundational or roadmap."},
+      tracker:{status:"Implemented Phase 1 foundation",evidenceState:"Implemented foundation",evidence:["Phase 1 captures project context, business objectives, technical baseline, constraints, sources, questions and owners.","The baseline is the prerequisite for creating the project-specific A–G pack.","The working demonstrator keeps governed records and imported snapshots together."],artefacts:["Phase 1 baseline","Context and constraint records","Open-question log","A–G creation input"],caveat:"The local governance demonstrator implements the control-plane foundation, while its own Git/CI, multi-user persistence, identity and production deployment remain incomplete."},
+      mar:{status:"Operational governed baseline",evidenceState:"Operational",evidence:["Prompts 01–13 capture context, discovery, decisions, conventions, standards, testing, governance, security, traceability and readiness.","Every prompt reloads authoritative context and separates facts from assumptions.","The approved baseline generates the active A–G project pack."],artefacts:["Prompts 01–13","Functional Specification","Decision records","Phase 2 context"],caveat:"The governed artefacts prove the baseline and prompt system exist; they do not prove every route completed or the full product was released."},
+    }
+  },
+  "architecture-standards": {
+    operatingQuestion:"How do we make architecture, engineering standards and assurance duties binding inputs to AI-assisted work?",
+    decisions:["Which architecture and coding decisions govern the task?","Which test, security, accessibility and privacy triggers apply?","What evidence makes the Definition of Done true?","Who can approve a material standards change?"],
+    failureModes:["An agent invents a local convention that conflicts with the system design.","A security, privacy or accessibility trigger is missed.","A checklist is presented as evidence without the underlying result.","Changed standards leave active tasks and approvals stale."],
+    project:{
+      compass:{status:"Operational local engineering contract",evidenceState:"Operational",evidence:["Workspace rules, tiered validation and named specialist reviews govern repository-changing work.","Architecture, security, testing and documentation findings return to the accountable task owner.","Human acceptance remains separate from automated success."],artefacts:["Workspace rules","Validation-tier contract","Specialist review findings","Human acceptance handoff"],caveat:"The local engineering contract is operational; hosted security, identity and production operations remain partly foundational or roadmap."},
+      tracker:{status:"Defined Phase 1 contract",evidenceState:"Defined",evidence:["Phase 1 defines hard stops, engineering standards, tests, provenance rules and the Definition of Done.","Humans retain architecture, risk, approval and assurance decisions.","The project-specific A–G pack carries the approved contract into Phase 2."],artefacts:["Architecture baseline","Engineering standards","Test strategy","Definition of Done"],caveat:"The operating contract is defined more strongly than the Tracker repository and CI governance currently demonstrate."},
+      mar:{status:"Implemented framework foundation",evidenceState:"Implemented foundation",evidence:["Prompts 03–09 cover decisions, conventions, standards, testing, governance, security and traceability.","Pipeline and repository evidence implement portions of the assurance contract.","Definition-of-Done evidence and named human approvals bound completion."],artefacts:["Decision Records","Coding and test standards","Security and traceability prompts","Definition-of-Done evidence"],caveat:"The framework and platform foundation are evidenced; complete product delivery and live Azure traffic promotion are not claimed."},
+    }
+  },
+  "select-route": {
+    operatingQuestion:"How do we choose the smallest safe delivery route without turning a short route into an ungoverned bypass?",
+    decisions:["Does the change affect functional behaviour?","Which technical, data, security or deployment surfaces change?","Which design, readiness and assurance steps are mandatory?","Which material change forces reclassification?"],
+    failureModes:["A documentation label hides a functional change.","The route omits a required dependency or specialist review.","A short route starts without a recorded rationale.","Scope changes but the original route and approval remain in use."],
+    project:{
+      compass:{status:"Operational blast-radius routing",evidenceState:"Operational",evidence:["Change blast radius selects focused commands and tiered validation.","Tier 2 and Tier 3 add UI, API, persistence, upload and workflow proof where needed.","Human acceptance and integration remain separate gates."],artefacts:["Task classification","Validation-tier selection","Focused check list","Acceptance route"],caveat:"Risk routing is operational locally; it does not by itself prove hosted release readiness."},
+      tracker:{status:"Defined proportional A–G routing",evidenceState:"Defined",evidence:["The operating model distinguishes a full A–G route, a no-functional-change route and a tightly constrained short route.","Functional impact, design, tasks, readiness, implementation and integration remain explicit stages.","Material change invalidates the chosen path."],artefacts:["Route decision","Functional-impact assessment","A–G stage selection","Readiness record"],caveat:"The route model is defined and demonstrated locally, but the Tracker repository does not yet evidence a complete governed CI/release path."},
+      mar:{status:"Defined A–G route contract",evidenceState:"Defined",evidence:["A captures intake, B assesses impact, C designs, D decomposes, E gates readiness, F implements one task and G governs integration or release readiness.","Prompts fail closed when authority or evidence is missing.","Material scope, contract or risk change makes approval stale."],artefacts:["A–G prompt set","Impact record","Prompt E readiness packet","Prompt G evidence"],caveat:"The prompt route is governed and versioned; its existence does not prove that every route completed or that live release occurred."},
+    }
+  },
+  "baseline-forecast-change": {
+    operatingQuestion:"How do we preserve an approved delivery baseline while forecasting uncertainty and controlling every later change?",
+    decisions:["What is the conventional estimate and what is AI-assisted?","Which dependencies drive P50 and P80 outcomes?","Who approves the baseline and management-reserve use?","Which unavailable values must remain missing?"],
+    failureModes:["AI-assisted optimism replaces the conventional estimate without disclosure.","A point estimate hides dependency and uncertainty.","A change silently rewrites the approved baseline.","Missing cost, effort or test evidence is converted to zero."],
+    project:{
+      tracker:{status:"Operational local planning control",evidenceState:"Operational",evidence:["The imported snapshot contains 42 EVM work packages and four forecast runs.","The model supports conventional versus AI-assisted estimates, three-point packages and dependency-aware P50/P80 forecasting.","PV, EV, AC, SPI, CPI and EAC sit alongside deterministic scenarios, formal change decisions, reserve and readiness warnings.","Missing values remain missing rather than being normalised to zero."],artefacts:["Immutable approved baseline","Three-point work packages","P50 / P80 forecast","EVM and change-control record"],caveat:"These are operational controls in the local governance demonstrator and point-in-time imported evidence, not live portfolio telemetry or proof of completed delivery."},
+    }
+  },
+  "report-evidence": {
+    operatingQuestion:"How do we publish the same governed delivery record in several formats and still explain exactly which evidence and limitations each report used?",
+    decisions:["Which measurement snapshot is frozen for publication?","Which evidence gaps, findings and RAID items must be shown?","Which formats and audience views are required?","How will the historic report be reconstructed?"],
+    failureModes:["A report silently refreshes after publication.","PDF, PowerPoint and workbook show different numbers.","Evidence gaps or RAID exposure disappear in an executive summary.","An export is presented as live telemetry or proof of closure."],
+    project:{
+      tracker:{status:"Implemented reporting foundation",evidenceState:"Implemented foundation",evidence:["Completed reports retain a frozen measurement snapshot and source template.","Outputs cover weekly PDF and PowerPoint, executive PowerPoint and the Excel governance workbook.","JSON export, backup and archived report history preserve portability and explanation.","Evidence gaps, limitations, findings and RAID exposure remain part of the reporting record."],artefacts:["Weekly PDF","Weekly PowerPoint","Executive PowerPoint","Excel governance workbook","JSON export / backup","Archived report history"],caveat:"Report outputs are point-in-time products of the local demonstrator, not live telemetry or proof that Prompt G, story closure or production release completed."},
+    }
+  },
+  "separate-environments": {
+    operatingQuestion:"How do we separate code, configuration and data across development, test, UAT or staging and production without overstating local test isolation as a full environment model?",
+    decisions:["Which environments actually exist and which are only defined?","Which stores, configuration and credentials belong to each?","What non-production data is permitted?","Which promotion evidence is required?"],
+    failureModes:["A test run changes normal developer or client data.","Configuration or secrets leak between environments.","A local feature app is presented as UAT or production.","Promotion rebuilds or mutates the reviewed artefact."],
+    project:{
+      compass:{status:"Implemented local isolation / hosted contract",evidenceState:"Implemented foundation",evidence:["Feature applications use branch-specific ports, data directories and safe fixtures.","Tier 3 starts an isolated server and temporary data directory.","Hosted dev, test, UAT and production boundaries are described in the production contract."],artefacts:["Feature test-app state","Temporary tier-3 data directory","Environment runbook","Promotion checklist"],caveat:"Local environment isolation is implemented; the full hosted environment and production promotion model remains partly foundational or roadmap."},
+      tracker:{status:"Defined environment model with test-isolation foundation",evidenceState:"Defined",evidence:["Browser tests copy data to a temporary directory, start a separate server and disable external AI.","The operating model calls for separated delivery environments and controlled promotion.","The local demonstrator does not provide a complete multi-environment production route."],artefacts:["Temporary test data","Separate browser-test server","Environment contract","Promotion evidence definition"],caveat:"Test isolation is implemented, but formal development, test, UAT/staging and production boundaries remain defined rather than operational."},
+      mar:{status:"Implemented platform environment foundation",evidenceState:"Implemented foundation",evidence:["Foundation, schema and workload state roots are separated.","Typed deployment parameters are environment-specific and default to no mutation.","Non-personal synthetic or approved fixtures are required outside production."],artefacts:["Terraform state roots","Typed deployment parameters","Approved fixture policy","Environment readiness evidence"],caveat:"The platform foundation is functioning, but complete product delivery and live Azure traffic promotion are not claimed."},
+    }
+  },
+  "protect-identity-data": {
+    operatingQuestion:"How do we protect identities, credentials, uploads and client data while stating clearly which access controls are not yet implemented?",
+    decisions:["Which identity and authorization boundary exists today?","Where are secrets and credentials held?","Which data classes and fixtures are allowed?","When may an upload be sent to AI?"],
+    failureModes:["A local demonstrator is described as if it has enterprise RBAC.","Secrets or production extracts enter prompts, fixtures or evidence.","An upload is sent to AI without an explicit user action.","Production limitations are hidden behind a generic security claim."],
+    project:{
+      compass:{status:"Implemented local safeguards / hosted roadmap",evidenceState:"Implemented foundation",evidence:["Uploaded evidence is not sent to AI without an explicit user trigger.","Local workflows separate permissions, fixtures and evidence boundaries.","Hosted identity and production access are defined as part of later capability."],artefacts:["Upload validation","Explicit AI trigger","Safe fixture policy","Hosted identity contract"],caveat:"Local safeguards are implemented, while hosted enterprise identity and production access remain partly foundational or roadmap."},
+      tracker:{status:"Defined identity boundary / operational local mutation controls",evidenceState:"Defined",evidence:["Structured mutation uses schema validation, record and field allow-lists, target validation, preview and explicit human confirmation.","Uploads and imported evidence follow bounded review routes.","The inspected local application does not provide general authentication, user identity or RBAC."],artefacts:["Mutation schema","Record and field allow-lists","Target validation","Preview and confirmation event","Production limitation record"],caveat:"Do not infer authentication or RBAC from the mutation boundary; multi-user identity, hardened persistence and production deployment remain incomplete."},
+      mar:{status:"Implemented platform security foundation",evidenceState:"Implemented foundation",evidence:["Credentials and production extracts are prohibited from fixtures and ordinary evidence.","Private execution uses temporary-secret scope and controlled parameters.","The framework defines authentication, authorization, secrets and client-data duties."],artefacts:["Credential-handling rules","Private execution route","Non-personal fixture policy","Security governance evidence"],caveat:"The platform and governance foundation are evidenced; complete live product identity and production use are not claimed."},
+    }
+  },
+  "backup-restore-audit": {
+    operatingQuestion:"How do we prove that important delivery and product state can be recovered, retained and audited rather than merely copied?",
+    decisions:["Which state requires backup and for how long?","Where is the backup held and how is it protected?","When was restore last tested?","Who owns recovery and disposal?"],
+    failureModes:["A local copy is described as disaster recovery.","Backups are never restored in a test.","Retention keeps client data longer than authorised.","Audit evidence is lost during recovery or disposal."],
+    project:{
+      compass:{status:"Defined hosted recovery contract",evidenceState:"Defined",evidence:["The hosted contract names backup, data/schema restore, rollback ownership and recovery verification.","Local timestamped quality snapshots retain engineering evidence.","A known-good application artefact is distinct from data recovery."],artefacts:["Backup and restore runbook","Quality snapshot history","Known-good artefact","Recovery decision record"],caveat:"Hosted backup and restore are defined contracts rather than a claimed operational production recovery service."},
+      tracker:{status:"Implemented local backup foundation",evidenceState:"Implemented foundation",evidence:["JSON export and local backup preserve the demonstrator record.","Archived reports retain their measurement snapshots and source templates.","The source review found local backup evidence but not off-device disaster recovery."],artefacts:["JSON export","Local backup","Archived report history","Recovery ownership record"],caveat:"Current Tracker backups are local and are not equivalent to off-device disaster recovery; retention, disposal and production restore testing remain incomplete."},
+      mar:{status:"Defined governed recovery and retention",evidenceState:"Defined",evidence:["The delivery framework defines evidence retention, audit and recovery ownership.","Immutable artefact identity and rollback evidence support application recovery decisions.","Infrastructure and schema controls separate deployment state."],artefacts:["Retention policy","Audit evidence","Rollback target","Data/schema recovery route"],caveat:"Governed controls and platform foundations do not prove a complete live production restore or disaster-recovery exercise."},
+    }
+  },
+  "observe-recover": {
+    operatingQuestion:"How do we use current service signals to decide, execute and verify a safe recovery to a known-good state?",
+    decisions:["Which health and readiness checks prove service state?","Which logs, metrics, traces and alerts carry correlation identity?","Who owns the rollback window?","What post-recovery checks prove success?"],
+    failureModes:["An alert cannot identify the affected release or request.","Rollback begins without a named owner or decision window.","The application recovers but data integrity is not checked.","Configured observability is presented as live production evidence."],
+    project:{
+      compass:{status:"Implemented local health / hosted roadmap",evidenceState:"Implemented foundation",evidence:["Feature test-app state is registered only after the health route succeeds.","Runtime metadata identifies branch, dataset, directory and timestamp.","Hosted logs, metrics, alerts and recovery are described in the production contract."],artefacts:["/api/health metadata","Feature runtime state","Hosted observability contract","Rollback runbook"],caveat:"Local health evidence is implemented; full hosted production observability and recovery remain partly foundational or roadmap."},
+      tracker:{status:"Defined operational contract",evidenceState:"Defined",evidence:["The operating model names health, readiness, logs, metrics, correlation and recovery responsibilities.","The local control plane captures reporting and point-in-time evidence.","No production deployment or central operational telemetry is claimed."],artefacts:["Health/readiness definition","Recovery ownership","Metric snapshot","Production limitation record"],caveat:"This is a defined operating contract for a working local demonstrator, not evidence of live production monitoring or recovery."},
+      mar:{status:"Implemented readiness foundation",evidenceState:"Implemented foundation",evidence:["Pipeline and deployment controls include readiness and smoke evidence.","Immutable digest identity and known-good targets support bounded rollback decisions.","Platform configuration includes logging, alerting and correlation expectations."],artefacts:["Readiness evidence","Release digest","Known-good target","Observability configuration"],caveat:"The implemented foundation does not prove complete live Azure traffic observation, promotion or a production recovery exercise."},
+    }
+  },
+  "boards-delivery-spine": {
+    operatingQuestion:"How do we make Azure DevOps the joined delivery record from authorised need to release evidence instead of a detached list of tickets?",
+    decisions:["Which item and stable IDs anchor the change?","Which approved requirement, design and task list authorise build?","Which state transition is justified by current evidence?","Which process-mapping or link gaps must remain visible?"],
+    failureModes:["A work item moves to Active before design, task authority or readiness exists.","Tasks are created ad hoc instead of from the approved task list.","A merge moves the parent story to Done while criteria, findings or children remain incomplete.","A Basic-process Issue is presented as if the target User Story process were configured."],
+    project:{
+      mar:{status:"Implemented Boards lineage foundation",evidenceState:"Implemented foundation",snapshot:"Repository operating records reviewed 5 August 2026",evidence:["The retained import contains 66 ADO records, including 24 primary M-* stories and 20 cross-item relations.","The hierarchy connects Epic, User Story or explicit Issue fallback, focused Task or Bug, and TEST-* evidence.","Prompt A, C, D, E, F and G events each have a defined ADO action and evidence-based exit condition.","Required content grows from stable IDs and authority through branch, PR, build, tests, findings, risk and release evidence."],artefacts:["Azure DevOps Boards lineage","Work-item hierarchy","ADO state-transition contract","Traceability identifiers","Definition-of-Done result"],caveat:"The backlog is imported and reconciled, but remaining type, field and relation remediation is explicitly tracked; the target ADO process must not be claimed as fully configured."},
+    }
+  },
+  "pr-proof-pack": {
+    operatingQuestion:"How do we turn a pull request into the complete, current evidence packet for one governed change rather than a diff with a generic approval?",
+    decisions:["Is the branch limited to one authorised task or governed change?","Which trace, risk, specialist and AI evidence must the PR expose?","Which reviewer role assessed which control?","Did a later source push make approval stale?"],
+    failureModes:["A PR carries no work-item or requirement lineage.","An unrun or unavailable check is displayed as passed.","The author or AI output effectively approves its own work.","A source update keeps an approval that was made against a different diff."],
+    project:{
+      mar:{status:"Implemented PR and policy foundation",evidenceState:"Implemented foundation",snapshot:"Master policy and PR evidence reviewed 5 August 2026",evidence:["Master is the protected integration branch and work enters it through an Azure DevOps pull request.","The template captures scope, exclusions, trace links, classification, checks, coverage, NFR impacts, AI provenance, rollback and residual risk.","Implementation PRs target roughly 400 changed lines where practical; generated or mechanical changes remain acceptable when review boundaries are explicit and unrelated concerns are split.","Three live master policies cover linked work, independent non-author review with the author vote excluded, and approval reset after source push.","Active comments require visible disposition and each proxy reviewer role records the evidence it assessed."],artefacts:[".azuredevops/pull_request_template.md","Master branch-policy record","Reviewer-role dispositions","CI and TEST-* links","Rollback or forward-fix route"],caveat:"Build-validation blocking and direct-push denial require administrator confirmation; repository design is not presented as proof of administrator-only enforcement."},
+    }
+  },
+  "assurance-ladder": {
+    operatingQuestion:"How do we stop evidence that proves one task from being overstated as proof of the story, integrated stream or complete release?",
+    decisions:["What proves the focused task outcome?","Does every AC-M-* criterion have current TEST-* proof?","Which contracts and journeys prove the stream works together?","Which functional and NFR commitments must pass for release?"],
+    failureModes:["Unit tests are used to claim story acceptance.","A story closes with an uncovered criterion.","Component success hides a schema or shared-contract failure.","Declared tests or a configured pipeline are presented as release pass evidence."],
+    project:{
+      mar:{status:"Defined four-level assurance model",evidenceState:"Defined",snapshot:"Testing and delivery assurance model reviewed 5 August 2026",evidence:["Level 1 joins task tests, build, review and task evidence.","Level 2 maps every story acceptance criterion to TEST-* and QA or SME evidence.","Level 3 proves component, contract, schema and dependency behaviour together.","Level 4 covers end-to-end behaviour, parity, accessibility, security, performance, deployment and rollback."],artefacts:["Task validation evidence","Criterion-to-TEST-* matrix","Stream integration journeys","Release and NFR assurance pack","Human acceptance decision"],caveat:"The four levels define the required claim boundary; declared test inventory and configured pipeline stages do not prove that every applicable check executed or passed."},
+    }
+  },
+  "source-stat-pack": {
+    operatingQuestion:"How do we produce management statistics from repository and Azure DevOps facts without manual copying, ambiguous denominators or invented values?",
+    decisions:["Which as-of time, branch and commit define the snapshot?","How is each source collected, linked and normalised?","Is each metric a flow, stock, rate or point-in-time value?","Which confidence, caveat or unavailable reason must travel with the number?"],
+    failureModes:["Missing data is converted to zero.","A historic snapshot is shown as a live current total.","Builds or pull requests are double counted across pages or date boundaries.","Repository activity is used to infer model messages, tokens, credits or cost."],
+    project:{
+      mar:{status:"Repeated source-backed snapshots / automation approval-gated",evidenceState:"Implemented foundation",snapshot:"Retained 30 July 2026 stat-pack snapshot; method reviewed 5 August 2026",evidence:["The workflow freezes collection time, period, ref and commit before reading source facts.","Git, ADO Boards, PR and Build APIs, trace matrices, test scans and the safe AI activity log each have explicit extracted facts and assurance rules.","Normalisation preserves source, denominator, unit, aggregation type, link method, confidence and caveat, and represents missing information as unavailable.","An illustrative retained snapshot contains 118 merged PRs, 227 recorded builds, 177 successful builds and 152 safe AI activity rows."],artefacts:["Normalised long-form fact contract","Source inventory","Reconciliation exception list","One-sheet stat pack","Versioned and hashed snapshot"],caveat:"Several source-backed snapshots exist, but DR-CR-008 and the persistent collector, scheduler, secret path and replacement generator remain approval-gated; scheduled universal automation is not claimed as operational."},
+    }
+  },
+  "delivery-system-alignment": {
+    operatingQuestion:"How do we prove that approved governance and the live repository, Azure DevOps configuration, pipeline evidence and published statistics still describe the same delivery system?",
+    decisions:["Which point-in-time sources are being compared?","Is the discrepancy drift, missing evidence, configuration gap, defect, new requirement or contradiction?","Which claims or work must be contained?","Which material change requires fresh design, readiness, tests and approval?"],
+    failureModes:["A proposed or stale record is treated as current authority.","Instruction mirrors, prompts or repository-root paths drift apart.","Documented branch or pipeline policy is assumed to be live configuration.","A discrepancy is silently corrected by rewriting the old approval or report."],
+    project:{
+      mar:{status:"Defined and repeatedly applied alignment model",evidenceState:"Defined",snapshot:"Alignment assurance reviewed 5 August 2026",evidence:["The review compares eight layers: authority, instructions, prompts, ADO, source, CI, evidence and reporting.","Repeatable checks find mirror drift, broken references, missing or duplicate IDs, policy/configuration mismatch, pipeline drift, boundary breaches, incomplete Done items and stat-pack variance.","Discrepancies are classified, contained and routed through Prompt A, impact, superseding records and fresh readiness where material.","Historic approvals and snapshots are preserved as evidence but cannot authorise changed scope."],artefacts:["Pinned alignment report","Missing, orphan and duplicate checks","Policy and pipeline comparison","Owned remediation backlog","Fresh readiness and approval packet"],caveat:"The assurance model is defined and repeatedly applied; automation is expanded only through approved Technical Design and Task List work rather than presented as universal continuous enforcement."},
+    }
+  },
+} satisfies Record<string,DeepDive>);
+
+export const sourceProfiles = [
+  { project:"compass" as const, title:"CGI Migration Compass", subtitle:"AI-Assisted Engineering, Build and DevOps Operating Model", snapshot:"As of 5 August 2026 · Europe/London", evidenceState:"Operational" as EvidenceState, maturity:"Operational local engineering framework", claimBoundary:"Hosted production services, observability and deployment remain partly foundational or roadmap.", summary:"A ten-stage local change lifecycle built around named tasks, executable branch enforcement, isolated worktrees, tiered validation, feature test apps, human acceptance and its own serialized merge queue.", signals:["10-stage lifecycle — operational local workflow.","3 validation tiers — selected by blast radius.","Serialized merge queue — Migration Compass only."] },
+  { project:"tracker" as const, title:"AI-Assisted Delivery Operating Model", subtitle:"PoC Tracker", snapshot:"As of 5 August 2026", evidenceState:"Implemented foundation" as EvidenceState, maturity:"Working local governance demonstrator", claimBoundary:"Its own Git/CI, multi-user persistence, general identity/RBAC and production deployment remain incomplete.", summary:"A 23-stage governed process and local delivery control plane covering baseline and A–G routes, structured AI mutation, planning, evidence, forecasting and reporting.", signals:["23 governed stages — defined operating model.","3 AI capability modes — local capability boundary.","497 metric rows — point-in-time snapshot."] },
+  { project:"mar" as const, title:"Meter Advancement Reconciliation PoC", subtitle:"AI-Assisted Software Delivery Framework", snapshot:"origin/master c51fecf · 31 July 2026; governance reviewed 5 August 2026", evidenceState:"Implemented foundation" as EvidenceState, maturity:"Functioning platform foundation with mature governed delivery framework", claimBoundary:"Complete product delivery and live Azure traffic promotion are not claimed; the pod model is proposed and trial-ready.", summary:"A governed Azure delivery framework combining a functioning platform foundation, prompt-pack delivery, Azure DevOps lineage, protected pull requests, risk-based assurance and source-backed stat packs.", signals:["Three live master policies — build-validation and direct-push administrator confirmation remains pending.","66 imported ADO records — remaining type, field and relation remediation stays explicit.","Several source-backed stat snapshots — universal scheduled collection remains approval-gated."] },
+];
+
+export const categories: Category[] = ["Governance","Evidence","Delivery","Safety","Quality"];
+const loop = [
+  { number:"01", label:"Frame", copy:"Set outcome, scope, owner" },
+  { number:"02", label:"Constrain", copy:"Choose data and permissions" },
+  { number:"03", label:"Build", copy:"Run within a bounded route" },
+  { number:"04", label:"Review", copy:"Test evidence and decisions" },
+  { number:"05", label:"Release", copy:"Pass readiness gates" },
+];
+
+function ProjectTag({ project, maturity }: { project:ProjectKey; maturity?:Maturity }) {
+  const item = projects[project];
+  return <span className={`agent-project-tag ${project}`}><i style={{background:item.colour}} /><b>{item.name}</b>{maturity && <em>{maturity}</em>}</span>;
+}
+
+export default function AgentMethods() {
+  const [dark, setDark] = usePersistentDarkMode();
+  const [project, setProject] = useState<"all" | ProjectKey>("all");
+  const [category, setCategory] = useState<"all" | Category>("all");
+  const [query, setQuery] = useState("");
+  const [selectedId, setSelectedId] = useState("govern-change");
+  const [shortlist, setShortlist] = useState<string[]>(["govern-change","orchestrate-pods","scale-assurance","prove-lineage"]);
+  const [view, setView] = useState<"cards"|"matrix">("cards");
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailTab, setDetailTab] = useState<"overview"|"process"|"controls"|"evidence">("overview");
+
+  const filtered = useMemo(() => methods.filter((method) => {
+    const text = `${method.name} ${method.summary} ${method.scenario} ${method.outcome} ${method.category} ${method.controls.join(" ")} ${method.roles.join(" ")} ${method.inputs.join(" ")} ${method.outputs.join(" ")} ${method.measures.join(" ")} ${method.evidence}`.toLowerCase();
+    return (project === "all" || method.projects.includes(project))
+      && (category === "all" || method.category === category)
+      && (!query || text.includes(query.toLowerCase()));
+  }), [project, category, query]);
+  const selected = methods.find((method) => method.id === selectedId) || methods[0];
+  const coverage = (Object.keys(projects) as ProjectKey[]).map((key) => ({ key, count:methods.filter((method) => method.projects.includes(key)).length }));
+  const sharedCounts = [3,2,1].map((count) => ({ count, methods:methods.filter((method) => method.projects.length === count).length }));
+  const maxCategoryCount = Math.max(...categories.map((item) => methods.filter((method) => method.category === item).length));
+
+  function toggleShortlist(id:string) {
+    setShortlist((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current,id]);
+  }
+
+  function openMethod(id:string) {
+    setSelectedId(id);
+    setDetailTab("overview");
+    setDetailOpen(true);
+  }
+
+  useEffect(() => {
+    if (!detailOpen) return;
+    const closeOnEscape = (event:KeyboardEvent) => { if (event.key === "Escape") setDetailOpen(false); };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [detailOpen]);
+
+  return <div className="agent-showroom" data-theme={dark ? "dark" : "light"}>
+    <aside className="agent-sidebar">
+      <Link className="agent-brand" href="/"><span>✦</span><div><strong>Agent use cases</strong><small>Operating catalogue</small></div></Link>
+      <div className="agent-side-intro"><small>SHOWROOM 03</small><strong>How we manage AI-assisted delivery</strong><p>{methods.length} specific methods across three project sources.</p></div>
+      <nav aria-label="Agent delivery use case sections">
+        <a href="#overview"><span>01</span> Control loop</a>
+        <a href="#coverage"><span>02</span> Coverage</a>
+        <a href="#sources"><span>03</span> Source models</a>
+        <a href="#catalogue"><span>04</span> Use cases</a>
+        <a href="#selection"><span>05</span> Pick list</a>
+      </nav>
+      <div className="agent-project-legend"><small>PROJECT SOURCES</small>{(Object.keys(projects) as ProjectKey[]).map((key) => <button className={project === key ? "active" : ""} onClick={() => setProject(project === key ? "all" : key)} key={key}><i style={{background:projects[key].colour}} /><span><b>{projects[key].name}</b><em>{methods.filter((method) => method.projects.includes(key)).length} use cases</em></span></button>)}</div>
+      <Link className="back-to-library" href="/">← Component showroom</Link>
+    </aside>
+
+    <main>
+      <header className="agent-topbar">
+        <div><span>Library</span><b>/</b><strong>Agent delivery use cases</strong></div>
+        <aside><div className="agent-system-switch" role="group" aria-label="Choose library collection"><Link className="compass-choice" href="/?system=compass"><i />Migration Compass</Link><Link className="tracker-choice" href="/?system=tracker"><i />PoC Tracker</Link><Link className="generic-choice" href="/components"><i />Individual Components</Link><Link className="agent-choice active" href="/methods" aria-current="page"><i />Agent Methods</Link></div><span className="agent-live"><i /> 3 sources mapped</span><a href="#catalogue">Browse catalogue</a><button onClick={() => setDark((value) => !value)} aria-label={`Switch to ${dark ? "light" : "dark"} theme`}>{dark ? "☀" : "◐"}</button></aside>
+      </header>
+
+      <section className="agent-hero" id="overview">
+        <div className="agent-hero-copy"><span className="agent-kicker">AI DELIVERY · USE CASE LIBRARY</span><h1>Patterns that make<br /><em>agent work governable.</em></h1><p>{methods.length} detailed, document-backed methods show how Migration Compass, PoC Tracker and Meter Reconciliation manage AI-assisted delivery from baseline through operation and recovery.</p><div><a className="agent-primary" href="#catalogue">Explore {methods.length} use cases ↓</a><a className="agent-secondary" href="#sources">View 3 source models</a></div></div>
+        <div className="agent-loop" aria-label="Agent delivery control loop">
+          <header><span><i /> LIVE CONTROL LOOP</span><b>HUMAN OVERSIGHT</b></header>
+          <div className="agent-loop-track" aria-hidden="true"><i /></div>
+          <div className="agent-loop-nodes">{loop.map((stage,index) => <article key={stage.number}><span>{index === 4 ? "✓" : stage.number}</span><strong>{stage.label}</strong><small>{stage.copy}</small></article>)}</div>
+          <footer><span><i /> Agent action</span><span><i /> Automated check</span><span><i /> Human gate</span></footer>
+        </div>
+      </section>
+
+      <section className="agent-metrics" aria-label="Catalogue summary">
+        <article><small>CONSOLIDATED USE CASES</small><strong>{methods.length}</strong><span>End-to-end delivery patterns</span></article>
+        <article><small>USED BY ALL 3</small><strong>{sharedCounts.find((item) => item.count === 3)?.methods}</strong><span>Shared foundations</span></article>
+        <article><small>PROJECT-SPECIFIC</small><strong>{sharedCounts.find((item) => item.count === 1)?.methods}</strong><span>Specialist use cases</span></article>
+        <article><small>SHORTLISTED</small><strong>{shortlist.length}</strong><span>Ready for the next build</span></article>
+      </section>
+
+      <section className="agent-section" id="coverage">
+        <div className="agent-section-heading"><div><span>02 · COVERAGE</span><h2>See what is shared—and what is special.</h2><p>Overlapping controls are consolidated into one end-to-end use case, then tagged to every project where that pattern appears.</p></div><div className="agent-mini-legend"><span><i /> All projects</span><span><i /> Two projects</span><span><i /> One project</span></div></div>
+        <div className="coverage-grid">
+          <article className="coverage-chart">
+            <header><div><small>USE CASE COVERAGE</small><strong>Patterns by project</strong></div><span>{methods.length} total</span></header>
+            <div className="coverage-bars">{coverage.map((item) => <div key={item.key}><label><span><i style={{background:projects[item.key].colour}} />{projects[item.key].name}</span><b>{item.count}</b></label><div><i style={{width:`${item.count / methods.length * 100}%`,background:projects[item.key].colour}} /></div></div>)}</div>
+            <footer>Each bar counts consolidated use cases tagged to that project.</footer>
+          </article>
+          <article className="shared-chart">
+            <header><small>REUSE PROFILE</small><strong>One use case, many projects</strong></header>
+            <div className="reuse-visual"><div className="reuse-donut" style={{"--shared":`${(sharedCounts[0].methods/methods.length)*100}%`,"--paired":`${((sharedCounts[0].methods+sharedCounts[1].methods)/methods.length)*100}%`} as CSSProperties}><span><strong>{sharedCounts[0].methods}</strong><small>universal</small></span></div><div>{sharedCounts.map((item) => <p key={item.count}><i className={`reuse-${item.count}`} /><span><b>{item.methods} use case{item.methods === 1 ? "" : "s"}</b><small>used by {item.count} project{item.count === 1 ? "" : "s"}</small></span></p>)}</div></div>
+          </article>
+          <article className="layer-chart">
+            <header><small>CONTROL STACK</small><strong>Coverage across the build</strong></header>
+            <div>{categories.map((item,index) => { const count = methods.filter((method) => method.category === item).length; return <p key={item}><span>{String(index+1).padStart(2,"0")}</span><b>{item}</b><i><em style={{width:`${count/maxCategoryCount*100}%`}} /></i><strong>{count}</strong></p> })}</div>
+          </article>
+        </div>
+      </section>
+
+      <section className="agent-section source-docs-section" id="sources">
+        <div className="agent-section-heading"><div><span>03 · SOURCE OPERATING MODELS</span><h2>Three portfolios, one reusable use-case library.</h2><p>Each source keeps its own maturity and project-specific evidence. Related controls are grouped into a single scenario only when they support the same delivery outcome.</p></div><div className="maturity-key"><span><i className="operational" /> Operational</span><span><i className="defined" /> Defined</span><span><i className="proposed" /> Proposed</span></div></div>
+        <div className="source-profile-grid">{sourceProfiles.map((source,index) => <article key={source.project} style={{"--source-colour":projects[source.project].colour} as CSSProperties}>
+          <header><span>{String(index+1).padStart(2,"0")}</span><i style={{background:projects[source.project].colour}} /></header>
+          <small>{source.subtitle}</small><h3>{source.title}</h3><b>{source.maturity}</b><p>{source.summary}</p>
+          <div>{source.signals.map((signal) => <span key={signal}>{signal}</span>)}</div>
+          <footer><span>{methods.filter((method) => method.projects.includes(source.project)).length} use cases</span><button onClick={() => { setProject(source.project); document.getElementById("catalogue")?.scrollIntoView({behavior:"smooth"}); }}>Filter catalogue →</button></footer>
+        </article>)}</div>
+      </section>
+
+      <section className="agent-section catalogue-section" id="catalogue">
+        <div className="agent-section-heading"><div><span>04 · USE CASE CATALOGUE</span><h2>Explore an end-to-end operating pattern.</h2><p>Each card opens a component-style workbench with the scenario, five-step process, role and control model, source evidence and measures.</p></div><div className="catalogue-view"><button className={view === "cards" ? "active" : ""} onClick={() => setView("cards")}>Cards</button><button className={view === "matrix" ? "active" : ""} onClick={() => setView("matrix")}>Matrix</button></div></div>
+        <div className="catalogue-toolbar">
+          <label className="method-search"><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search use cases, roles or controls…" /></label>
+          <div className="project-filters" role="group" aria-label="Filter by project"><button className={project === "all" ? "active" : ""} onClick={() => setProject("all")}>All projects</button>{(Object.keys(projects) as ProjectKey[]).map((key) => <button className={project === key ? "active" : ""} onClick={() => setProject(key)} key={key}><i style={{background:projects[key].colour}} />{projects[key].short}</button>)}</div>
+          <label>Category<select value={category} onChange={(event) => setCategory(event.target.value as "all" | Category)}><option value="all">All categories</option>{categories.map((item) => <option key={item}>{item}</option>)}</select></label>
+          <span className="result-count">{filtered.length} shown</span>
+        </div>
+
+        {view === "cards" ? <div className="method-grid use-case-grid">{filtered.map((method) => <article className={`method-card use-case-card ${selected.id === method.id ? "selected" : ""}`} key={method.id}>
+            <header><div><span className="use-case-number">{String(methods.findIndex((item) => item.id === method.id)+1).padStart(2,"0")}</span><span className={`category-pill ${method.category.toLowerCase()}`}>{method.category}</span></div><span className="adoption-label">{method.adoption}</span></header>
+            <h3>{method.name}</h3><p>{method.summary}</p>
+            <div className="use-case-outcome"><small>INTENDED OUTCOME</small><strong>{method.outcome}</strong></div>
+            <div className="method-projects">{method.projects.map((key) => <ProjectTag project={key} key={key} />)}</div>
+            <footer><button className="use-case-open" onClick={() => openMethod(method.id)}>Open use case <span>→</span></button><button className={shortlist.includes(method.id) ? "picked" : ""} onClick={() => toggleShortlist(method.id)}>{shortlist.includes(method.id) ? "✓ Picked" : "+ Pick"}</button></footer>
+          </article>)}{!filtered.length && <div className="method-empty"><strong>No matching use cases</strong><span>Try removing a project or category filter.</span></div>}</div> : <><div className="matrix-key"><span><i className="operational" /> Operational</span><span><i className="foundation" /> Implemented foundation</span><span><i className="defined" /> Defined</span><span><i className="proposed" /> Proposed</span><span><i className="roadmap" /> Roadmap</span></div><div className="method-matrix" role="table" aria-label="Use case coverage and maturity matrix"><header role="row"><span role="columnheader">Use case</span><span role="columnheader">Category</span>{(Object.keys(projects) as ProjectKey[]).map((key) => <span role="columnheader" key={key}>{projects[key].short}</span>)}<span role="columnheader">Pick</span></header>{filtered.map((method) => <div role="row" key={method.id}><button role="cell" onClick={() => openMethod(method.id)}>{method.name}</button><span role="cell">{method.category}</span>{(Object.keys(projects) as ProjectKey[]).map((key) => { const state = method.maturity[key]; return <span className={state ? `has-method maturity-${state.toLowerCase().replaceAll(" ","-")}` : ""} title={state ? `${projects[key].name}: ${state}` : `${projects[key].name}: not used`} role="cell" key={key}>{state ? state.charAt(0) : "—"}</span> })}<button className={shortlist.includes(method.id) ? "picked" : ""} onClick={() => toggleShortlist(method.id)}>{shortlist.includes(method.id) ? "✓" : "+"}</button></div>)}</div></>}
+      </section>
+
+      <section className="agent-section pick-section" id="selection">
+        <div className="agent-section-heading"><div><span>05 · PICK LIST</span><h2>Your operating set for the next project.</h2><p>Combine shared foundations with the specialist use cases your delivery model needs.</p></div><strong>{shortlist.length} selected</strong></div>
+        <div className="pick-grid">{shortlist.map((id,index) => { const method = methods.find((item) => item.id === id)!; return <article key={id}><span>{String(index+1).padStart(2,"0")}</span><div><small>{method.category} · {method.projects.length === 3 ? "FOUNDATION" : method.adoption.toUpperCase()}</small><strong>{method.name}</strong><p>{method.outcome}</p></div><button onClick={() => toggleShortlist(id)} aria-label={`Remove ${method.name} from pick list`}>×</button></article> })}{!shortlist.length && <div className="pick-empty"><strong>Your pick list is empty</strong><p>Add useful use cases from the catalogue above.</p><a href="#catalogue">Browse use cases ↑</a></div>}</div>
+      </section>
+
+      {detailOpen && <div className="method-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setDetailOpen(false); }}><section className="method-workbench-modal" role="dialog" aria-modal="true" aria-labelledby="method-modal-title">
+        <header><div><p className="method-eyebrow">USE CASE WORKBENCH · {String(methods.findIndex((item) => item.id === selected.id)+1).padStart(2,"0")} / {methods.length}</p><h2 id="method-modal-title">{selected.name}</h2><p>{selected.summary}</p><div className="method-modal-badges"><span className={`category-pill ${selected.category.toLowerCase()}`}>{selected.category}</span><span>{selected.adoption} pattern</span><span>{selected.projects.length} project{selected.projects.length === 1 ? "" : "s"}</span></div></div><button autoFocus onClick={() => setDetailOpen(false)} aria-label="Close use case workbench">×</button></header>
+        <div className="method-modal-tabs" role="tablist" aria-label="Use case workbench view">{([
+          {id:"overview",number:"01",title:"Overview",copy:"Scenario and fit"},
+          {id:"process",number:"02",title:"Process",copy:"Five-step operating flow"},
+          {id:"controls",number:"03",title:"Controls",copy:"Roles, inputs and outputs"},
+          {id:"evidence",number:"04",title:"Evidence",copy:"Project proof and measures"},
+        ] as const).map((tab) => <button role="tab" aria-selected={detailTab === tab.id} className={detailTab === tab.id ? "active" : ""} onClick={() => setDetailTab(tab.id)} key={tab.id}><span>{tab.number}</span><div><strong>{tab.title}</strong><small>{tab.copy}</small></div></button>)}</div>
+        {detailTab === "overview" && <div className="method-overview-grid"><article><span>01</span><h3>Scenario</h3><p>{selected.scenario}</p></article><article><span>02</span><h3>Use when</h3><ul>{selected.whenToUse.map((item) => <li key={item}>{item}</li>)}</ul></article><article><span>03</span><h3>Intended result</h3><p>{selected.outcome}</p><div className="method-output-tags">{selected.outputs.slice(0,3).map((item) => <span key={item}>{item}</span>)}</div></article></div>}
+        {detailTab === "process" && <div className="method-process"><div className="method-process-line" aria-hidden="true" />{selected.workflow.map((step,index) => <article key={step.label}><span>{String(index+1).padStart(2,"0")}</span><div><small>{step.owner}</small><h3>{step.label}</h3><p>{step.detail}</p><footer><b>GATE</b>{step.gate}</footer></div></article>)}</div>}
+        {detailTab === "controls" && <div className="method-control-layout"><article><span>01</span><h3>Control set</h3><ul>{selected.controls.map((item) => <li key={item}><i>✓</i>{item}</li>)}</ul></article><article><span>02</span><h3>Operating roles</h3><ul>{selected.roles.map((item) => <li key={item}>{item}</li>)}</ul></article><article><span>03</span><h3>Inputs</h3><ul>{selected.inputs.map((item) => <li key={item}>{item}</li>)}</ul></article><article><span>04</span><h3>Outputs</h3><ul>{selected.outputs.map((item) => <li key={item}>{item}</li>)}</ul></article></div>}
+        {detailTab === "evidence" && <div className="method-evidence-layout"><div className="method-project-evidence">{selected.projects.map((key) => <article key={key}><header><ProjectTag project={key} maturity={selected.maturity[key]} /></header><p>{selected.projectEvidence[key]}</p></article>)}</div><aside><small>SUCCESS MEASURES</small><h3>How to know it is working</h3>{selected.measures.map((item) => <span key={item}><i />{item}</span>)}<footer><small>CONSOLIDATED FROM</small><p>{selected.evidence}</p></footer></aside></div>}
+        <footer><span><i /> Document-backed use case with project-specific maturity</span><div><button className={shortlist.includes(selected.id) ? "picked" : ""} onClick={() => toggleShortlist(selected.id)}>{shortlist.includes(selected.id) ? "✓ In pick list" : "+ Add to pick list"}</button><button onClick={() => setDetailOpen(false)}>Done</button></div></footer>
+      </section></div>}
+
+      <footer className="agent-footer"><Link className="agent-brand" href="/"><span>✦</span><div><strong>Architecture Component Library</strong><small>Three operating models · {methods.length} detailed methods</small></div></Link><p>Controls are distilled and consolidated from the supplied operating-model portfolios.</p><a href="#overview">Back to top ↑</a></footer>
+    </main>
+  </div>;
+}

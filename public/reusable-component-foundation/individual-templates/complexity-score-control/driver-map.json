@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "complexity-score-control",
+  "purpose": "Display or edit numeric complexity measures alongside their derived scores and explanations.",
+  "drivers": [
+    {
+      "name": "renderBuNumericComplexityControl",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuNumericComplexityControl(",
+      "startLine": 11046,
+      "endLine": 11057,
+      "codeFile": "app--renderBuNumericComplexityControl.reference.js"
+    },
+    {
+      "name": "renderBuCalculatedComplexityControl",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuCalculatedComplexityControl(",
+      "startLine": 11059,
+      "endLine": 11071,
+      "codeFile": "app--renderBuCalculatedComplexityControl.reference.js"
+    },
+    {
+      "name": "calculateBuSizeBand",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function calculateBuSizeBand(",
+      "startLine": 11073,
+      "endLine": 11079,
+      "codeFile": "app--calculateBuSizeBand.reference.js"
+    },
+    {
+      "name": "calculateBuComplexityBand",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function calculateBuComplexityBand(",
+      "startLine": 11081,
+      "endLine": 11083,
+      "codeFile": "app--calculateBuComplexityBand.reference.js"
+    }
+  ]
+}

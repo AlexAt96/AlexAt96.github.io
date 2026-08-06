@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0",
+  "id": "graphs-and-charts",
+  "title": "Graphs and chart primitives",
+  "requestedCoverage": "Graphs and charts",
+  "summary": "Reusable SVG/CSS line, bar, pie, distribution, waterfall and KPI visual patterns used across dashboards, reports and decisions.",
+  "routes": [
+    "app/index.html",
+    "app/document.html",
+    "app/decision.html"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "renderDiscoveryLineChart",
+        "renderReportPieVisual",
+        "renderReportPieSlice",
+        "renderReportBarVisual",
+        "renderMetadataBarChart",
+        "renderAdvancedDiscoveryPieChart",
+        "renderAdvancedDiscoveryDistributionChart",
+        "renderCostBuComparisonChart",
+        "renderCostBridgeChart",
+        "renderDecisionSavingsChartSvg",
+        "renderDecisionWaterfallChart"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/03-dashboard-planning.css",
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/07-outputs-decision.css"
+  ],
+  "states": [
+    "populated",
+    "empty",
+    "single series",
+    "multi-series",
+    "positive",
+    "warning",
+    "negative"
+  ],
+  "dataContracts": [
+    "label/value rows",
+    "time series",
+    "stacked series",
+    "waterfall steps",
+    "chart legend"
+  ],
+  "templateKey": "charts",
+  "boundaries": [
+    "LineChart",
+    "BarChart",
+    "PieChart",
+    "DistributionChart",
+    "WaterfallChart",
+    "ChartLegend",
+    "EmptyChart"
+  ]
+}

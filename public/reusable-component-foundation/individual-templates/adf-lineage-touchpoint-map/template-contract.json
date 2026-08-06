@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0",
+  "id": "adf-lineage-touchpoint-map",
+  "capabilityId": "data-lineage-screen",
+  "title": "ADF lineage touchpoint map",
+  "layer": "composite",
+  "purpose": "Show pipeline touchpoints across datasets, activities and Databricks assets.",
+  "drivers": [
+    {
+      "name": "renderAdfLineageTouchpointMap",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfLineageTouchpointMap(",
+      "startLine": 12419,
+      "endLine": 12496,
+      "codeFile": "app--renderAdfLineageTouchpointMap.reference.js"
+    },
+    {
+      "name": "buildAdfPipelineTouchpointGraph",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function buildAdfPipelineTouchpointGraph(",
+      "startLine": 12498,
+      "endLine": 12601,
+      "codeFile": "app--buildAdfPipelineTouchpointGraph.reference.js"
+    }
+  ],
+  "inputs": [
+    "ADF lineage model"
+  ],
+  "outputs": [
+    "Touchpoint graph",
+    "Focused node"
+  ],
+  "behaviour": [
+    "Show pipeline touchpoints across datasets, activities and Databricks assets.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Data lineage and dependency explorer",
+  "templateDataPath": "template-data/template-data.json#dataLineage",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/11-system-map-visuals.css",
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "no lineage",
+    "partial",
+    "complete",
+    "pipeline focus",
+    "activity focus",
+    "source focus",
+    "target focus",
+    "evidence caveat"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Touchpoint graph. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "report": {
+    "id": "report-bu-template",
+    "businessUnitId": "bu-template",
+    "title": "Commerce Analytics Technical Report",
+    "version": 4,
+    "status": "In review",
+    "approvalStatus": "Pending"
+  },
+  "sections": [
+    {
+      "key": "executive-summary",
+      "title": "Executive summary",
+      "body": "Migration is feasible with a controlled month-end cutover.",
+      "reviewStatus": "Approved",
+      "sourceTasks": [
+        "BU sizing",
+        "Evidence review"
+      ]
+    },
+    {
+      "key": "environment-rationalisation",
+      "title": "Environment rationalisation",
+      "body": "Retain production and merge non-production estates.",
+      "reviewStatus": "Changes requested",
+      "sourceTasks": [
+        "Environment rationalisation"
+      ]
+    },
+    {
+      "key": "metadata-review",
+      "title": "Metadata review",
+      "body": "Inventory coverage is sufficient; four parsing warnings remain.",
+      "reviewStatus": "In review",
+      "sourceTasks": [
+        "Metadata review"
+      ]
+    }
+  ],
+  "feedback": [
+    {
+      "id": "report-feedback-1",
+      "sectionKey": "environment-rationalisation",
+      "comment": "Name the target non-production workspace.",
+      "status": "Open"
+    }
+  ],
+  "lifecycle": [
+    "Draft",
+    "In review",
+    "Ready to finalise",
+    "Finalised",
+    "Approved"
+  ]
+}

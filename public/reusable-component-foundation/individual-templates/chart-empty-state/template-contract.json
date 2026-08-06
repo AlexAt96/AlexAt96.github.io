@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0",
+  "id": "chart-empty-state",
+  "capabilityId": "graphs-and-charts",
+  "title": "Chart empty state",
+  "layer": "primitive",
+  "purpose": "Keep chart layouts stable and explain which source data is required when no values exist.",
+  "drivers": [
+    {
+      "name": "renderAdvancedDiscoveryEmptyChart",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdvancedDiscoveryEmptyChart(",
+      "startLine": 13308,
+      "endLine": 13317,
+      "codeFile": "app--renderAdvancedDiscoveryEmptyChart.reference.js"
+    }
+  ],
+  "inputs": [
+    "Chart title",
+    "Empty-state guidance"
+  ],
+  "outputs": [
+    "Accessible empty-state panel"
+  ],
+  "behaviour": [
+    "Keep chart layouts stable and explain which source data is required when no values exist.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Graphs and chart primitives",
+  "templateDataPath": "template-data/template-data.json#charts",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/03-dashboard-planning.css",
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/07-outputs-decision.css"
+  ],
+  "inheritedStates": [
+    "populated",
+    "empty",
+    "single series",
+    "multi-series",
+    "positive",
+    "warning",
+    "negative"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Accessible empty-state panel. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

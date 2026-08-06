@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "test-coverage-dashboard",
+  "purpose": "Compose coverage summary, suite cards, coverage table, cadence, recent log and gaps.",
+  "drivers": [
+    {
+      "name": "testTelemetryMetrics",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function testTelemetryMetrics(",
+      "startLine": 7664,
+      "endLine": 7666,
+      "codeFile": "interactive-system-map--testTelemetryMetrics.reference.html"
+    },
+    {
+      "name": "renderTestTelemetryReport",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function renderTestTelemetryReport(",
+      "startLine": 7730,
+      "endLine": 7788,
+      "codeFile": "interactive-system-map--renderTestTelemetryReport.reference.html"
+    }
+  ]
+}

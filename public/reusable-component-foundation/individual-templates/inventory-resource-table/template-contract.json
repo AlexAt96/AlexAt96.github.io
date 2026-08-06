@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "1.0",
+  "id": "inventory-resource-table",
+  "capabilityId": "metadata-results-screen",
+  "title": "Inventory resource table",
+  "layer": "composite",
+  "purpose": "Group Databricks inventory resources by type and reveal captured attributes.",
+  "drivers": [
+    {
+      "name": "renderDatabricksInventoryResourceTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDatabricksInventoryResourceTable(",
+      "startLine": 14329,
+      "endLine": 14362,
+      "codeFile": "app--renderDatabricksInventoryResourceTable.reference.js"
+    },
+    {
+      "name": "renderDatabricksInventoryResourceTypePanel",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDatabricksInventoryResourceTypePanel(",
+      "startLine": 14375,
+      "endLine": 14394,
+      "codeFile": "app--renderDatabricksInventoryResourceTypePanel.reference.js"
+    },
+    {
+      "name": "renderMetadataAttributeDetails",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMetadataAttributeDetails(",
+      "startLine": 13989,
+      "endLine": 14005,
+      "codeFile": "app--renderMetadataAttributeDetails.reference.js"
+    }
+  ],
+  "inputs": [
+    "Inventory resource rows",
+    "Context label",
+    "BU"
+  ],
+  "outputs": [
+    "Grouped resource panels",
+    "Attribute disclosure",
+    "Workbook export"
+  ],
+  "behaviour": [
+    "Group Databricks inventory resources by type and reveal captured attributes.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Metadata results and advanced discovery",
+  "templateDataPath": "template-data/template-data.json#metadataResults",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "no metadata",
+    "partial parse",
+    "complete parse",
+    "cross-BU",
+    "BU filtered",
+    "expanded category",
+    "exporting"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Grouped resource panels. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

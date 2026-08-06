@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "1.0",
+  "id": "decision-rice-sequencing",
+  "capabilityId": "decision-screen",
+  "title": "Decision RICE sequencing",
+  "layer": "composite",
+  "purpose": "Rank BUs by RICE contribution and explain the proposed sequence.",
+  "drivers": [
+    {
+      "name": "renderDecisionRiceSequencingPanel",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionRiceSequencingPanel(",
+      "startLine": 27596,
+      "endLine": 27616,
+      "codeFile": "app--renderDecisionRiceSequencingPanel.reference.js"
+    },
+    {
+      "name": "renderDecisionRiceRows",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionRiceRows(",
+      "startLine": 27618,
+      "endLine": 27628,
+      "codeFile": "app--renderDecisionRiceRows.reference.js"
+    },
+    {
+      "name": "renderDecisionRiceRow",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionRiceRow(",
+      "startLine": 27638,
+      "endLine": 27652,
+      "codeFile": "app--renderDecisionRiceRow.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU decision models",
+    "Scenario summary"
+  ],
+  "outputs": [
+    "Sequenced BU rows"
+  ],
+  "behaviour": [
+    "Rank BUs by RICE contribution and explain the proposed sequence.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Decision screen and scenario layout",
+  "templateDataPath": "template-data/template-data.json#decision",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/07-outputs-decision.css"
+  ],
+  "inheritedStates": [
+    "baseline",
+    "scenario changed",
+    "unsaved scenario",
+    "recommended",
+    "conditional",
+    "not recommended",
+    "decision ready",
+    "blocked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Sequenced BU rows. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "id": "phase-owner-filter",
+  "capabilityId": "kanban-list-and-cards",
+  "title": "Phase owner filter",
+  "layer": "primitive",
+  "purpose": "Filter phase work by accountable role or show all owners.",
+  "drivers": [
+    {
+      "name": "renderPhaseDashboardOwnerFilter",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderPhaseDashboardOwnerFilter(",
+      "startLine": 3319,
+      "endLine": 3337,
+      "codeFile": "app--renderPhaseDashboardOwnerFilter.reference.js"
+    },
+    {
+      "name": "getPhaseDashboardOwnerFilter",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getPhaseDashboardOwnerFilter(",
+      "startLine": 3360,
+      "endLine": 3367,
+      "codeFile": "app--getPhaseDashboardOwnerFilter.reference.js"
+    }
+  ],
+  "inputs": [
+    "Owner options",
+    "Active owner"
+  ],
+  "outputs": [
+    "Owner filter change"
+  ],
+  "behaviour": [
+    "Filter phase work by accountable role or show all owners.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [
+    "data-phase-owner-filter"
+  ],
+  "notes": [],
+  "capabilityTitle": "Kanban, list and task cards",
+  "templateDataPath": "template-data/template-data.json#kanban",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/03-dashboard-planning.css",
+    "app/styles/04-phase-documents.css"
+  ],
+  "inheritedStates": [
+    "not started",
+    "draft",
+    "in progress",
+    "in review",
+    "blocked",
+    "completed",
+    "filtered",
+    "empty column"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Owner filter change. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

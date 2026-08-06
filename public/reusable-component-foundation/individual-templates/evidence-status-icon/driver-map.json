@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "evidence-status-icon",
+  "purpose": "Render a consistent missing, partial, submitted, reviewed or not-applicable marker.",
+  "drivers": [
+    {
+      "name": "renderEvidenceStatusIcon",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEvidenceStatusIcon(",
+      "startLine": 9018,
+      "endLine": 9022,
+      "codeFile": "app--renderEvidenceStatusIcon.reference.js"
+    }
+  ]
+}

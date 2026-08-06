@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "1.0",
+  "id": "script-output-wizard",
+  "capabilityId": "questionnaire-wizards",
+  "title": "Script-output upload wizard",
+  "layer": "composite",
+  "purpose": "Guide an analyst through environment selection, run instructions, file selection and upload submission.",
+  "drivers": [
+    {
+      "name": "renderScriptOutputWizard",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderScriptOutputWizard(",
+      "startLine": 9516,
+      "endLine": 9595,
+      "codeFile": "app--renderScriptOutputWizard.reference.js"
+    },
+    {
+      "name": "getScriptRunCommand",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getScriptRunCommand(",
+      "startLine": 9597,
+      "endLine": 9602,
+      "codeFile": "app--getScriptRunCommand.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU",
+    "Script-output task",
+    "Environment rows",
+    "Accepted formats"
+  ],
+  "outputs": [
+    "Upload payload",
+    "Selected environment/workspace"
+  ],
+  "behaviour": [
+    "Guide an analyst through environment selection, run instructions, file selection and upload submission.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "wizard-shell"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Questionnaire and multi-step wizard patterns",
+  "templateDataPath": "template-data/template-data.json#questionnaire",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/05-collection-workflows.css",
+    "app/styles/01-foundation.css"
+  ],
+  "inheritedStates": [
+    "closed",
+    "step active",
+    "step complete",
+    "validation error",
+    "draft saved",
+    "submitted",
+    "read-only answers"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Upload payload. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

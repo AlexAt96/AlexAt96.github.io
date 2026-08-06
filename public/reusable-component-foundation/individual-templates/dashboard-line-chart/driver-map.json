@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "dashboard-line-chart",
+  "purpose": "Render a compact SVG trend line with labelled points and an empty state.",
+  "drivers": [
+    {
+      "name": "renderDiscoveryLineChart",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDiscoveryLineChart(",
+      "startLine": 1929,
+      "endLine": 1980,
+      "codeFile": "app--renderDiscoveryLineChart.reference.js"
+    }
+  ]
+}

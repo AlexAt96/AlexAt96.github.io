@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "1.0",
+  "id": "tool-metadata-setup",
+  "title": "Tool metadata setup",
+  "requestedCoverage": "Metadata setup",
+  "summary": "Editable programme metadata for RICE measures, ADF complexity factors, workflow statuses and technology mappings.",
+  "routes": [
+    "app/admin.html?tab=tool-metadata",
+    "/api/programme/rice-definitions",
+    "/api/programme/adf-activity-factors",
+    "/api/programme/status-reference",
+    "/api/programme/technology-mappings"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "renderToolMetadata",
+        "renderMetadataDisclosure",
+        "renderRiceDefinitionsEditTable",
+        "renderAdfActivityFactorsEditTable",
+        "renderPhaseStatusModelTable",
+        "renderTechnologyMappingMetadataTable",
+        "saveToolMetadataSection"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/08-admin-integrations.css",
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "states": [
+    "collapsed",
+    "expanded",
+    "editing",
+    "saving",
+    "saved",
+    "invalid",
+    "locked"
+  ],
+  "dataContracts": [
+    "RICE metric definition",
+    "ADF activity factor",
+    "status reference",
+    "technology mapping"
+  ],
+  "templateKey": "toolMetadata",
+  "boundaries": [
+    "MetadataSetupPage",
+    "MetadataDisclosure",
+    "DefinitionTable",
+    "StatusModel",
+    "SaveStatus"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "editable-data-table",
+  "purpose": "Render addable, copyable and removable form rows with screen-supplied columns and cells.",
+  "drivers": [
+    {
+      "name": "renderEditDataTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEditDataTable(",
+      "startLine": 6013,
+      "endLine": 6033,
+      "codeFile": "app--renderEditDataTable.reference.js"
+    },
+    {
+      "name": "copyEditableTableRow",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function copyEditableTableRow(",
+      "startLine": 40080,
+      "endLine": 40099,
+      "codeFile": "app--copyEditableTableRow.reference.js"
+    }
+  ]
+}

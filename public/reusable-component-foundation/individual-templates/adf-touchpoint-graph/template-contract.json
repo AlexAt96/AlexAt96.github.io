@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "1.0",
+  "id": "adf-touchpoint-graph",
+  "capabilityId": "adf-pipeline-charts-and-graphs",
+  "title": "ADF touchpoint graph",
+  "layer": "composite",
+  "purpose": "Build and render the cross-pipeline touchpoint graph for datasets, activities and Databricks objects.",
+  "drivers": [
+    {
+      "name": "buildAdfPipelineTouchpointGraph",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function buildAdfPipelineTouchpointGraph(",
+      "startLine": 12498,
+      "endLine": 12601,
+      "codeFile": "app--buildAdfPipelineTouchpointGraph.reference.js"
+    },
+    {
+      "name": "serializeAdfPipelineTouchpointGraph",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function serializeAdfPipelineTouchpointGraph(",
+      "startLine": 12603,
+      "endLine": 12622,
+      "codeFile": "app--serializeAdfPipelineTouchpointGraph.reference.js"
+    },
+    {
+      "name": "renderAdfPipelineTouchpointSvg",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfPipelineTouchpointSvg(",
+      "startLine": 12624,
+      "endLine": 12688,
+      "codeFile": "app--renderAdfPipelineTouchpointSvg.reference.js"
+    }
+  ],
+  "inputs": [
+    "ADF lineage model"
+  ],
+  "outputs": [
+    "Graph nodes/edges",
+    "SVG touchpoint map"
+  ],
+  "behaviour": [
+    "Build and render the cross-pipeline touchpoint graph for datasets, activities and Databricks objects.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "ADF pipeline charts, graphs and step explorer",
+  "templateDataPath": "template-data/template-data.json#adfPipeline",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/11-system-map-visuals.css"
+  ],
+  "inheritedStates": [
+    "no pipeline",
+    "pipeline selected",
+    "step selected",
+    "branching",
+    "fan-in",
+    "Databricks activity",
+    "missing endpoint evidence"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Graph nodes/edges. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

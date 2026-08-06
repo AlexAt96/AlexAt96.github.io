@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "1.0",
+  "id": "adf-step-detail-map",
+  "capabilityId": "adf-pipeline-charts-and-graphs",
+  "title": "ADF step detail map",
+  "layer": "composite",
+  "purpose": "Expand one pipeline step into source, activity, Databricks and target detail nodes.",
+  "drivers": [
+    {
+      "name": "renderAdfStepDetailBranchMap",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfStepDetailBranchMap(",
+      "startLine": 12365,
+      "endLine": 12384,
+      "codeFile": "app--renderAdfStepDetailBranchMap.reference.js"
+    },
+    {
+      "name": "renderAdfStepDetailNode",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfStepDetailNode(",
+      "startLine": 12386,
+      "endLine": 12395,
+      "codeFile": "app--renderAdfStepDetailNode.reference.js"
+    },
+    {
+      "name": "renderAdfStepDatabricksBlock",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfStepDatabricksBlock(",
+      "startLine": 12397,
+      "endLine": 12407,
+      "codeFile": "app--renderAdfStepDatabricksBlock.reference.js"
+    },
+    {
+      "name": "renderAdfPipelineDetailLaneSvg",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfPipelineDetailLaneSvg(",
+      "startLine": 12280,
+      "endLine": 12308,
+      "codeFile": "app--renderAdfPipelineDetailLaneSvg.reference.js"
+    }
+  ],
+  "inputs": [
+    "Selected pipeline step"
+  ],
+  "outputs": [
+    "Detailed branch map"
+  ],
+  "behaviour": [
+    "Expand one pipeline step into source, activity, Databricks and target detail nodes.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "adf-activity-step-card"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "ADF pipeline charts, graphs and step explorer",
+  "templateDataPath": "template-data/template-data.json#adfPipeline",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/11-system-map-visuals.css"
+  ],
+  "inheritedStates": [
+    "no pipeline",
+    "pipeline selected",
+    "step selected",
+    "branching",
+    "fan-in",
+    "Databricks activity",
+    "missing endpoint evidence"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Detailed branch map. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

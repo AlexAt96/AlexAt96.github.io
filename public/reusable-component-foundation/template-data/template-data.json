@@ -1,0 +1,984 @@
+{
+  "templateVersion": "1.0",
+  "generatedFor": "Reusable component extraction and prototyping",
+  "notice": "Synthetic template data only. Replace IDs and business facts before production use.",
+  "dashboard": {
+    "project": {
+      "id": "project-template",
+      "name": "Cloud Migration Discovery",
+      "status": "In progress",
+      "reportingDate": "2026-08-05"
+    },
+    "kpis": [
+      {
+        "id": "bu-coverage",
+        "label": "BUs assessed",
+        "value": 3,
+        "detail": "of 4 in scope",
+        "tone": "watch"
+      },
+      {
+        "id": "evidence",
+        "label": "Evidence complete",
+        "value": 72,
+        "unit": "%",
+        "detail": "18 of 25 required items",
+        "tone": "good"
+      },
+      {
+        "id": "decisions",
+        "label": "Open decisions",
+        "value": 6,
+        "detail": "2 due this week",
+        "tone": "risk"
+      }
+    ],
+    "planRows": [
+      {
+        "id": "plan-1",
+        "label": "Collect evidence",
+        "owner": "Discovery Lead",
+        "startWeek": 1,
+        "endWeek": 2,
+        "status": "Completed",
+        "dependencies": []
+      },
+      {
+        "id": "plan-2",
+        "label": "Analyse metadata",
+        "owner": "Data Engineer",
+        "startWeek": 2,
+        "endWeek": 4,
+        "status": "In progress",
+        "dependencies": [
+          {
+            "id": "plan-1",
+            "type": "finish-start"
+          }
+        ]
+      },
+      {
+        "id": "plan-3",
+        "label": "Review recommendation",
+        "owner": "Engagement Lead",
+        "startWeek": 4,
+        "endWeek": 5,
+        "status": "Not started",
+        "dependencies": [
+          {
+            "id": "plan-2",
+            "type": "finish-start"
+          }
+        ]
+      }
+    ]
+  },
+  "charts": {
+    "lineSeries": [
+      {
+        "label": "W1",
+        "value": 20
+      },
+      {
+        "label": "W2",
+        "value": 44
+      },
+      {
+        "label": "W3",
+        "value": 61
+      },
+      {
+        "label": "W4",
+        "value": 72
+      }
+    ],
+    "distribution": [
+      {
+        "label": "Complete",
+        "value": 18,
+        "color": "#22c55e"
+      },
+      {
+        "label": "In review",
+        "value": 5,
+        "color": "#f2a200"
+      },
+      {
+        "label": "Missing",
+        "value": 2,
+        "color": "#e31937"
+      }
+    ],
+    "waterfall": [
+      {
+        "label": "Baseline cost",
+        "value": 820000
+      },
+      {
+        "label": "Cloud saving",
+        "value": -210000
+      },
+      {
+        "label": "Migration cost",
+        "value": 95000
+      },
+      {
+        "label": "Target cost",
+        "value": 705000
+      }
+    ]
+  },
+  "diagrams": {
+    "nodes": [
+      {
+        "id": "source-crm",
+        "label": "CRM",
+        "kind": "source",
+        "lane": "source",
+        "metadata": {
+          "owner": "Sales"
+        }
+      },
+      {
+        "id": "pipeline-orders",
+        "label": "Orders pipeline",
+        "kind": "process",
+        "lane": "processing",
+        "metadata": {
+          "platform": "ADF"
+        }
+      },
+      {
+        "id": "target-lakehouse",
+        "label": "Orders lakehouse",
+        "kind": "target",
+        "lane": "target",
+        "metadata": {
+          "platform": "Databricks"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge-1",
+        "from": "source-crm",
+        "to": "pipeline-orders",
+        "label": "Daily extract"
+      },
+      {
+        "id": "edge-2",
+        "from": "pipeline-orders",
+        "to": "target-lakehouse",
+        "label": "Delta write"
+      }
+    ]
+  },
+  "kanban": {
+    "columns": [
+      {
+        "id": "todo",
+        "label": "To do",
+        "statuses": [
+          "Not started",
+          "Draft"
+        ]
+      },
+      {
+        "id": "doing",
+        "label": "Doing",
+        "statuses": [
+          "In progress",
+          "In review"
+        ]
+      },
+      {
+        "id": "done",
+        "label": "Done",
+        "statuses": [
+          "Completed"
+        ]
+      }
+    ],
+    "cards": [
+      {
+        "id": "task-1",
+        "title": "Confirm workspace access",
+        "status": "Completed",
+        "owner": "BU Lead",
+        "badges": [
+          "Access",
+          "BU A"
+        ],
+        "href": "#task-1"
+      },
+      {
+        "id": "task-2",
+        "title": "Review ADF profiler",
+        "status": "In review",
+        "owner": "Data Engineer",
+        "badges": [
+          "Evidence"
+        ],
+        "href": "#task-2"
+      },
+      {
+        "id": "task-3",
+        "title": "Finalise BU report",
+        "status": "Not started",
+        "owner": "Engagement Lead",
+        "badges": [
+          "Output"
+        ],
+        "href": "#task-3"
+      }
+    ]
+  },
+  "tables": {
+    "editable": {
+      "columns": [
+        {
+          "key": "name",
+          "label": "Environment",
+          "required": true
+        },
+        {
+          "key": "type",
+          "label": "Type",
+          "editor": "select"
+        },
+        {
+          "key": "inScope",
+          "label": "In scope",
+          "editor": "checkbox"
+        }
+      ],
+      "rows": [
+        {
+          "id": "env-1",
+          "name": "Production",
+          "type": "Production",
+          "inScope": true
+        },
+        {
+          "id": "env-2",
+          "name": "Development",
+          "type": "Development",
+          "inScope": true
+        }
+      ]
+    },
+    "readOnly": {
+      "columns": [
+        {
+          "key": "resource",
+          "label": "Resource"
+        },
+        {
+          "key": "count",
+          "label": "Count",
+          "align": "right"
+        },
+        {
+          "key": "status",
+          "label": "Status"
+        }
+      ],
+      "rows": [
+        {
+          "resource": "Pipelines",
+          "count": 14,
+          "status": "Reviewed"
+        },
+        {
+          "resource": "Tables",
+          "count": 186,
+          "status": "In review"
+        }
+      ]
+    }
+  },
+  "toolMetadata": {
+    "riceDefinitions": [
+      {
+        "id": "reach",
+        "label": "Reach",
+        "min": 1,
+        "max": 10,
+        "description": "Relative breadth of benefit"
+      }
+    ],
+    "adfActivityFactors": [
+      {
+        "activityType": "Copy",
+        "factor": 1
+      },
+      {
+        "activityType": "Data Flow",
+        "factor": 3
+      },
+      {
+        "activityType": "Databricks Notebook",
+        "factor": 4
+      }
+    ],
+    "statuses": [
+      {
+        "id": "not-started",
+        "label": "Not started",
+        "order": 10
+      },
+      {
+        "id": "in-review",
+        "label": "In review",
+        "order": 40
+      },
+      {
+        "id": "completed",
+        "label": "Completed",
+        "order": 60
+      }
+    ],
+    "technologyMappings": [
+      {
+        "source": "Azure Data Factory",
+        "target": "AWS Step Functions",
+        "priority": "Review",
+        "rationale": "Pattern-dependent mapping"
+      }
+    ]
+  },
+  "accessConfirmation": {
+    "businessUnitId": "bu-template",
+    "environments": [
+      {
+        "id": "env-prod",
+        "name": "Production",
+        "databricksConfirmed": true,
+        "azureConfirmed": true,
+        "confirmedBy": "BU Lead",
+        "confirmedAt": "2026-08-01T09:30:00Z",
+        "analysisTest": {
+          "status": "Working",
+          "testedBy": "Analyst",
+          "testedAt": "2026-08-02T10:15:00Z",
+          "notes": "Read-only access verified."
+        }
+      },
+      {
+        "id": "env-dev",
+        "name": "Development",
+        "databricksConfirmed": true,
+        "azureConfirmed": false,
+        "confirmedBy": "BU Lead",
+        "confirmedAt": "2026-08-01T09:35:00Z",
+        "analysisTest": {
+          "status": "Issue",
+          "notes": "Azure subscription role pending."
+        }
+      }
+    ]
+  },
+  "documentFeedback": {
+    "document": {
+      "key": "bu-tech-report",
+      "title": "BU Technical Report",
+      "version": 3,
+      "status": "In review"
+    },
+    "items": [
+      {
+        "id": "feedback-1",
+        "sectionKey": "executive-summary",
+        "author": "Reviewer",
+        "comment": "Add the production cutover dependency.",
+        "status": "Changes requested",
+        "createdAt": "2026-08-03T12:00:00Z"
+      },
+      {
+        "id": "feedback-2",
+        "sectionKey": "metadata-review",
+        "author": "Report Author",
+        "comment": "Dependency added with evidence link.",
+        "status": "Resolved",
+        "createdAt": "2026-08-04T15:20:00Z"
+      }
+    ]
+  },
+  "questionnaire": {
+    "id": "questionnaire-template",
+    "title": "Migration discovery questionnaire",
+    "steps": [
+      {
+        "id": "context",
+        "title": "Context",
+        "questions": [
+          {
+            "id": "criticality",
+            "label": "How critical is this workload?",
+            "type": "select",
+            "options": [
+              "Low",
+              "Medium",
+              "High"
+            ],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "constraints",
+        "title": "Constraints",
+        "questions": [
+          {
+            "id": "freeze-window",
+            "label": "Describe change-freeze windows",
+            "type": "textarea"
+          },
+          {
+            "id": "pii",
+            "label": "Contains personal data",
+            "type": "boolean"
+          }
+        ]
+      },
+      {
+        "id": "review",
+        "title": "Review and submit",
+        "questions": []
+      }
+    ],
+    "answers": {
+      "criticality": "High",
+      "freeze-window": "No production changes during month-end close.",
+      "pii": true
+    }
+  },
+  "metadataResults": {
+    "summary": {
+      "resources": 128,
+      "workspaces": 3,
+      "tables": 186,
+      "columns": 2410,
+      "pipelines": 14,
+      "warnings": 4
+    },
+    "resources": [
+      {
+        "id": "resource-1",
+        "type": "databricks_cluster",
+        "name": "shared-etl",
+        "environment": "Production",
+        "attributes": {
+          "runtime": "14.3 LTS",
+          "policy": "etl-standard"
+        }
+      },
+      {
+        "id": "resource-2",
+        "type": "databricks_job",
+        "name": "daily-orders",
+        "environment": "Production",
+        "attributes": {
+          "schedule": "0 3 * * *",
+          "tasks": 4
+        }
+      }
+    ],
+    "bindings": [
+      {
+        "catalog": "sales",
+        "workspace": "prod-analytics",
+        "bindingType": "READ_WRITE",
+        "owner": "data-platform"
+      }
+    ]
+  },
+  "adfPipeline": {
+    "pipeline": {
+      "id": "pipeline-orders",
+      "name": "pl_orders_daily",
+      "environment": "Production",
+      "complexityScore": 18
+    },
+    "activities": [
+      {
+        "id": "extract",
+        "name": "Extract orders",
+        "type": "Copy",
+        "level": 0,
+        "source": "CRM Orders",
+        "target": "Landing/orders"
+      },
+      {
+        "id": "transform",
+        "name": "Transform orders",
+        "type": "Databricks Notebook",
+        "level": 1,
+        "notebook": "/Shared/orders_transform"
+      },
+      {
+        "id": "publish",
+        "name": "Publish marts",
+        "type": "Copy",
+        "level": 2,
+        "source": "Delta/orders",
+        "target": "SQL/orders_mart"
+      }
+    ],
+    "dependencies": [
+      {
+        "from": "extract",
+        "to": "transform",
+        "condition": "Succeeded"
+      },
+      {
+        "from": "transform",
+        "to": "publish",
+        "condition": "Succeeded"
+      }
+    ],
+    "activityTypeSummary": [
+      {
+        "label": "Copy",
+        "count": 8,
+        "complexity": 8
+      },
+      {
+        "label": "Databricks Notebook",
+        "count": 2,
+        "complexity": 8
+      },
+      {
+        "label": "Lookup",
+        "count": 2,
+        "complexity": 2
+      }
+    ]
+  },
+  "buComplexity": {
+    "businessUnit": {
+      "id": "bu-template",
+      "name": "Commerce Analytics"
+    },
+    "sizing": {
+      "dataSizeTb": 12.4,
+      "tableCount": 186,
+      "workspaceCount": 3,
+      "sizeScore": 3,
+      "sizeBand": "Medium"
+    },
+    "factors": [
+      {
+        "id": "criticality",
+        "label": "Business criticality",
+        "value": "High",
+        "score": 4,
+        "evidence": "Month-end reporting dependency"
+      },
+      {
+        "id": "governance",
+        "label": "Governance complexity",
+        "value": "Medium",
+        "score": 3,
+        "evidence": "Personal data and regional controls"
+      },
+      {
+        "id": "adf",
+        "label": "ADF complexity",
+        "value": "Medium",
+        "score": 3,
+        "evidence": "18 weighted activity points"
+      }
+    ],
+    "result": {
+      "complexityScore": 10,
+      "complexityBand": "High",
+      "effort": 30
+    }
+  },
+  "environmentRationalisation": {
+    "rows": [
+      {
+        "id": "env-prod",
+        "currentName": "Production",
+        "action": "Migrate",
+        "targetName": "Production AWS",
+        "rationale": "Retain isolated production boundary",
+        "status": "Ready"
+      },
+      {
+        "id": "env-test",
+        "currentName": "Test",
+        "action": "Merge",
+        "mergeTargetId": "env-dev",
+        "targetName": "Non-production AWS",
+        "rationale": "Consolidate low-utilisation workspaces",
+        "status": "Review"
+      },
+      {
+        "id": "env-legacy",
+        "currentName": "Legacy Sandbox",
+        "action": "Decommission",
+        "targetName": "",
+        "rationale": "No active workloads",
+        "status": "Review"
+      }
+    ],
+    "topology": {
+      "account": "aws-account-analytics",
+      "environments": [
+        {
+          "id": "target-prod",
+          "name": "Production AWS",
+          "type": "Production"
+        },
+        {
+          "id": "target-nonprod",
+          "name": "Non-production AWS",
+          "type": "Non-production"
+        }
+      ]
+    }
+  },
+  "environmentEvidenceMatrix": {
+    "environments": [
+      {
+        "id": "env-prod",
+        "name": "Production"
+      },
+      {
+        "id": "env-dev",
+        "name": "Development"
+      }
+    ],
+    "groups": [
+      {
+        "id": "metadata",
+        "label": "Metadata",
+        "items": [
+          {
+            "id": "terraform",
+            "label": "Terraform and Databricks metadata",
+            "statuses": {
+              "env-prod": "Submitted",
+              "env-dev": "Missing"
+            }
+          },
+          {
+            "id": "adf",
+            "label": "ADF profiler",
+            "statuses": {
+              "env-prod": "Reviewed",
+              "env-dev": "Not applicable"
+            }
+          }
+        ]
+      },
+      {
+        "id": "access",
+        "label": "Access",
+        "items": [
+          {
+            "id": "access-confirm",
+            "label": "Access confirmation",
+            "statuses": {
+              "env-prod": "Confirmed",
+              "env-dev": "Partial"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "evidenceReviewQueue": {
+    "filters": {
+      "status": "All",
+      "environment": "All",
+      "artifactType": "All"
+    },
+    "items": [
+      {
+        "id": "review-1",
+        "artifactType": "Upload",
+        "title": "Production metadata export",
+        "environments": [
+          "Production"
+        ],
+        "status": "Accepted",
+        "confidence": "High",
+        "reviewer": "Data Engineer",
+        "notes": "Resource inventory parsed successfully."
+      },
+      {
+        "id": "review-2",
+        "artifactType": "Questionnaire",
+        "title": "Product questionnaire",
+        "environments": [
+          "Production",
+          "Development"
+        ],
+        "status": "More info needed",
+        "confidence": "Medium",
+        "followUpQuestion": "Confirm the month-end freeze dates.",
+        "buAnswer": "Freeze is business days 1-3."
+      }
+    ]
+  },
+  "finalBuReport": {
+    "report": {
+      "id": "report-bu-template",
+      "businessUnitId": "bu-template",
+      "title": "Commerce Analytics Technical Report",
+      "version": 4,
+      "status": "In review",
+      "approvalStatus": "Pending"
+    },
+    "sections": [
+      {
+        "key": "executive-summary",
+        "title": "Executive summary",
+        "body": "Migration is feasible with a controlled month-end cutover.",
+        "reviewStatus": "Approved",
+        "sourceTasks": [
+          "BU sizing",
+          "Evidence review"
+        ]
+      },
+      {
+        "key": "environment-rationalisation",
+        "title": "Environment rationalisation",
+        "body": "Retain production and merge non-production estates.",
+        "reviewStatus": "Changes requested",
+        "sourceTasks": [
+          "Environment rationalisation"
+        ]
+      },
+      {
+        "key": "metadata-review",
+        "title": "Metadata review",
+        "body": "Inventory coverage is sufficient; four parsing warnings remain.",
+        "reviewStatus": "In review",
+        "sourceTasks": [
+          "Metadata review"
+        ]
+      }
+    ],
+    "feedback": [
+      {
+        "id": "report-feedback-1",
+        "sectionKey": "environment-rationalisation",
+        "comment": "Name the target non-production workspace.",
+        "status": "Open"
+      }
+    ],
+    "lifecycle": [
+      "Draft",
+      "In review",
+      "Ready to finalise",
+      "Finalised",
+      "Approved"
+    ]
+  },
+  "decision": {
+    "summary": {
+      "recommendation": "Proceed with conditions",
+      "confidence": "Medium",
+      "totalFiveYearSaving": 1240000,
+      "migrationCost": 390000,
+      "netSaving": 850000
+    },
+    "businessUnits": [
+      {
+        "id": "bu-a",
+        "name": "Commerce Analytics",
+        "action": "Migrate",
+        "riceScore": 7.8,
+        "readiness": "Ready with conditions",
+        "fiveYearNetSaving": 460000
+      },
+      {
+        "id": "bu-b",
+        "name": "Operations Reporting",
+        "action": "Replatform",
+        "riceScore": 6.2,
+        "readiness": "Needs evidence",
+        "fiveYearNetSaving": 270000
+      },
+      {
+        "id": "bu-c",
+        "name": "Legacy Insights",
+        "action": "Decommission",
+        "riceScore": 4.1,
+        "readiness": "Decision required",
+        "fiveYearNetSaving": 120000
+      }
+    ],
+    "openDecisions": [
+      {
+        "id": "decision-1",
+        "title": "Confirm identity integration",
+        "owner": "Security Lead",
+        "dueDate": "2026-08-12",
+        "priority": "High",
+        "status": "Open"
+      }
+    ]
+  },
+  "dataLineage": {
+    "nodes": [
+      {
+        "id": "crm-orders",
+        "kind": "source",
+        "label": "CRM Orders",
+        "evidenceId": "review-1"
+      },
+      {
+        "id": "adf-extract",
+        "kind": "activity",
+        "label": "ADF Extract Orders",
+        "pipelineId": "pipeline-orders"
+      },
+      {
+        "id": "dbx-transform",
+        "kind": "databricks",
+        "label": "Orders Transform Notebook",
+        "notebookPath": "/Shared/orders_transform"
+      },
+      {
+        "id": "orders-mart",
+        "kind": "target",
+        "label": "Orders Mart",
+        "catalog": "sales",
+        "schema": "reporting"
+      }
+    ],
+    "edges": [
+      {
+        "from": "crm-orders",
+        "to": "adf-extract",
+        "label": "read"
+      },
+      {
+        "from": "adf-extract",
+        "to": "dbx-transform",
+        "label": "invoke"
+      },
+      {
+        "from": "dbx-transform",
+        "to": "orders-mart",
+        "label": "write"
+      }
+    ],
+    "caveats": [
+      "Column-level lineage is not included in the source extract."
+    ]
+  },
+  "doraMetrics": {
+    "service": "Reusable Component Platform",
+    "summary": {
+      "trueMetricCount": 2,
+      "proxyMetricCount": 2,
+      "missingMetricCount": 1
+    },
+    "metrics": [
+      {
+        "id": "deployment-frequency",
+        "name": "Deployment frequency",
+        "group": "Throughput",
+        "value": 5.2,
+        "unit": "deployments/week",
+        "status": "true",
+        "confidence": "high",
+        "dashboard": {
+          "band": "high",
+          "tone": "good",
+          "leverPosition": 84
+        }
+      },
+      {
+        "id": "change-lead-time",
+        "name": "Change lead time",
+        "group": "Throughput",
+        "value": 18,
+        "unit": "hours",
+        "status": "true",
+        "confidence": "medium",
+        "dashboard": {
+          "band": "medium",
+          "tone": "watch",
+          "leverPosition": 52
+        }
+      },
+      {
+        "id": "failed-deployment-recovery-time",
+        "name": "Failed deployment recovery time",
+        "group": "Instability",
+        "value": null,
+        "unit": "hours",
+        "status": "missing",
+        "confidence": "none",
+        "requiredData": [
+          "incident_events",
+          "deployment_events"
+        ]
+      }
+    ]
+  },
+  "testCoverage": {
+    "summary": {
+      "coveragePercent": 80,
+      "suiteCount": 5,
+      "passingCount": 4,
+      "gapCount": 2
+    },
+    "suites": [
+      {
+        "id": "tier1",
+        "name": "Tier 1 static checks",
+        "command": "npm run test:tier1",
+        "status": "Passing",
+        "cadence": "Every change",
+        "coverage": "Static UI, docs, security and contracts"
+      },
+      {
+        "id": "tier2",
+        "name": "Tier 2 browser smoke",
+        "command": "npm run test:tier2",
+        "status": "Available",
+        "cadence": "UI changes",
+        "coverage": "Browser behaviour"
+      },
+      {
+        "id": "tier3",
+        "name": "Tier 3 server smoke",
+        "command": "npm run test:tier3",
+        "status": "Available",
+        "cadence": "API/data changes",
+        "coverage": "Persistence and API flows"
+      }
+    ],
+    "coverageAreas": [
+      {
+        "id": "ui",
+        "area": "Static UI and accessibility",
+        "covered": true,
+        "evidence": "tools/check-static.cjs",
+        "scope": "HTML, routes and accessibility smoke"
+      },
+      {
+        "id": "api",
+        "area": "Server/API",
+        "covered": true,
+        "evidence": "tools/run-server-smoke.cjs",
+        "scope": "Routes and persistence"
+      },
+      {
+        "id": "visual",
+        "area": "Visual regression",
+        "covered": false,
+        "evidence": "",
+        "scope": "Component screenshots across themes"
+      }
+    ]
+  }
+}

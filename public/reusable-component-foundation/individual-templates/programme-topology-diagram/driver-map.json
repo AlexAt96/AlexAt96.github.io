@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "programme-topology-diagram",
+  "purpose": "Show current or proposed environment topology across business units.",
+  "drivers": [
+    {
+      "name": "renderProgramTopologyDiagram",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderProgramTopologyDiagram(",
+      "startLine": 17583,
+      "endLine": 17597,
+      "codeFile": "app--renderProgramTopologyDiagram.reference.js"
+    }
+  ]
+}

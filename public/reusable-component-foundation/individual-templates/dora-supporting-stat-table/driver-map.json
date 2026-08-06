@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "dora-supporting-stat-table",
+  "purpose": "Show the evidence and supporting counts behind one DORA metric.",
+  "drivers": [
+    {
+      "name": "renderDoraStatTable",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function renderDoraStatTable(",
+      "startLine": 8208,
+      "endLine": 8218,
+      "codeFile": "interactive-system-map--renderDoraStatTable.reference.html"
+    },
+    {
+      "name": "doraMissingDataSummary",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function doraMissingDataSummary(",
+      "startLine": 8288,
+      "endLine": 8296,
+      "codeFile": "interactive-system-map--doraMissingDataSummary.reference.html"
+    }
+  ]
+}

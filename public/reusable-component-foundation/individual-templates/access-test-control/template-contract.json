@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0",
+  "id": "access-test-control",
+  "capabilityId": "access-confirmation-flow",
+  "title": "Access test and confirmation control",
+  "layer": "primitive",
+  "purpose": "Record whether analysis access works, has an issue or remains untested, then show save confirmation.",
+  "drivers": [
+    {
+      "name": "renderEnvironmentAccessTestControls",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEnvironmentAccessTestControls(",
+      "startLine": 8379,
+      "endLine": 8396,
+      "codeFile": "app--renderEnvironmentAccessTestControls.reference.js"
+    },
+    {
+      "name": "getEnvironmentAccessTestSummary",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getEnvironmentAccessTestSummary(",
+      "startLine": 8370,
+      "endLine": 8377,
+      "codeFile": "app--getEnvironmentAccessTestSummary.reference.js"
+    },
+    {
+      "name": "applyEnvironmentAccessSaveResult",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function applyEnvironmentAccessSaveResult(",
+      "startLine": 40193,
+      "endLine": 40202,
+      "codeFile": "app--applyEnvironmentAccessSaveResult.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU",
+    "Environment",
+    "Existing access test"
+  ],
+  "outputs": [
+    "Working/issue result",
+    "Notes",
+    "Saved confirmation"
+  ],
+  "behaviour": [
+    "Record whether analysis access works, has an issue or remains untested, then show save confirmation.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [
+    "PUT /api/business-units/:businessUnitId/environment-access-test"
+  ],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Access confirmation and analysis verification",
+  "templateDataPath": "template-data/template-data.json#accessConfirmation",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/05-collection-workflows.css",
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "not confirmed",
+    "partially confirmed",
+    "confirmed",
+    "analysis untested",
+    "working",
+    "issue",
+    "saving",
+    "saved"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Working/issue result. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

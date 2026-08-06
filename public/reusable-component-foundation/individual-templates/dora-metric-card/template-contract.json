@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "1.0",
+  "id": "dora-metric-card",
+  "capabilityId": "dora-metrics-screen",
+  "title": "DORA metric card and gauge",
+  "layer": "primitive",
+  "purpose": "Show one DORA value, true/proxy/missing status, confidence and low-medium-high gauge.",
+  "drivers": [
+    {
+      "name": "renderDoraMetricCard",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function renderDoraMetricCard(",
+      "startLine": 8152,
+      "endLine": 8171,
+      "codeFile": "interactive-system-map--renderDoraMetricCard.reference.html"
+    },
+    {
+      "name": "doraGaugeModel",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function doraGaugeModel(",
+      "startLine": 8173,
+      "endLine": 8191,
+      "codeFile": "interactive-system-map--doraGaugeModel.reference.html"
+    },
+    {
+      "name": "doraMetricBoundaryDefaults",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function doraMetricBoundaryDefaults(",
+      "startLine": 8220,
+      "endLine": 8246,
+      "codeFile": "interactive-system-map--doraMetricBoundaryDefaults.reference.html"
+    },
+    {
+      "name": "doraBandForMetric",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function doraBandForMetric(",
+      "startLine": 8248,
+      "endLine": 8255,
+      "codeFile": "interactive-system-map--doraBandForMetric.reference.html"
+    }
+  ],
+  "inputs": [
+    "DORA metric definition/result"
+  ],
+  "outputs": [
+    "Metric card",
+    "Gauge position/band/tone"
+  ],
+  "behaviour": [
+    "Show one DORA value, true/proxy/missing status, confidence and low-medium-high gauge.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "DORA metrics dashboard",
+  "templateDataPath": "template-data/template-data.json#doraMetrics",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "docs/reports/interactive-system-map.html"
+  ],
+  "inheritedStates": [
+    "true metric",
+    "proxy",
+    "missing data",
+    "good",
+    "watch",
+    "risk",
+    "low confidence",
+    "high confidence"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Metric card. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

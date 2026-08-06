@@ -1,0 +1,41 @@
+{
+  "businessUnit": {
+    "id": "bu-template",
+    "name": "Commerce Analytics"
+  },
+  "sizing": {
+    "dataSizeTb": 12.4,
+    "tableCount": 186,
+    "workspaceCount": 3,
+    "sizeScore": 3,
+    "sizeBand": "Medium"
+  },
+  "factors": [
+    {
+      "id": "criticality",
+      "label": "Business criticality",
+      "value": "High",
+      "score": 4,
+      "evidence": "Month-end reporting dependency"
+    },
+    {
+      "id": "governance",
+      "label": "Governance complexity",
+      "value": "Medium",
+      "score": 3,
+      "evidence": "Personal data and regional controls"
+    },
+    {
+      "id": "adf",
+      "label": "ADF complexity",
+      "value": "Medium",
+      "score": 3,
+      "evidence": "18 weighted activity points"
+    }
+  ],
+  "result": {
+    "complexityScore": 10,
+    "complexityBand": "High",
+    "effort": 30
+  }
+}

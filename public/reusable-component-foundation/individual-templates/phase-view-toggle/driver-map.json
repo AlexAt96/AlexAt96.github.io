@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "phase-view-toggle",
+  "purpose": "Switch the same phase work between Kanban and list presentation while preserving user preference.",
+  "drivers": [
+    {
+      "name": "renderPhaseDashboardViewToggle",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderPhaseDashboardViewToggle(",
+      "startLine": 3310,
+      "endLine": 3317,
+      "codeFile": "app--renderPhaseDashboardViewToggle.reference.js"
+    },
+    {
+      "name": "setPhaseDashboardView",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function setPhaseDashboardView(",
+      "startLine": 3953,
+      "endLine": 3970,
+      "codeFile": "app--setPhaseDashboardView.reference.js"
+    }
+  ]
+}

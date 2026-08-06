@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "dora-dashboard",
+  "purpose": "Compose summary counts, metric cards, supporting statistics and data-contract table.",
+  "drivers": [
+    {
+      "name": "renderDoraMetricsReport",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function renderDoraMetricsReport(",
+      "startLine": 8102,
+      "endLine": 8150,
+      "codeFile": "interactive-system-map--renderDoraMetricsReport.reference.html"
+    }
+  ]
+}

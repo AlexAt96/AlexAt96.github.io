@@ -1,0 +1,51 @@
+{
+  "service": "Reusable Component Platform",
+  "summary": {
+    "trueMetricCount": 2,
+    "proxyMetricCount": 2,
+    "missingMetricCount": 1
+  },
+  "metrics": [
+    {
+      "id": "deployment-frequency",
+      "name": "Deployment frequency",
+      "group": "Throughput",
+      "value": 5.2,
+      "unit": "deployments/week",
+      "status": "true",
+      "confidence": "high",
+      "dashboard": {
+        "band": "high",
+        "tone": "good",
+        "leverPosition": 84
+      }
+    },
+    {
+      "id": "change-lead-time",
+      "name": "Change lead time",
+      "group": "Throughput",
+      "value": 18,
+      "unit": "hours",
+      "status": "true",
+      "confidence": "medium",
+      "dashboard": {
+        "band": "medium",
+        "tone": "watch",
+        "leverPosition": 52
+      }
+    },
+    {
+      "id": "failed-deployment-recovery-time",
+      "name": "Failed deployment recovery time",
+      "group": "Instability",
+      "value": null,
+      "unit": "hours",
+      "status": "missing",
+      "confidence": "none",
+      "requiredData": [
+        "incident_events",
+        "deployment_events"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "1.0",
+  "id": "decision-waterfall-chart",
+  "capabilityId": "decision-screen",
+  "title": "Decision waterfall chart",
+  "layer": "composite",
+  "purpose": "Break the scenario into baseline, savings, migration costs and final net position.",
+  "drivers": [
+    {
+      "name": "renderDecisionWaterfallChart",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionWaterfallChart(",
+      "startLine": 27450,
+      "endLine": 27521,
+      "codeFile": "app--renderDecisionWaterfallChart.reference.js"
+    },
+    {
+      "name": "getDecisionWaterfallSteps",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getDecisionWaterfallSteps(",
+      "startLine": 27436,
+      "endLine": 27448,
+      "codeFile": "app--getDecisionWaterfallSteps.reference.js"
+    },
+    {
+      "name": "renderDecisionWaterfallBuContributions",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionWaterfallBuContributions(",
+      "startLine": 27577,
+      "endLine": 27594,
+      "codeFile": "app--renderDecisionWaterfallBuContributions.reference.js"
+    }
+  ],
+  "inputs": [
+    "Scenario summary",
+    "Stacked flag",
+    "Selected BU"
+  ],
+  "outputs": [
+    "Waterfall chart",
+    "Contribution details"
+  ],
+  "behaviour": [
+    "Break the scenario into baseline, savings, migration costs and final net position.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Decision screen and scenario layout",
+  "templateDataPath": "template-data/template-data.json#decision",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/07-outputs-decision.css"
+  ],
+  "inheritedStates": [
+    "baseline",
+    "scenario changed",
+    "unsaved scenario",
+    "recommended",
+    "conditional",
+    "not recommended",
+    "decision ready",
+    "blocked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Waterfall chart. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

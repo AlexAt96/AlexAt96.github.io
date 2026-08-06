@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "1.0",
+  "id": "rationalisation-import-controller",
+  "capabilityId": "environment-rationalisation",
+  "title": "Rationalisation import controller",
+  "layer": "controller",
+  "purpose": "Parse spreadsheet rows, map them into rationalisation records and refresh every diagram.",
+  "drivers": [
+    {
+      "name": "parseEnvironmentRationalisationImportFile",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "async function parseEnvironmentRationalisationImportFile(",
+      "startLine": 40573,
+      "endLine": 40575,
+      "codeFile": "app--parseEnvironmentRationalisationImportFile.reference.js"
+    },
+    {
+      "name": "applyEnvironmentRationalisationImportRows",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function applyEnvironmentRationalisationImportRows(",
+      "startLine": 36850,
+      "endLine": 36873,
+      "codeFile": "app--applyEnvironmentRationalisationImportRows.reference.js"
+    },
+    {
+      "name": "refreshProposedTopologyDiagrams",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function refreshProposedTopologyDiagrams(",
+      "startLine": 36905,
+      "endLine": 36910,
+      "codeFile": "app--refreshProposedTopologyDiagrams.reference.js"
+    }
+  ],
+  "inputs": [
+    "Uploaded spreadsheet",
+    "Current form"
+  ],
+  "outputs": [
+    "Mapped rows",
+    "Validation errors",
+    "Diagram refresh"
+  ],
+  "behaviour": [
+    "Parse spreadsheet rows, map them into rationalisation records and refresh every diagram.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Environment rationalisation and proposed topology",
+  "templateDataPath": "template-data/template-data.json#environmentRationalisation",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "current",
+    "migrate",
+    "merge",
+    "decommission",
+    "target incomplete",
+    "diagram refreshed",
+    "saved"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Mapped rows. Show the state change immediately."
+    },
+    {
+      "id": "edge-case",
+      "title": "Edge case",
+      "instruction": "Run an invalid, missing-data or boundary input and expose the structured result/error."
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0",
+  "id": "decision-artifact-hub",
+  "capabilityId": "decision-screen",
+  "title": "Decision artifact hub",
+  "layer": "composite",
+  "purpose": "Collect report, evidence and source links needed for decision playback.",
+  "drivers": [
+    {
+      "name": "renderDecisionArtifactHub",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionArtifactHub(",
+      "startLine": 27925,
+      "endLine": 27975,
+      "codeFile": "app--renderDecisionArtifactHub.reference.js"
+    },
+    {
+      "name": "renderDecisionArtifactsTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionArtifactsTable(",
+      "startLine": 27977,
+      "endLine": 28004,
+      "codeFile": "app--renderDecisionArtifactsTable.reference.js"
+    },
+    {
+      "name": "renderDecisionTableSection",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionTableSection(",
+      "startLine": 27882,
+      "endLine": 27887,
+      "codeFile": "app--renderDecisionTableSection.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU decision models",
+    "Scenario summary"
+  ],
+  "outputs": [
+    "Artifact navigation",
+    "Decision option rows"
+  ],
+  "behaviour": [
+    "Collect report, evidence and source links needed for decision playback.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Decision screen and scenario layout",
+  "templateDataPath": "template-data/template-data.json#decision",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/07-outputs-decision.css"
+  ],
+  "inheritedStates": [
+    "baseline",
+    "scenario changed",
+    "unsaved scenario",
+    "recommended",
+    "conditional",
+    "not recommended",
+    "decision ready",
+    "blocked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Artifact navigation. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

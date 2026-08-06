@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0",
+  "id": "dora-metrics-screen",
+  "title": "DORA metrics dashboard",
+  "requestedCoverage": "DORA metrics",
+  "summary": "Five-metric DORA dashboard with true/proxy/missing status, confidence, low-medium-high gauges, supporting statistics and explicit production-data contracts.",
+  "routes": [
+    "docs/reports/interactive-system-map.html#doraMetrics",
+    "/api/system-map"
+  ],
+  "symbols": [
+    {
+      "file": "docs/reports/interactive-system-map.html",
+      "names": [
+        "normaliseDoraMetrics",
+        "renderDoraMetricsReport",
+        "renderDoraMetricCard",
+        "doraGaugeModel",
+        "renderDoraStatTable",
+        "doraMetricBoundaryDefaults",
+        "doraBandForMetric",
+        "doraMissingDataSummary"
+      ]
+    },
+    {
+      "file": "server/lib/dora-metrics.js",
+      "names": [
+        "buildDoraMetrics"
+      ]
+    }
+  ],
+  "styles": [
+    "docs/reports/interactive-system-map.html"
+  ],
+  "states": [
+    "true metric",
+    "proxy",
+    "missing data",
+    "good",
+    "watch",
+    "risk",
+    "low confidence",
+    "high confidence"
+  ],
+  "dataContracts": [
+    "DORA metric",
+    "dashboard gauge",
+    "deployment event",
+    "change event",
+    "incident event",
+    "service scope",
+    "missing-data contract"
+  ],
+  "templateKey": "doraMetrics",
+  "boundaries": [
+    "DoraDashboard",
+    "MetricCard",
+    "MetricGauge",
+    "MetricStatus",
+    "SupportingStats",
+    "DataContractTable",
+    "MissingDataNotice"
+  ]
+}

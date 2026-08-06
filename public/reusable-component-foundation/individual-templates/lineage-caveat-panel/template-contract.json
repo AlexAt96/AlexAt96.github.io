@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0",
+  "id": "lineage-caveat-panel",
+  "capabilityId": "data-lineage-screen",
+  "title": "Lineage caveat panel",
+  "layer": "primitive",
+  "purpose": "Explain missing, inferred or fallback lineage so the graph is not over-trusted.",
+  "drivers": [
+    {
+      "name": "getAdfLineageCaveats",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getAdfLineageCaveats(",
+      "startLine": 12794,
+      "endLine": 12799,
+      "codeFile": "app--getAdfLineageCaveats.reference.js"
+    }
+  ],
+  "inputs": [
+    "ADF lineage model"
+  ],
+  "outputs": [
+    "Caveat messages"
+  ],
+  "behaviour": [
+    "Explain missing, inferred or fallback lineage so the graph is not over-trusted.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Data lineage and dependency explorer",
+  "templateDataPath": "template-data/template-data.json#dataLineage",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/11-system-map-visuals.css",
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "no lineage",
+    "partial",
+    "complete",
+    "pipeline focus",
+    "activity focus",
+    "source focus",
+    "target focus",
+    "evidence caveat"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Caveat messages. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

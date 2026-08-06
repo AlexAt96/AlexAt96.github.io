@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0",
+  "id": "evidence-progress-bar",
+  "capabilityId": "environment-evidence-matrix",
+  "title": "Evidence progress bar",
+  "layer": "primitive",
+  "purpose": "Show completed versus total evidence requirements with accessible percentage text.",
+  "drivers": [
+    {
+      "name": "renderCollectionEvidenceProgressBar",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderCollectionEvidenceProgressBar(",
+      "startLine": 8890,
+      "endLine": 8910,
+      "codeFile": "app--renderCollectionEvidenceProgressBar.reference.js"
+    },
+    {
+      "name": "formatEvidenceProgressPercent",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function formatEvidenceProgressPercent(",
+      "startLine": 8912,
+      "endLine": 8916,
+      "codeFile": "app--formatEvidenceProgressPercent.reference.js"
+    }
+  ],
+  "inputs": [
+    "Completed count",
+    "Total count",
+    "Size variant"
+  ],
+  "outputs": [
+    "Progress indicator"
+  ],
+  "behaviour": [
+    "Show completed versus total evidence requirements with accessible percentage text.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Environment evidence matrix",
+  "templateDataPath": "template-data/template-data.json#environmentEvidenceMatrix",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/05-collection-workflows.css"
+  ],
+  "inheritedStates": [
+    "missing",
+    "required",
+    "optional",
+    "partial",
+    "submitted",
+    "reviewed",
+    "not applicable"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Progress indicator. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

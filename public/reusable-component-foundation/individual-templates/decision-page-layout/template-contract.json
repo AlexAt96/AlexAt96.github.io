@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "1.0",
+  "id": "decision-page-layout",
+  "capabilityId": "decision-screen",
+  "title": "Decision page layout",
+  "layer": "screen",
+  "purpose": "Compose recommendation, scenario, charts, sequencing, accounting, options and artifact sections.",
+  "drivers": [
+    {
+      "name": "renderDecisionPage",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionPage(",
+      "startLine": 4407,
+      "endLine": 4438,
+      "codeFile": "app--renderDecisionPage.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU decision models",
+    "Saved scenario",
+    "Permissions"
+  ],
+  "outputs": [
+    "Scenario changes",
+    "Save/export actions",
+    "Report navigation"
+  ],
+  "behaviour": [
+    "Compose recommendation, scenario, charts, sequencing, accounting, options and artifact sections.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "decision-recommendation-panel",
+    "decision-scenario-configurator",
+    "decision-savings-chart",
+    "decision-waterfall-chart",
+    "decision-rice-sequencing",
+    "decision-accounting-overview",
+    "decision-artifact-hub"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Decision screen and scenario layout",
+  "templateDataPath": "template-data/template-data.json#decision",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/07-outputs-decision.css"
+  ],
+  "inheritedStates": [
+    "baseline",
+    "scenario changed",
+    "unsaved scenario",
+    "recommended",
+    "conditional",
+    "not recommended",
+    "decision ready",
+    "blocked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Scenario changes. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

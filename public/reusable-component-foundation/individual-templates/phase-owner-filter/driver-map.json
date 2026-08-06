@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "phase-owner-filter",
+  "purpose": "Filter phase work by accountable role or show all owners.",
+  "drivers": [
+    {
+      "name": "renderPhaseDashboardOwnerFilter",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderPhaseDashboardOwnerFilter(",
+      "startLine": 3319,
+      "endLine": 3337,
+      "codeFile": "app--renderPhaseDashboardOwnerFilter.reference.js"
+    },
+    {
+      "name": "getPhaseDashboardOwnerFilter",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getPhaseDashboardOwnerFilter(",
+      "startLine": 3360,
+      "endLine": 3367,
+      "codeFile": "app--getPhaseDashboardOwnerFilter.reference.js"
+    }
+  ]
+}

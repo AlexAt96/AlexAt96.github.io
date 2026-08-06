@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0",
+  "id": "test-coverage-screen",
+  "title": "Test coverage map and quality telemetry",
+  "requestedCoverage": "Test coverage screens",
+  "summary": "Coverage summary cards, suite inventory, cadence/status table, trigger-suite-area diagram and evidence-backed coverage-area gaps.",
+  "routes": [
+    "docs/reports/interactive-system-map.html#testTelemetry",
+    "/api/system-map"
+  ],
+  "symbols": [
+    {
+      "file": "docs/reports/interactive-system-map.html",
+      "names": [
+        "renderTestCoverageDiagram"
+      ]
+    },
+    {
+      "file": "server/lib/repo-quality-metrics.js",
+      "names": [
+        "buildRepoQualityMetrics",
+        "buildTestCoverageAreas",
+        "coverageArea",
+        "testSuite"
+      ]
+    }
+  ],
+  "styles": [
+    "docs/reports/interactive-system-map.html"
+  ],
+  "states": [
+    "covered",
+    "gap",
+    "available",
+    "passing",
+    "failing",
+    "not run",
+    "manual",
+    "automated"
+  ],
+  "dataContracts": [
+    "test telemetry summary",
+    "test suite",
+    "coverage area",
+    "cadence",
+    "trigger",
+    "evidence path",
+    "gap scope"
+  ],
+  "templateKey": "testCoverage",
+  "boundaries": [
+    "CoverageDashboard",
+    "CoverageSummary",
+    "SuiteTable",
+    "CoverageAreaTable",
+    "CoverageMap",
+    "CoverageNode",
+    "GapBadge"
+  ]
+}

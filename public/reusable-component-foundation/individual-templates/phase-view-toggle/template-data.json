@@ -1,0 +1,60 @@
+{
+  "columns": [
+    {
+      "id": "todo",
+      "label": "To do",
+      "statuses": [
+        "Not started",
+        "Draft"
+      ]
+    },
+    {
+      "id": "doing",
+      "label": "Doing",
+      "statuses": [
+        "In progress",
+        "In review"
+      ]
+    },
+    {
+      "id": "done",
+      "label": "Done",
+      "statuses": [
+        "Completed"
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "id": "task-1",
+      "title": "Confirm workspace access",
+      "status": "Completed",
+      "owner": "BU Lead",
+      "badges": [
+        "Access",
+        "BU A"
+      ],
+      "href": "#task-1"
+    },
+    {
+      "id": "task-2",
+      "title": "Review ADF profiler",
+      "status": "In review",
+      "owner": "Data Engineer",
+      "badges": [
+        "Evidence"
+      ],
+      "href": "#task-2"
+    },
+    {
+      "id": "task-3",
+      "title": "Finalise BU report",
+      "status": "Not started",
+      "owner": "Engagement Lead",
+      "badges": [
+        "Output"
+      ],
+      "href": "#task-3"
+    }
+  ]
+}

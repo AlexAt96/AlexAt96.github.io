@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "1.0",
+  "id": "metadata-category-overview",
+  "capabilityId": "metadata-results-screen",
+  "title": "Metadata category overview",
+  "layer": "composite",
+  "purpose": "Combine category statistics and a distribution chart inside an expandable overview.",
+  "drivers": [
+    {
+      "name": "renderMetadataSectionOverview",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMetadataSectionOverview(",
+      "startLine": 14214,
+      "endLine": 14229,
+      "codeFile": "app--renderMetadataSectionOverview.reference.js"
+    },
+    {
+      "name": "renderMetadataReviewDisclosure",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMetadataReviewDisclosure(",
+      "startLine": 14281,
+      "endLine": 14297,
+      "codeFile": "app--renderMetadataReviewDisclosure.reference.js"
+    }
+  ],
+  "inputs": [
+    "title",
+    "statistics",
+    "chart rows",
+    "summary",
+    "detail content"
+  ],
+  "outputs": [
+    "Expanded/collapsed category"
+  ],
+  "behaviour": [
+    "Combine category statistics and a distribution chart inside an expandable overview.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "metadata-bar-chart"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Metadata results and advanced discovery",
+  "templateDataPath": "template-data/template-data.json#metadataResults",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "no metadata",
+    "partial parse",
+    "complete parse",
+    "cross-BU",
+    "BU filtered",
+    "expanded category",
+    "exporting"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Expanded/collapsed category. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

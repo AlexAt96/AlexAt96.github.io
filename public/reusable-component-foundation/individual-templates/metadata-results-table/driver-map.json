@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "metadata-results-table",
+  "purpose": "Render metadata/report rows with a caption, context and stable empty state.",
+  "drivers": [
+    {
+      "name": "renderMetadataTableSection",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMetadataTableSection(",
+      "startLine": 14589,
+      "endLine": 14602,
+      "codeFile": "app--renderMetadataTableSection.reference.js"
+    },
+    {
+      "name": "renderDataDictionaryTableSection",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDataDictionaryTableSection(",
+      "startLine": 6918,
+      "endLine": 6931,
+      "codeFile": "app--renderDataDictionaryTableSection.reference.js"
+    }
+  ]
+}

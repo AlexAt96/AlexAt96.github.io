@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0",
+  "id": "bu-complexity-analysis",
+  "title": "Business-unit sizing and complexity analysis",
+  "requestedCoverage": "BU complexity analysis",
+  "summary": "BU size/complexity scoring, factor controls, calculated bands, ADF contribution, RICE lineage and topology context.",
+  "routes": [
+    "app/document.html?phase=team-analysis&section=bu-sizing-complexity-scoring&bu=:businessUnitId",
+    "/api/business-units/:businessUnitId/sizing-assessment"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "renderBuSizingComplexity",
+        "renderBuComplexityFactorControl",
+        "renderBuNumericComplexityControl",
+        "renderBuCalculatedComplexityControl",
+        "calculateBuSizeBand",
+        "calculateBuComplexityBand",
+        "getComplexityFactorScore",
+        "getBuSizingAdfBand",
+        "getBuSizingAdfScore",
+        "renderBandDefinitionTable",
+        "getRiceScoreLineageTooltip"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "states": [
+    "not assessed",
+    "draft",
+    "calculated",
+    "low",
+    "medium",
+    "high",
+    "very high",
+    "saved",
+    "locked"
+  ],
+  "dataContracts": [
+    "sizing assessment",
+    "complexity factor",
+    "factor option",
+    "derived score",
+    "size band",
+    "complexity band",
+    "ADF contribution"
+  ],
+  "templateKey": "buComplexity",
+  "boundaries": [
+    "ComplexityAssessment",
+    "FactorControl",
+    "NumericMeasure",
+    "CalculatedMeasure",
+    "BandBadge",
+    "ScoreSummary",
+    "DefinitionTable"
+  ]
+}

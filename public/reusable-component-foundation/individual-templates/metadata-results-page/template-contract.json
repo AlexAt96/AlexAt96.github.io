@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0",
+  "id": "metadata-results-page",
+  "capabilityId": "metadata-results-screen",
+  "title": "Metadata results page",
+  "layer": "screen",
+  "purpose": "Compose metadata statistics, category summaries, inventory tables and advanced-discovery navigation.",
+  "drivers": [
+    {
+      "name": "renderMetadataReview",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMetadataReview(",
+      "startLine": 13006,
+      "endLine": 13059,
+      "codeFile": "app--renderMetadataReview.reference.js"
+    },
+    {
+      "name": "getMetadataReviewModel",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getMetadataReviewModel(",
+      "startLine": 14018,
+      "endLine": 14034,
+      "codeFile": "app--getMetadataReviewModel.reference.js"
+    },
+    {
+      "name": "getMetadataReviewSummary",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getMetadataReviewSummary(",
+      "startLine": 14036,
+      "endLine": 14068,
+      "codeFile": "app--getMetadataReviewSummary.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU or cross-BU context",
+    "Parsed metadata tables",
+    "Active tab"
+  ],
+  "outputs": [
+    "Category expansion",
+    "Filter/export/navigation events"
+  ],
+  "behaviour": [
+    "Compose metadata statistics, category summaries, inventory tables and advanced-discovery navigation.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "metadata-summary-cards",
+    "metadata-category-overview",
+    "inventory-resource-table",
+    "unity-catalog-binding-table"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Metadata results and advanced discovery",
+  "templateDataPath": "template-data/template-data.json#metadataResults",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "no metadata",
+    "partial parse",
+    "complete parse",
+    "cross-BU",
+    "BU filtered",
+    "expanded category",
+    "exporting"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Category expansion. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0",
+  "id": "final-bu-report-lifecycle",
+  "title": "Final BU report review, finalise, read and feedback states",
+  "requestedCoverage": "Final BU report: finalise/review plus complete read/feedback state",
+  "summary": "Section-by-section report drafting, source/task links, review controls, client-readable output, completion/approval, export and feedback loops.",
+  "routes": [
+    "app/document.html?phase=team-analysis&section=bu-tech-report-input&bu=:businessUnitId",
+    "app/document.html?phase=outputs&section=bu-tech-report&bu=:businessUnitId",
+    "/api/business-units/:businessUnitId/bu-tech-report",
+    "/api/business-units/:businessUnitId/outputs/approve"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "renderBuTechReportInput",
+        "getBuTechReportModel",
+        "renderBuTechReportInputSection",
+        "renderBuTechReportSummaryTable",
+        "renderBuTechReportEvidenceLinks",
+        "renderBuTechReport",
+        "renderBuTechReportTabs",
+        "renderBuTechReportClientReport",
+        "renderBuTechReportClientSection",
+        "renderBuOutputDocumentFeedbackBanner",
+        "wireBuTechReportActions",
+        "sendBuTechReportSectionFeedback"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/07-outputs-decision.css",
+    "app/styles/04-phase-documents.css"
+  ],
+  "states": [
+    "draft",
+    "review",
+    "changes requested",
+    "ready to finalise",
+    "finalised",
+    "complete read-only",
+    "feedback open",
+    "feedback resolved",
+    "approved"
+  ],
+  "dataContracts": [
+    "report section",
+    "saved narrative",
+    "source task",
+    "review control",
+    "feedback",
+    "approval",
+    "client report",
+    "export metadata"
+  ],
+  "templateKey": "finalBuReport",
+  "boundaries": [
+    "ReportEditor",
+    "ReportSectionEditor",
+    "SourceTaskLink",
+    "ReviewNavigator",
+    "FinaliseAction",
+    "ClientReport",
+    "ReportFeedback",
+    "ApprovalBanner"
+  ]
+}

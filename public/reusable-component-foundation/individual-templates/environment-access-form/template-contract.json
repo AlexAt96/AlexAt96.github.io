@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "1.0",
+  "id": "environment-access-form",
+  "capabilityId": "access-confirmation-flow",
+  "title": "Environment access confirmation form",
+  "layer": "composite",
+  "purpose": "Let a BU confirm Databricks and Azure access per environment and save collection status.",
+  "drivers": [
+    {
+      "name": "renderEnvironmentAccessTask",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEnvironmentAccessTask(",
+      "startLine": 9077,
+      "endLine": 9121,
+      "codeFile": "app--renderEnvironmentAccessTask.reference.js"
+    },
+    {
+      "name": "getEnvironmentAccessConfirmationForRow",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getEnvironmentAccessConfirmationForRow(",
+      "startLine": 8427,
+      "endLine": 8441,
+      "codeFile": "app--getEnvironmentAccessConfirmationForRow.reference.js"
+    },
+    {
+      "name": "getEnvironmentAccessPayload",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getEnvironmentAccessPayload(",
+      "startLine": 40217,
+      "endLine": 40228,
+      "codeFile": "app--getEnvironmentAccessPayload.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU",
+    "Environment/workspace rows",
+    "Saved confirmations"
+  ],
+  "outputs": [
+    "Access confirmation payload",
+    "Save/submit event"
+  ],
+  "behaviour": [
+    "Let a BU confirm Databricks and Azure access per environment and save collection status.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [
+    "PUT /api/business-units/:businessUnitId/environment-access"
+  ],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Access confirmation and analysis verification",
+  "templateDataPath": "template-data/template-data.json#accessConfirmation",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/05-collection-workflows.css",
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "not confirmed",
+    "partially confirmed",
+    "confirmed",
+    "analysis untested",
+    "working",
+    "issue",
+    "saving",
+    "saved"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Access confirmation payload. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

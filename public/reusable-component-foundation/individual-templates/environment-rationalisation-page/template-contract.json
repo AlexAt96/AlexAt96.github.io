@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "1.0",
+  "id": "environment-rationalisation-page",
+  "capabilityId": "environment-rationalisation",
+  "title": "Environment rationalisation page",
+  "layer": "screen",
+  "purpose": "Compose rationalisation inputs, proposed topology and live diagrams for one BU.",
+  "drivers": [
+    {
+      "name": "renderEnvironmentRationalisation",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEnvironmentRationalisation(",
+      "startLine": 20781,
+      "endLine": 20869,
+      "codeFile": "app--renderEnvironmentRationalisation.reference.js"
+    },
+    {
+      "name": "getEnvironmentRationalisationModel",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getEnvironmentRationalisationModel(",
+      "startLine": 21918,
+      "endLine": 21965,
+      "codeFile": "app--getEnvironmentRationalisationModel.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU",
+    "Current environments",
+    "Saved actions",
+    "Proposed topology"
+  ],
+  "outputs": [
+    "Rationalisation save payload",
+    "Import/export events"
+  ],
+  "behaviour": [
+    "Compose rationalisation inputs, proposed topology and live diagrams for one BU.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "proposed-topology-table",
+    "topology-flow-diagram",
+    "topology-structure-diagram",
+    "rationalisation-import-controller"
+  ],
+  "apiEndpoints": [
+    "PUT /api/business-units/:businessUnitId/environment-rationalisation"
+  ],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Environment rationalisation and proposed topology",
+  "templateDataPath": "template-data/template-data.json#environmentRationalisation",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "current",
+    "migrate",
+    "merge",
+    "decommission",
+    "target incomplete",
+    "diagram refreshed",
+    "saved"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Rationalisation save payload. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

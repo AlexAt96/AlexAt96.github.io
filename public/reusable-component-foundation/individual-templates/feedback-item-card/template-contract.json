@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "1.0",
+  "id": "feedback-item-card",
+  "capabilityId": "document-feedback-loop",
+  "title": "Feedback item card",
+  "layer": "primitive",
+  "purpose": "Render one feedback request with source, author, status and destination task link.",
+  "drivers": [
+    {
+      "name": "renderFeedbackSection",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderFeedbackSection(",
+      "startLine": 4262,
+      "endLine": 4278,
+      "codeFile": "app--renderFeedbackSection.reference.js"
+    },
+    {
+      "name": "renderFeedbackItem",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderFeedbackItem(",
+      "startLine": 4280,
+      "endLine": 4300,
+      "codeFile": "app--renderFeedbackItem.reference.js"
+    }
+  ],
+  "inputs": [
+    "Feedback item"
+  ],
+  "outputs": [
+    "Open source/task event"
+  ],
+  "behaviour": [
+    "Render one feedback request with source, author, status and destination task link.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Document review and feedback loop",
+  "templateDataPath": "template-data/template-data.json#documentFeedback",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/04-phase-documents.css",
+    "app/styles/07-outputs-decision.css"
+  ],
+  "inheritedStates": [
+    "no feedback",
+    "open feedback",
+    "changes requested",
+    "author response",
+    "resolved",
+    "reopened"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Open source/task event. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "businessUnitId": "bu-template",
+  "environments": [
+    {
+      "id": "env-prod",
+      "name": "Production",
+      "databricksConfirmed": true,
+      "azureConfirmed": true,
+      "confirmedBy": "BU Lead",
+      "confirmedAt": "2026-08-01T09:30:00Z",
+      "analysisTest": {
+        "status": "Working",
+        "testedBy": "Analyst",
+        "testedAt": "2026-08-02T10:15:00Z",
+        "notes": "Read-only access verified."
+      }
+    },
+    {
+      "id": "env-dev",
+      "name": "Development",
+      "databricksConfirmed": true,
+      "azureConfirmed": false,
+      "confirmedBy": "BU Lead",
+      "confirmedAt": "2026-08-01T09:35:00Z",
+      "analysisTest": {
+        "status": "Issue",
+        "notes": "Azure subscription role pending."
+      }
+    }
+  ]
+}

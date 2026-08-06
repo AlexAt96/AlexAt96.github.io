@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "1.0",
+  "id": "source-consumer-dependency-map",
+  "capabilityId": "diagram-primitives",
+  "title": "Source/consumer dependency map",
+  "layer": "composite",
+  "purpose": "Turn source/consumer tracker rows into an interactive dependency diagram.",
+  "drivers": [
+    {
+      "name": "renderSourceConsumerDependencyDiagram",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderSourceConsumerDependencyDiagram(",
+      "startLine": 15235,
+      "endLine": 15255,
+      "codeFile": "app--renderSourceConsumerDependencyDiagram.reference.js"
+    },
+    {
+      "name": "renderSourceConsumerDependencyDiagramContent",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderSourceConsumerDependencyDiagramContent(",
+      "startLine": 15302,
+      "endLine": 15313,
+      "codeFile": "app--renderSourceConsumerDependencyDiagramContent.reference.js"
+    }
+  ],
+  "inputs": [
+    "Source/consumer rows",
+    "BU context"
+  ],
+  "outputs": [
+    "Dependency graph",
+    "Node focus events"
+  ],
+  "behaviour": [
+    "Turn source/consumer tracker rows into an interactive dependency diagram.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "diagram-toolbar"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Diagram and dependency-map primitives",
+  "templateDataPath": "template-data/template-data.json#diagrams",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/11-system-map-visuals.css"
+  ],
+  "inheritedStates": [
+    "empty",
+    "partial",
+    "complete",
+    "selected node",
+    "focused edge",
+    "zoomed",
+    "exported"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Dependency graph. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

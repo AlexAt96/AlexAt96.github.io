@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0",
+  "id": "evidence-review-page",
+  "capabilityId": "evidence-review-queue",
+  "title": "Evidence review page",
+  "layer": "screen",
+  "purpose": "Compose the review queue, counts, filters, rows and review modal for one BU.",
+  "drivers": [
+    {
+      "name": "renderEvidenceReview",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEvidenceReview(",
+      "startLine": 10151,
+      "endLine": 10206,
+      "codeFile": "app--renderEvidenceReview.reference.js"
+    },
+    {
+      "name": "getEvidenceReviewDocumentsForBu",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getEvidenceReviewDocumentsForBu(",
+      "startLine": 10447,
+      "endLine": 10479,
+      "codeFile": "app--getEvidenceReviewDocumentsForBu.reference.js"
+    },
+    {
+      "name": "getEvidenceReviewAppArtifactsForBu",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getEvidenceReviewAppArtifactsForBu(",
+      "startLine": 10510,
+      "endLine": 10624,
+      "codeFile": "app--getEvidenceReviewAppArtifactsForBu.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU",
+    "Upload versions",
+    "App-created artifacts",
+    "Existing reviews"
+  ],
+  "outputs": [
+    "Review selection",
+    "Filter changes"
+  ],
+  "behaviour": [
+    "Compose the review queue, counts, filters, rows and review modal for one BU.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "evidence-review-row",
+    "evidence-review-modal",
+    "evidence-follow-up-summary"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Evidence review queue",
+  "templateDataPath": "template-data/template-data.json#evidenceReviewQueue",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/05-collection-workflows.css"
+  ],
+  "inheritedStates": [
+    "not reviewed",
+    "in review",
+    "accepted",
+    "question raised",
+    "more info needed",
+    "further investigation",
+    "confirmed",
+    "rejected"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Review selection. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

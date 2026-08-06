@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "id": "compact-readonly-table",
+  "capabilityId": "data-tables-input-and-rendering",
+  "title": "Compact read-only table",
+  "layer": "primitive",
+  "purpose": "Render a captioned compact table for calculation references and report summaries.",
+  "drivers": [
+    {
+      "name": "renderMiniTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMiniTable(",
+      "startLine": 16976,
+      "endLine": 16978,
+      "codeFile": "app--renderMiniTable.reference.js"
+    }
+  ],
+  "inputs": [
+    "caption",
+    "headers",
+    "rows"
+  ],
+  "outputs": [
+    "Read-only table markup"
+  ],
+  "behaviour": [
+    "Render a captioned compact table for calculation references and report summaries.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Editable and read-only data tables",
+  "templateDataPath": "template-data/template-data.json#tables",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/01-foundation.css",
+    "app/styles/05-collection-workflows.css",
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "empty",
+    "view",
+    "edit",
+    "row added",
+    "row copied",
+    "row removed",
+    "validation error",
+    "import preview",
+    "locked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Read-only table markup. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

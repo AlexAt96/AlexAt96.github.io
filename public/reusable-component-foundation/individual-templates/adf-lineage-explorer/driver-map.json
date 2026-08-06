@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "adf-lineage-explorer",
+  "purpose": "Compose pipeline, touchpoint and full-lineage views with focus/navigation state.",
+  "drivers": [
+    {
+      "name": "getAdfLineageModel",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getAdfLineageModel(",
+      "startLine": 11543,
+      "endLine": 11770,
+      "codeFile": "app--getAdfLineageModel.reference.js"
+    },
+    {
+      "name": "renderAdfLineageExplorer",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfLineageExplorer(",
+      "startLine": 11983,
+      "endLine": 12014,
+      "codeFile": "app--renderAdfLineageExplorer.reference.js"
+    },
+    {
+      "name": "renderAdfLineageExplorerLaunch",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfLineageExplorerLaunch(",
+      "startLine": 12016,
+      "endLine": 12031,
+      "codeFile": "app--renderAdfLineageExplorerLaunch.reference.js"
+    }
+  ]
+}

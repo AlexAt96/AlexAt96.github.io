@@ -1,0 +1,171 @@
+/* Reference extracts from docs/reports/interactive-system-map.html. See the full source snapshot for surrounding context. */
+
+    function normaliseDoraMetrics(metrics) {
+      if (!metrics || typeof metrics !== "object") return null;
+      const fallback = fallbackDoraMetrics;
+      return {
+        generatedAt: metrics.generatedAt || fallback.generatedAt,
+        source: metrics.source || fallback.source,
+        scope: metrics.scope || fallback.scope,
+        service: metrics.service || fallback.service,
+        periodDays: Number(metrics.periodDays || fallback.periodDays || 30),
+        model: { ...fallback.model, ...(metrics.model || {}) },
+        summary: { ...fallback.summary, ...(metrics.summary || {}) },
+        deploymentProxy: { ...(fallback.deploymentProxy || {}), ...(metrics.deploymentProxy || {}) },
+        metrics: Array.isArray(metrics.metrics) ? metrics.metrics : fallback.metrics,
+        availableSignals: Array.isArray(metrics.availableSignals) ? metrics.availableSignals : fallback.availableSignals,
+        missingData: Array.isArray(metrics.missingData) ? metrics.missingData : fallback.missingData,
+        recommendedDataModel: Array.isArray(metrics.recommendedDataModel) ? metrics.recommendedDataModel : fallback.recommendedDataModel,
+        recentSignals: Array.isArray(metrics.recentSignals) ? metrics.recentSignals : fallback.recentSignals
+      };
+    }
+
+    function renderDoraMetricsReport() {
+      const metrics = doraMetrics();
+      const summary = metrics.summary || {};
+      const metricList = metrics.metrics || [];
+      const metricCards = metricList.map(renderDoraMetricCard).join('') || '<div class="dora-metric-card dora-tone-missing dora-band-needs-data dora-direction-lower"><header><div><h3>DORA metrics</h3><span>Whole application</span></div><b class="dora-status-pill">Needs data</b></header><div class="dora-gauge" style="--dora-pos:0%;" aria-label="DORA metrics need data"><div class="dora-gauge-value dora-gauge-value-left">No rows</div><div class="dora-gauge-track"><span></span><span></span><span></span><i class="dora-gauge-needle"></i></div><div class="dora-gauge-labels"><span>Low</span><span>Medium</span><span>High</span></div></div><div class="dora-band">Needs data</div></div>';
+      const metricRows = (metrics.metrics || []).map((item) => '<tr>'
+        + '<td><strong>' + escapeHtml(item.name || '') + '</strong><br><span class="muted">' + escapeHtml(item.group || '') + '</span></td>'
+        + '<td><strong>' + escapeHtml(item.value || '') + '</strong><br><span class="muted">' + escapeHtml(item.unit || '') + '</span></td>'
+        + '<td>' + escapeHtml(doraStatusLabel(item.status)) + '<br><span class="muted">' + escapeHtml(item.confidence || '') + '</span></td>'
+        + '<td>' + escapeHtml(item.source || '') + '</td>'
+        + '<td>' + escapeHtml(item.formula || '') + '</td>'
+        + '<td>' + escapeHtml(item.interpretation || '') + '</td>'
+        + '<td>' + escapeHtml(doraList(item.requiredData)) + '</td>'
+        + '</tr>').join('') || '<tr><td colspan="7">No DORA metric rows are available yet.</td></tr>';
+      const dashboardStatTables = metricList.map(renderDoraStatTable).join('') || '<article class="dora-mini-stat-panel dora-mini-tone-missing"><header><strong>DORA metrics</strong><span>No supporting stats</span></header><table><tbody><tr><td>Status</td><td>Needs data</td></tr></tbody></table></article>';
+      const signalRows = (metrics.availableSignals || []).map((item) => '<tr><td>' + escapeHtml(item.signal || '') + '</td><td>' + escapeHtml(item.source || '') + '</td><td>' + formatNumber(item.records || 0) + '</td><td>' + escapeHtml(item.supports || '') + '</td><td>' + escapeHtml(item.confidence || '') + '</td></tr>').join('') || '<tr><td colspan="5">No current signals are available yet.</td></tr>';
+      const missingRows = (metrics.missingData || []).map((item) => '<tr><td>' + escapeHtml(item.data || '') + '</td><td>' + escapeHtml(item.neededFor || '') + '</td><td>' + escapeHtml(item.platformContract || '') + '</td><td>' + escapeHtml(item.note || '') + '</td></tr>').join('') || '<tr><td colspan="4">No missing data has been catalogued.</td></tr>';
+      const modelRows = (metrics.recommendedDataModel || []).map((item) => '<tr><td><strong>' + escapeHtml(item.table || '') + '</strong><br><span class="muted">' + escapeHtml(item.scope || '') + '</span></td><td>' + escapeHtml(item.keyFields || '') + '</td><td>' + escapeHtml(item.platformAlignment || '') + '</td></tr>').join('') || '<tr><td colspan="3">No platform data-model recommendations are available yet.</td></tr>';
+      const recentRows = (metrics.recentSignals || []).map((item) => '<tr><td><strong>' + escapeHtml(item.shortSha || '') + '</strong><br><span class="muted">' + escapeHtml(formatDate(item.date)) + '</span></td><td>' + escapeHtml(item.signalType || '') + '</td><td>' + escapeHtml(shortText(item.subject || '', 120)) + '</td></tr>').join('') || '<tr><td colspan="3">Open a live app to refresh recent repo signals.</td></tr>';
+      const noteGrid = '<div class="report-note-grid">'
+        + reportNote('Deployment frequency', doraDeploymentFrequencySummary(metrics))
+        + reportNote('Data needed', doraMissingDataSummary(metrics))
+        + reportNote('Current confidence', formatNumber(summary.proxyMetricCount || 0) + ' estimated metric cards, ' + formatNumber((metrics.missingData || []).length) + ' data gaps catalogued, confidence ' + (summary.confidence || 'unknown') + '.')
+        + reportNote('Scope', (metrics.scope || 'whole-application') + ', period ' + formatNumber(metrics.periodDays || 30) + ' days. These metrics are not per client BU.')
+        + reportNote('Platform alignment', 'Future DORA capture should use platform-style event tables with explicit scope, UUID-ready IDs, correlation IDs, and no raw client evidence.')
+        + '</div>';
+      els.consistencyReport.innerHTML = ''
+        + '<div class="report-shell">'
+        + '<section class="report-hero">'
+        + '<div>'
+        + '<h2>DORA metrics</h2>'
+        + '<p>Whole-application software delivery metrics for ' + escapeHtml(metrics.service || 'CGI Migration Compass') + '. The top cards show the current value where one exists, a low/medium/high lever, and whether the number is a true DORA metric, an estimate, or blocked by missing production data.</p>'
+        + '</div>'
+        + '<div class="report-score-card"><span>True DORA metrics</span><strong>' + formatNumber(summary.trueMetricCount || 0) + '/5</strong></div>'
+        + '</section>'
+        + '<section class="dora-dashboard-grid" aria-label="DORA metrics dashboard">'
+        + metricCards
+        + '</section>'
+        + '<section class="dora-mini-stat-grid" aria-label="DORA dashboard supporting stats">'
+        + dashboardStatTables
+        + '</section>'
+        + '<div class="consistency-table-wrap"><table class="consistency-table"><thead><tr><th>Metric</th><th>Current value</th><th>Status</th><th>Source</th><th>Formula</th><th>Interpretation</th><th>Production data needed</th></tr></thead><tbody>' + metricRows + '</tbody></table></div>'
+        + '<div class="consistency-table-wrap"><table class="consistency-table"><thead><tr><th>Available signal</th><th>Source</th><th>Records</th><th>Supports</th><th>Confidence</th></tr></thead><tbody>' + signalRows + '</tbody></table></div>'
+        + '<div class="consistency-table-wrap"><table class="consistency-table"><thead><tr><th>Missing data</th><th>Needed for</th><th>Platform contract</th><th>Note</th></tr></thead><tbody>' + missingRows + '</tbody></table></div>'
+        + '<div class="consistency-table-wrap"><table class="consistency-table"><thead><tr><th>Recommended table</th><th>Key fields</th><th>Platform alignment</th></tr></thead><tbody>' + modelRows + '</tbody></table></div>'
+        + '<div class="consistency-table-wrap"><table class="consistency-table"><thead><tr><th>Recent signal</th><th>Type</th><th>Subject</th></tr></thead><tbody>' + recentRows + '</tbody></table></div>'
+        + noteGrid
+        + '</div>';
+    }
+
+    function renderDoraMetricCard(item) {
+      const gauge = doraGaugeModel(item);
+      const className = 'dora-metric-card dora-tone-' + gauge.tone + ' dora-band-' + gauge.band + ' dora-direction-' + gauge.direction;
+      const status = doraStatusLabel(item.status);
+      const supportingData = item.status === 'needs-data'
+        ? 'Needs: ' + doraList(item.requiredData)
+        : (gauge.insight || item.interpretation || '');
+      const gaugeValueClass = doraGaugeValueClass(gauge.leverPosition);
+      return '<article class="' + escapeHtml(className) + '" title="' + escapeHtml(item.name || '') + ': ' + escapeHtml(gauge.displayValue) + '">'
+        + '<header><div><h3>' + escapeHtml(item.name || item.id || '') + '</h3><span>' + escapeHtml(item.group || 'DORA') + '</span></div><b class="dora-status-pill">' + escapeHtml(status) + '</b></header>'
+        + '<div class="dora-gauge" style="--dora-pos:' + gauge.leverPosition.toFixed(0) + '%;" aria-label="' + escapeHtml((item.name || 'Metric') + ' band ' + gauge.bandLabel) + '">'
+        + '<div class="dora-gauge-value ' + escapeHtml(gaugeValueClass) + '" title="' + escapeHtml(gauge.statLabel || '') + '">' + escapeHtml(gauge.displayValue) + '</div>'
+        + '<div class="dora-gauge-track"><span></span><span></span><span></span><i class="dora-gauge-needle"></i></div>'
+        + doraBoundaryLabels(gauge.boundaries)
+        + '<div class="dora-gauge-labels"><span>Low</span><span>Medium</span><span>High</span></div>'
+        + '</div>'
+        + '<div class="dora-band">' + escapeHtml(gauge.bandLabel) + '</div>'
+        + '<p>' + escapeHtml(supportingData) + '</p>'
+        + '</article>';
+    }
+
+    function doraGaugeModel(item) {
+      const dashboard = item.dashboard || {};
+      const rawValue = item.numericValue;
+      const numericValue = Number(rawValue);
+      const hasNumber = rawValue !== null && rawValue !== undefined && rawValue !== '' && Number.isFinite(numericValue);
+      const band = dashboard.band || doraBandForMetric(item, hasNumber ? numericValue : null);
+      return {
+        band,
+        bandLabel: dashboard.bandLabel || doraBandLabel(item, band),
+        leverPosition: clamp(Number(dashboard.leverPosition ?? doraLeverPositionForBand(band)), 0, 100),
+        direction: dashboard.direction || (item.id === 'deployment-frequency' ? 'higher' : 'lower'),
+        boundaries: Array.isArray(dashboard.boundaries) ? dashboard.boundaries : doraMetricBoundaryDefaults(item),
+        tone: dashboard.tone || doraToneForBand(item, band),
+        displayValue: dashboard.displayValue || item.value || (hasNumber ? String(numericValue) : 'Needs data'),
+        statLabel: dashboard.statLabel || item.unit || (hasNumber ? 'current value' : 'production data missing'),
+        insight: dashboard.insight || item.interpretation || '',
+        stats: Array.isArray(dashboard.stats) ? dashboard.stats : []
+      };
+    }
+
+    function renderDoraStatTable(item) {
+      const gauge = doraGaugeModel(item);
+      const rows = [{ label: 'Headline', value: gauge.displayValue }, ...(Array.isArray(gauge.stats) ? gauge.stats : []).slice(0, 3)];
+      const rowHtml = rows.length
+        ? rows.map((stat) => '<tr><td>' + escapeHtml(stat.label || '') + '</td><td>' + escapeHtml(stat.value || '') + '</td></tr>').join('')
+        : '<tr><td>Status</td><td>' + escapeHtml(gauge.bandLabel || 'Needs data') + '</td></tr>';
+      return '<article class="dora-mini-stat-panel dora-mini-tone-' + escapeHtml(gauge.tone || 'missing') + '" title="' + escapeHtml((item.name || '') + ' supporting stats') + '">'
+        + '<header><strong>' + escapeHtml(item.name || item.id || 'Metric') + '</strong><span>' + escapeHtml(gauge.bandLabel || '') + '</span></header>'
+        + '<table><tbody>' + rowHtml + '</tbody></table>'
+        + '</article>';
+    }
+
+    function doraMetricBoundaryDefaults(item) {
+      if (item.id === 'deployment-frequency') {
+        return [
+          { label: '4', description: 'Low to medium' },
+          { label: '20', description: 'Medium to high' }
+        ];
+      }
+      if (item.id === 'change-lead-time') {
+        return [
+          { label: '24h', description: 'Low to medium' },
+          { label: '7d', description: 'Medium to high' }
+        ];
+      }
+      if (item.id === 'failed-deployment-recovery-time') {
+        return [
+          { label: '1h', description: 'Low to medium' },
+          { label: '24h', description: 'Medium to high' }
+        ];
+      }
+      if (item.id === 'change-fail-rate' || item.id === 'deployment-rework-rate') {
+        return [
+          { label: '15%', description: 'Low to medium' },
+          { label: '30%', description: 'Medium to high' }
+        ];
+      }
+      return [];
+    }
+
+    function doraBandForMetric(item, numericValue) {
+      if (!Number.isFinite(Number(numericValue))) return item.status === 'needs-data' ? 'needs-data' : 'proxy';
+      if (item.id === 'deployment-frequency') return numericValue >= 20 ? 'high' : numericValue >= 4 ? 'medium' : 'low';
+      if (item.id === 'change-lead-time') return numericValue <= 24 ? 'low' : numericValue <= 168 ? 'medium' : 'high';
+      if (item.id === 'failed-deployment-recovery-time') return numericValue <= 1 ? 'low' : numericValue <= 24 ? 'medium' : 'high';
+      if (item.id === 'change-fail-rate' || item.id === 'deployment-rework-rate') return numericValue <= 15 ? 'low' : numericValue <= 30 ? 'medium' : 'high';
+      return 'proxy';
+    }
+
+    function doraMissingDataSummary(metrics) {
+      const contracts = (metrics.missingData || [])
+        .map((item) => item.platformContract || item.data || '')
+        .filter(Boolean)
+        .slice(0, 5);
+      return contracts.length
+        ? 'Missing production data: ' + contracts.join('; ') + '. Without these records the dashboard will keep showing estimates rather than true DORA performance.'
+        : 'No missing DORA data is currently listed.';
+    }

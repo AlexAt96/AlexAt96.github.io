@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0",
+  "id": "environment-evidence-task-list",
+  "capabilityId": "environment-evidence-matrix",
+  "title": "Environment evidence task list",
+  "layer": "composite",
+  "purpose": "List each environment's required collection tasks and direct links to complete them.",
+  "drivers": [
+    {
+      "name": "renderEnvironmentTaskList",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEnvironmentTaskList(",
+      "startLine": 9024,
+      "endLine": 9033,
+      "codeFile": "app--renderEnvironmentTaskList.reference.js"
+    }
+  ],
+  "inputs": [
+    "Phase",
+    "Task definition",
+    "BU",
+    "Environment evidence status"
+  ],
+  "outputs": [
+    "Task navigation"
+  ],
+  "behaviour": [
+    "List each environment's required collection tasks and direct links to complete them.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "evidence-status-icon"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Environment evidence matrix",
+  "templateDataPath": "template-data/template-data.json#environmentEvidenceMatrix",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/05-collection-workflows.css"
+  ],
+  "inheritedStates": [
+    "missing",
+    "required",
+    "optional",
+    "partial",
+    "submitted",
+    "reviewed",
+    "not applicable"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Task navigation. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

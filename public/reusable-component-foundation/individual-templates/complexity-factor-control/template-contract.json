@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "1.0",
+  "id": "complexity-factor-control",
+  "capabilityId": "bu-complexity-analysis",
+  "title": "Complexity factor control",
+  "layer": "primitive",
+  "purpose": "Select a governed complexity response and show its score/evidence note.",
+  "drivers": [
+    {
+      "name": "renderBuComplexityFactorControl",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuComplexityFactorControl(",
+      "startLine": 11030,
+      "endLine": 11044,
+      "codeFile": "app--renderBuComplexityFactorControl.reference.js"
+    },
+    {
+      "name": "getComplexityFactorScore",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getComplexityFactorScore(",
+      "startLine": 11089,
+      "endLine": 11091,
+      "codeFile": "app--getComplexityFactorScore.reference.js"
+    }
+  ],
+  "inputs": [
+    "Factor definition",
+    "Current assessment"
+  ],
+  "outputs": [
+    "Selected factor value",
+    "Derived factor score"
+  ],
+  "behaviour": [
+    "Select a governed complexity response and show its score/evidence note.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Business-unit sizing and complexity analysis",
+  "templateDataPath": "template-data/template-data.json#buComplexity",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "not assessed",
+    "draft",
+    "calculated",
+    "low",
+    "medium",
+    "high",
+    "very high",
+    "saved",
+    "locked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Selected factor value. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

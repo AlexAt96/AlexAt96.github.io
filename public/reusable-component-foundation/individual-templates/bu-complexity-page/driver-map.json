@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "bu-complexity-page",
+  "purpose": "Compose sizing inputs, factor controls, calculated scores, topology context and reference bands.",
+  "drivers": [
+    {
+      "name": "renderBuSizingComplexity",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuSizingComplexity(",
+      "startLine": 10840,
+      "endLine": 10939,
+      "codeFile": "app--renderBuSizingComplexity.reference.js"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "1.0",
+  "id": "evidence-review-modal",
+  "capabilityId": "evidence-review-queue",
+  "title": "Evidence review modal",
+  "layer": "composite",
+  "purpose": "Capture status, confidence, reviewer notes and follow-up questions for one artifact.",
+  "drivers": [
+    {
+      "name": "renderEvidenceReviewModal",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEvidenceReviewModal(",
+      "startLine": 10301,
+      "endLine": 10445,
+      "codeFile": "app--renderEvidenceReviewModal.reference.js"
+    },
+    {
+      "name": "wireEvidenceReviewActions",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function wireEvidenceReviewActions(",
+      "startLine": 35961,
+      "endLine": 36090,
+      "codeFile": "app--wireEvidenceReviewActions.reference.js"
+    },
+    {
+      "name": "validateEvidenceReviewModalForm",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function validateEvidenceReviewModalForm(",
+      "startLine": 36092,
+      "endLine": 36104,
+      "codeFile": "app--validateEvidenceReviewModalForm.reference.js"
+    }
+  ],
+  "inputs": [
+    "Selected artifact",
+    "Current review",
+    "Reviewer"
+  ],
+  "outputs": [
+    "Validated review payload",
+    "Save/cancel"
+  ],
+  "behaviour": [
+    "Capture status, confidence, reviewer notes and follow-up questions for one artifact.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [
+    "PUT /api/business-units/:businessUnitId/evidence-review"
+  ],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Evidence review queue",
+  "templateDataPath": "template-data/template-data.json#evidenceReviewQueue",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/05-collection-workflows.css"
+  ],
+  "inheritedStates": [
+    "not reviewed",
+    "in review",
+    "accepted",
+    "question raised",
+    "more info needed",
+    "further investigation",
+    "confirmed",
+    "rejected"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Validated review payload. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

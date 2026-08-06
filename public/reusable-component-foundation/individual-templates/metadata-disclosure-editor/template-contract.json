@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0",
+  "id": "metadata-disclosure-editor",
+  "capabilityId": "tool-metadata-setup",
+  "title": "Metadata disclosure editor",
+  "layer": "composite",
+  "purpose": "Wrap one metadata editor in a collapsible section with status, description and save controls.",
+  "drivers": [
+    {
+      "name": "renderMetadataDisclosure",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMetadataDisclosure(",
+      "startLine": 7714,
+      "endLine": 7741,
+      "codeFile": "app--renderMetadataDisclosure.reference.js"
+    },
+    {
+      "name": "saveToolMetadataSection",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "async function saveToolMetadataSection(",
+      "startLine": 35417,
+      "endLine": 35435,
+      "codeFile": "app--saveToolMetadataSection.reference.js"
+    }
+  ],
+  "inputs": [
+    "section key",
+    "title",
+    "summary",
+    "metadata",
+    "status",
+    "editor content",
+    "save label"
+  ],
+  "outputs": [
+    "Save request",
+    "Saved/error status"
+  ],
+  "behaviour": [
+    "Wrap one metadata editor in a collapsible section with status, description and save controls.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Tool metadata setup",
+  "templateDataPath": "template-data/template-data.json#toolMetadata",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/08-admin-integrations.css",
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "collapsed",
+    "expanded",
+    "editing",
+    "saving",
+    "saved",
+    "invalid",
+    "locked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Save request. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

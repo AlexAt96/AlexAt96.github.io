@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0",
+  "id": "questionnaire-answer-wizard",
+  "capabilityId": "questionnaire-wizards",
+  "title": "Questionnaire answer wizard",
+  "layer": "composite",
+  "purpose": "Render typed questionnaire fields across steps, validate them and save draft or submitted answers.",
+  "drivers": [
+    {
+      "name": "renderQuestionnaireAnswerWizard",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderQuestionnaireAnswerWizard(",
+      "startLine": 10075,
+      "endLine": 10117,
+      "codeFile": "app--renderQuestionnaireAnswerWizard.reference.js"
+    },
+    {
+      "name": "wireQuestionnaireAnswerWizard",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function wireQuestionnaireAnswerWizard(",
+      "startLine": 39120,
+      "endLine": 39155,
+      "codeFile": "app--wireQuestionnaireAnswerWizard.reference.js"
+    },
+    {
+      "name": "saveQuestionnaireAnswers",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "async function saveQuestionnaireAnswers(",
+      "startLine": 39175,
+      "endLine": 39199,
+      "codeFile": "app--saveQuestionnaireAnswers.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU id",
+    "Section type",
+    "Question definitions",
+    "Existing answers"
+  ],
+  "outputs": [
+    "Draft answer payload",
+    "Submitted answer payload"
+  ],
+  "behaviour": [
+    "Render typed questionnaire fields across steps, validate them and save draft or submitted answers.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "wizard-shell"
+  ],
+  "apiEndpoints": [
+    "PUT /api/business-units/:businessUnitId/questionnaire/responses"
+  ],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Questionnaire and multi-step wizard patterns",
+  "templateDataPath": "template-data/template-data.json#questionnaire",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/05-collection-workflows.css",
+    "app/styles/01-foundation.css"
+  ],
+  "inheritedStates": [
+    "closed",
+    "step active",
+    "step complete",
+    "validation error",
+    "draft saved",
+    "submitted",
+    "read-only answers"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Draft answer payload. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

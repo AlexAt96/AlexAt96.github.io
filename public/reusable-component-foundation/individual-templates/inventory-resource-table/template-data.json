@@ -1,0 +1,40 @@
+{
+  "summary": {
+    "resources": 128,
+    "workspaces": 3,
+    "tables": 186,
+    "columns": 2410,
+    "pipelines": 14,
+    "warnings": 4
+  },
+  "resources": [
+    {
+      "id": "resource-1",
+      "type": "databricks_cluster",
+      "name": "shared-etl",
+      "environment": "Production",
+      "attributes": {
+        "runtime": "14.3 LTS",
+        "policy": "etl-standard"
+      }
+    },
+    {
+      "id": "resource-2",
+      "type": "databricks_job",
+      "name": "daily-orders",
+      "environment": "Production",
+      "attributes": {
+        "schedule": "0 3 * * *",
+        "tasks": 4
+      }
+    }
+  ],
+  "bindings": [
+    {
+      "catalog": "sales",
+      "workspace": "prod-analytics",
+      "bindingType": "READ_WRITE",
+      "owner": "data-platform"
+    }
+  ]
+}

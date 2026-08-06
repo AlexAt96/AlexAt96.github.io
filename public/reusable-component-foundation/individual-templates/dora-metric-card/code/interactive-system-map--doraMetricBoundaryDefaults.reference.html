@@ -1,0 +1,29 @@
+<!-- Reference extract: doraMetricBoundaryDefaults(...) from docs/reports/interactive-system-map.html:8220-8246. -->
+
+    function doraMetricBoundaryDefaults(item) {
+      if (item.id === 'deployment-frequency') {
+        return [
+          { label: '4', description: 'Low to medium' },
+          { label: '20', description: 'Medium to high' }
+        ];
+      }
+      if (item.id === 'change-lead-time') {
+        return [
+          { label: '24h', description: 'Low to medium' },
+          { label: '7d', description: 'Medium to high' }
+        ];
+      }
+      if (item.id === 'failed-deployment-recovery-time') {
+        return [
+          { label: '1h', description: 'Low to medium' },
+          { label: '24h', description: 'Medium to high' }
+        ];
+      }
+      if (item.id === 'change-fail-rate' || item.id === 'deployment-rework-rate') {
+        return [
+          { label: '15%', description: 'Low to medium' },
+          { label: '30%', description: 'Medium to high' }
+        ];
+      }
+      return [];
+    }

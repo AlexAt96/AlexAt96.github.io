@@ -1,0 +1,71 @@
+{
+  "project": {
+    "id": "project-template",
+    "name": "Cloud Migration Discovery",
+    "status": "In progress",
+    "reportingDate": "2026-08-05"
+  },
+  "kpis": [
+    {
+      "id": "bu-coverage",
+      "label": "BUs assessed",
+      "value": 3,
+      "detail": "of 4 in scope",
+      "tone": "watch"
+    },
+    {
+      "id": "evidence",
+      "label": "Evidence complete",
+      "value": 72,
+      "unit": "%",
+      "detail": "18 of 25 required items",
+      "tone": "good"
+    },
+    {
+      "id": "decisions",
+      "label": "Open decisions",
+      "value": 6,
+      "detail": "2 due this week",
+      "tone": "risk"
+    }
+  ],
+  "planRows": [
+    {
+      "id": "plan-1",
+      "label": "Collect evidence",
+      "owner": "Discovery Lead",
+      "startWeek": 1,
+      "endWeek": 2,
+      "status": "Completed",
+      "dependencies": []
+    },
+    {
+      "id": "plan-2",
+      "label": "Analyse metadata",
+      "owner": "Data Engineer",
+      "startWeek": 2,
+      "endWeek": 4,
+      "status": "In progress",
+      "dependencies": [
+        {
+          "id": "plan-1",
+          "type": "finish-start"
+        }
+      ]
+    },
+    {
+      "id": "plan-3",
+      "label": "Review recommendation",
+      "owner": "Engagement Lead",
+      "startWeek": 4,
+      "endWeek": 5,
+      "status": "Not started",
+      "dependencies": [
+        {
+          "id": "plan-2",
+          "type": "finish-start"
+        }
+      ]
+    }
+  ]
+}

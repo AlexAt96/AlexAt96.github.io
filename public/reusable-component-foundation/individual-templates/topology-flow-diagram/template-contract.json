@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "1.0",
+  "id": "topology-flow-diagram",
+  "capabilityId": "environment-rationalisation",
+  "title": "Proposed topology flow diagram",
+  "layer": "composite",
+  "purpose": "Visualise how proposed environments relate in the target estate.",
+  "drivers": [
+    {
+      "name": "renderProposedTopologyFlowDiagram",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderProposedTopologyFlowDiagram(",
+      "startLine": 21000,
+      "endLine": 21285,
+      "codeFile": "app--renderProposedTopologyFlowDiagram.reference.js"
+    },
+    {
+      "name": "renderEnvironmentMigrationFlowDiagram",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEnvironmentMigrationFlowDiagram(",
+      "startLine": 21287,
+      "endLine": 21491,
+      "codeFile": "app--renderEnvironmentMigrationFlowDiagram.reference.js"
+    }
+  ],
+  "inputs": [
+    "Current rationalisation rows",
+    "Proposed environments"
+  ],
+  "outputs": [
+    "Migration/topology SVG"
+  ],
+  "behaviour": [
+    "Visualise how proposed environments relate in the target estate.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Environment rationalisation and proposed topology",
+  "templateDataPath": "template-data/template-data.json#environmentRationalisation",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "current",
+    "migrate",
+    "merge",
+    "decommission",
+    "target incomplete",
+    "diagram refreshed",
+    "saved"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Migration/topology SVG. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

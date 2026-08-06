@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "1.0",
+  "id": "phase-view-toggle",
+  "capabilityId": "kanban-list-and-cards",
+  "title": "Kanban/list view toggle",
+  "layer": "primitive",
+  "purpose": "Switch the same phase work between Kanban and list presentation while preserving user preference.",
+  "drivers": [
+    {
+      "name": "renderPhaseDashboardViewToggle",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderPhaseDashboardViewToggle(",
+      "startLine": 3310,
+      "endLine": 3317,
+      "codeFile": "app--renderPhaseDashboardViewToggle.reference.js"
+    },
+    {
+      "name": "setPhaseDashboardView",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function setPhaseDashboardView(",
+      "startLine": 3953,
+      "endLine": 3970,
+      "codeFile": "app--setPhaseDashboardView.reference.js"
+    }
+  ],
+  "inputs": [
+    "Active view: kanban or list"
+  ],
+  "outputs": [
+    "View change event"
+  ],
+  "behaviour": [
+    "Switch the same phase work between Kanban and list presentation while preserving user preference.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [
+    "data-phase-dashboard-view"
+  ],
+  "notes": [],
+  "capabilityTitle": "Kanban, list and task cards",
+  "templateDataPath": "template-data/template-data.json#kanban",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/03-dashboard-planning.css",
+    "app/styles/04-phase-documents.css"
+  ],
+  "inheritedStates": [
+    "not started",
+    "draft",
+    "in progress",
+    "in review",
+    "blocked",
+    "completed",
+    "filtered",
+    "empty column"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: View change event. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}
