@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import PortfolioBrand from "../PortfolioBrand";
 import { methods } from "../AgentMethods";
 import {
@@ -12,6 +12,49 @@ import individualCatalogue from "../../public/reusable-component-foundation/indi
 import styles from "./library.module.css";
 
 type CollectionKey = "all" | "components" | "compass" | "tracker" | "methods";
+
+const componentLayerNames: Record<string,string> = {
+  backend: "Backend integrations",
+  composite: "Composite components",
+  controller: "Controllers",
+  primitive: "Primitive components",
+  screen: "Complete screens",
+};
+
+function folderSlug(value: string) {
+  return value.toLowerCase().replaceAll("&", "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function groupItems<T>(items: readonly T[], typeFor: (item:T) => string) {
+  const groups = new Map<string,T[]>();
+  items.forEach((item) => {
+    const type = typeFor(item);
+    groups.set(type, [...(groups.get(type) ?? []), item]);
+  });
+  return Array.from(groups.entries()).map(([type, entries]) => ({
+    type,
+    entries: [...entries].sort((a,b) => {
+      const aName = "title" in (a as object) ? String((a as {title?:string}).title ?? "") : String((a as {name?:string}).name ?? "");
+      const bName = "title" in (b as object) ? String((b as {title?:string}).title ?? "") : String((b as {name?:string}).name ?? "");
+      return aName.localeCompare(bName);
+    }),
+  }));
+}
+
+function TypeFolder({ project, type, children, count }: { project:string; type:string; children:ReactNode; count:number }) {
+  const path = `${folderSlug(project)} / ${folderSlug(type)}`;
+  return (
+    <details className={styles.typeFolder} open>
+      <summary>
+        <span className={styles.folderIcon} aria-hidden="true"><i /></span>
+        <span><small>{project}</small><strong>{type}</strong><code>{path} /</code></span>
+        <b>{count} {count === 1 ? "item" : "items"}</b>
+        <i aria-hidden="true">⌄</i>
+      </summary>
+      <div className={styles.folderContents}>{children}</div>
+    </details>
+  );
+}
 
 const trackerPatterns = [
   {
@@ -109,6 +152,10 @@ export default function LibraryCatalogue() {
   const visibleMethods = useMemo(() => methods.filter((item) =>
     matchesQuery([item.name, item.category, item.summary, item.whenToUse, item.projects], query)
   ), [query]);
+  const componentFolders = useMemo(() => groupItems(visibleComponents, (item) => componentLayerNames[item.layer] ?? item.layer), [visibleComponents]);
+  const compassFolders = useMemo(() => groupItems(visibleCompass, (item) => compassPatternGroups[item.templateKey]), [visibleCompass]);
+  const trackerFolders = useMemo(() => groupItems(visibleTracker, (item) => item.category), [visibleTracker]);
+  const methodFolders = useMemo(() => groupItems(visibleMethods, (item) => item.category), [visibleMethods]);
 
   const showComponents = collection === "all" || collection === "components";
   const showCompass = collection === "all" || collection === "compass";
@@ -198,60 +245,76 @@ export default function LibraryCatalogue() {
 
         {showComponents && visibleComponents.length ? (
           <section className={`${styles.collection} ${styles.components}`} aria-labelledby="components-title">
-            <header><div><span>01</span><p>SHARED INTERFACE SYSTEM</p><h2 id="components-title">Individual components</h2></div><p>{visibleComponents.length} of {individualCatalogue.templates.length} parts · primitives, composites, controllers and complete screens.</p></header>
-            <div className={styles.cardGrid}>
-              {visibleComponents.map((item, index) => (
-                <article className={styles.card} key={item.id}>
-                  <header><span>{String(index + 1).padStart(3,"0")}</span><small>{item.layer}</small></header>
-                  <div><p>{item.capabilityTitle}</p><h3>{item.title}</h3><span>{item.purpose}</span></div>
-                  <footer><code>{item.id}</code><Link href="/components#full-component-index">Open component showroom <span aria-hidden="true">↗</span></Link></footer>
-                </article>
-              ))}
+            <header><div><span>01</span><p>PROJECT FOLDER / SHARED INTERFACE SYSTEM</p><h2 id="components-title">Individual components</h2></div><p>{visibleComponents.length} of {individualCatalogue.templates.length} parts · organised by implementation type, then named component.</p></header>
+            <div className={styles.folderStack}>
+              {componentFolders.map((folder) => <TypeFolder project="Shared interface system" type={folder.type} count={folder.entries.length} key={folder.type}>
+                <div className={styles.cardGrid}>
+                  {folder.entries.map((item, index) => (
+                    <article className={styles.card} key={item.id}>
+                      <header><span>{String(index + 1).padStart(2,"0")}</span><small>{folder.type}</small></header>
+                      <div><p>{item.capabilityTitle}</p><h3>{item.title}</h3><span>{item.purpose}</span></div>
+                      <footer><code>{folderSlug(item.title)}</code><Link href="/components#full-component-index">Open component showroom <span aria-hidden="true">↗</span></Link></footer>
+                    </article>
+                  ))}
+                </div>
+              </TypeFolder>)}
             </div>
           </section>
         ) : null}
 
         {showCompass && visibleCompass.length ? (
           <section className={`${styles.collection} ${styles.compass}`} aria-labelledby="compass-title">
-            <header><div><span>02</span><p>MIGRATION COMPASS</p><h2 id="compass-title">Planning, evidence &amp; decision patterns</h2></div><p>{visibleCompass.length} of {compassPatterns.length} patterns · each with live states, behaviour and reusable source.</p></header>
-            <div className={styles.cardGrid}>
-              {visibleCompass.map((item, index) => (
-                <article className={styles.card} key={item.id}>
-                  <header><span>{String(index + 1).padStart(2,"0")}</span><small>{compassPatternGroups[item.templateKey]}</small></header>
-                  <div><p>{item.boundaries.length} component boundaries</p><h3>{item.title}</h3><span>{item.summary}</span></div>
-                  <footer><code>{item.boundaries.slice(0,2).join(" · ")}</code><Link href={`/?system=compass#compass-pattern-${item.id}`}>Open live pattern <span aria-hidden="true">↗</span></Link></footer>
-                </article>
-              ))}
+            <header><div><span>02</span><p>PROJECT FOLDER / MIGRATION COMPASS</p><h2 id="compass-title">Planning, evidence &amp; decision patterns</h2></div><p>{visibleCompass.length} of {compassPatterns.length} patterns · organised by workflow type, then named pattern.</p></header>
+            <div className={styles.folderStack}>
+              {compassFolders.map((folder) => <TypeFolder project="Migration Compass" type={folder.type} count={folder.entries.length} key={folder.type}>
+                <div className={styles.cardGrid}>
+                  {folder.entries.map((item, index) => (
+                    <article className={styles.card} key={item.id}>
+                      <header><span>{String(index + 1).padStart(2,"0")}</span><small>{folder.type}</small></header>
+                      <div><p>{item.boundaries.length} component boundaries</p><h3>{item.title}</h3><span>{item.summary}</span></div>
+                      <footer><code>{folderSlug(item.title)}</code><Link href={`/?system=compass#compass-pattern-${item.id}`}>Open live pattern <span aria-hidden="true">↗</span></Link></footer>
+                    </article>
+                  ))}
+                </div>
+              </TypeFolder>)}
             </div>
           </section>
         ) : null}
 
         {showTracker && visibleTracker.length ? (
           <section className={`${styles.collection} ${styles.tracker}`} aria-labelledby="tracker-title">
-            <header><div><span>03</span><p>POC TRACKER</p><h2 id="tracker-title">Workflow &amp; product patterns</h2></div><p>{visibleTracker.length} of {trackerPatterns.length} patterns · focused on visible, governed delivery.</p></header>
-            <div className={styles.cardGrid}>
-              {visibleTracker.map((item, index) => (
-                <article className={styles.card} key={item.id}>
-                  <header><span>{String(index + 1).padStart(2,"0")}</span><small>{item.category}</small></header>
-                  <div><p>Interactive product pattern</p><h3>{item.title}</h3><span>{item.summary}</span></div>
-                  <footer><code>{item.id}</code><Link href={item.href}>Open live pattern <span aria-hidden="true">↗</span></Link></footer>
-                </article>
-              ))}
+            <header><div><span>03</span><p>PROJECT FOLDER / POC TRACKER</p><h2 id="tracker-title">Workflow &amp; product patterns</h2></div><p>{visibleTracker.length} of {trackerPatterns.length} patterns · organised by product type, then named pattern.</p></header>
+            <div className={styles.folderStack}>
+              {trackerFolders.map((folder) => <TypeFolder project="PoC Tracker" type={folder.type} count={folder.entries.length} key={folder.type}>
+                <div className={styles.cardGrid}>
+                  {folder.entries.map((item, index) => (
+                    <article className={styles.card} key={item.id}>
+                      <header><span>{String(index + 1).padStart(2,"0")}</span><small>{folder.type}</small></header>
+                      <div><p>Interactive product pattern</p><h3>{item.title}</h3><span>{item.summary}</span></div>
+                      <footer><code>{folderSlug(item.title)}</code><Link href={item.href}>Open live pattern <span aria-hidden="true">↗</span></Link></footer>
+                    </article>
+                  ))}
+                </div>
+              </TypeFolder>)}
             </div>
           </section>
         ) : null}
 
         {showMethods && visibleMethods.length ? (
           <section className={`${styles.collection} ${styles.methods}`} aria-labelledby="methods-title">
-            <header><div><span>04</span><p>AGENT METHODS</p><h2 id="methods-title">AI-assisted delivery patterns</h2></div><p>{visibleMethods.length} of {methods.length} methods · practical controls from authorisation through recovery.</p></header>
-            <div className={styles.cardGrid}>
-              {visibleMethods.map((item, index) => (
-                <article className={styles.card} key={item.id}>
-                  <header><span>{String(index + 1).padStart(2,"0")}</span><small>{item.category} · {item.adoption}</small></header>
-                  <div><p>{item.projects.length} project {item.projects.length === 1 ? "application" : "applications"}</p><h3>{item.name}</h3><span>{item.summary}</span></div>
-                  <footer><code>{item.id}</code><Link href={`/methods?method=${item.id}`}>Open method guide <span aria-hidden="true">↗</span></Link></footer>
-                </article>
-              ))}
+            <header><div><span>04</span><p>PROJECT FOLDER / AGENT METHODS</p><h2 id="methods-title">AI-assisted delivery patterns</h2></div><p>{visibleMethods.length} of {methods.length} methods · organised by control type, then clearly named method.</p></header>
+            <div className={styles.folderStack}>
+              {methodFolders.map((folder) => <TypeFolder project="Agent Methods" type={folder.type} count={folder.entries.length} key={folder.type}>
+                <div className={styles.cardGrid}>
+                  {folder.entries.map((item, index) => (
+                    <article className={styles.card} key={item.id}>
+                      <header><span>{String(index + 1).padStart(2,"0")}</span><small>{folder.type} · {item.adoption}</small></header>
+                      <div><p>{item.projects.length} project {item.projects.length === 1 ? "application" : "applications"}</p><h3>{item.name}</h3><span>{item.summary}</span></div>
+                      <footer><code>{folderSlug(item.name)}</code><Link href={`/methods?method=${item.id}`}>Open method guide <span aria-hidden="true">↗</span></Link></footer>
+                    </article>
+                  ))}
+                </div>
+              </TypeFolder>)}
             </div>
           </section>
         ) : null}
