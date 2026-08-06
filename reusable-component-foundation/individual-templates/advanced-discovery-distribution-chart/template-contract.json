@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "1.0",
+  "id": "advanced-discovery-distribution-chart",
+  "capabilityId": "graphs-and-charts",
+  "title": "Advanced-discovery distribution chart",
+  "layer": "primitive",
+  "purpose": "Render ranked metadata or ADF distributions for the advanced-discovery screen.",
+  "drivers": [
+    {
+      "name": "renderAdvancedDiscoveryDistributionChart",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdvancedDiscoveryDistributionChart(",
+      "startLine": 13277,
+      "endLine": 13306,
+      "codeFile": "app--renderAdvancedDiscoveryDistributionChart.reference.js"
+    },
+    {
+      "name": "getAdvancedDiscoveryChartRows",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getAdvancedDiscoveryChartRows(",
+      "startLine": 13319,
+      "endLine": 13333,
+      "codeFile": "app--getAdvancedDiscoveryChartRows.reference.js"
+    }
+  ],
+  "inputs": [
+    "eyebrow",
+    "title",
+    "raw result rows"
+  ],
+  "outputs": [
+    "Normalised distribution chart"
+  ],
+  "behaviour": [
+    "Render ranked metadata or ADF distributions for the advanced-discovery screen.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Graphs and chart primitives",
+  "templateDataPath": "template-data/template-data.json#charts",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/03-dashboard-planning.css",
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/07-outputs-decision.css"
+  ],
+  "inheritedStates": [
+    "populated",
+    "empty",
+    "single series",
+    "multi-series",
+    "positive",
+    "warning",
+    "negative"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Normalised distribution chart. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "decision-page-layout",
+  "purpose": "Compose recommendation, scenario, charts, sequencing, accounting, options and artifact sections.",
+  "drivers": [
+    {
+      "name": "renderDecisionPage",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionPage(",
+      "startLine": 4407,
+      "endLine": 4438,
+      "codeFile": "app--renderDecisionPage.reference.js"
+    }
+  ]
+}

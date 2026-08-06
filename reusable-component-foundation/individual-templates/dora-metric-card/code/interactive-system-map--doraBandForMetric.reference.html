@@ -1,0 +1,10 @@
+<!-- Reference extract: doraBandForMetric(...) from docs/reports/interactive-system-map.html:8248-8255. -->
+
+    function doraBandForMetric(item, numericValue) {
+      if (!Number.isFinite(Number(numericValue))) return item.status === 'needs-data' ? 'needs-data' : 'proxy';
+      if (item.id === 'deployment-frequency') return numericValue >= 20 ? 'high' : numericValue >= 4 ? 'medium' : 'low';
+      if (item.id === 'change-lead-time') return numericValue <= 24 ? 'low' : numericValue <= 168 ? 'medium' : 'high';
+      if (item.id === 'failed-deployment-recovery-time') return numericValue <= 1 ? 'low' : numericValue <= 24 ? 'medium' : 'high';
+      if (item.id === 'change-fail-rate' || item.id === 'deployment-rework-rate') return numericValue <= 15 ? 'low' : numericValue <= 30 ? 'medium' : 'high';
+      return 'proxy';
+    }

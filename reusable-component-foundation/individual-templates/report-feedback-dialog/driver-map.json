@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "report-feedback-dialog",
+  "purpose": "Collect a section-specific review comment and send it back to the report author.",
+  "drivers": [
+    {
+      "name": "openBuOutputFeedbackDialog",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function openBuOutputFeedbackDialog(",
+      "startLine": 32721,
+      "endLine": 32787,
+      "codeFile": "app--openBuOutputFeedbackDialog.reference.js"
+    },
+    {
+      "name": "sendBuTechReportSectionFeedback",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "async function sendBuTechReportSectionFeedback(",
+      "startLine": 37161,
+      "endLine": 37197,
+      "codeFile": "app--sendBuTechReportSectionFeedback.reference.js"
+    }
+  ]
+}

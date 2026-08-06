@@ -1,0 +1,40 @@
+<!-- Reference extract: renderTestCoverageDiagram(...) from docs/reports/interactive-system-map.html:7790-7827. -->
+
+    function renderTestCoverageDiagram(metrics) {
+      const suites = (metrics.suites || []).slice(0, 7);
+      const areas = (metrics.coverageAreas || []).slice(0, 8);
+      const triggers = (metrics.cadence || []).slice(0, 4);
+      const height = Math.max(420, Math.max(suites.length, areas.length, triggers.length) * 68 + 80);
+      const node = (x, y, width, height, title, detail, tone) => {
+        const fill = tone === 'pass' ? 'rgba(34,197,94,0.20)' : tone === 'fail' ? 'rgba(244,63,94,0.18)' : tone === 'gap' ? 'rgba(234,179,8,0.18)' : 'rgba(56,189,248,0.16)';
+        const stroke = tone === 'pass' ? '#22c55e' : tone === 'fail' ? '#f43f5e' : tone === 'gap' ? '#eab308' : '#38bdf8';
+        return '<g>'
+          + '<rect x="' + x + '" y="' + y + '" width="' + width + '" height="' + height + '" rx="8" fill="' + fill + '" stroke="' + stroke + '" stroke-width="1.5"></rect>'
+          + '<text x="' + (x + 12) + '" y="' + (y + 22) + '" fill="#f8fafc" font-size="13" font-weight="760">' + escapeHtml(shortText(title, 26)) + '</text>'
+          + '<text x="' + (x + 12) + '" y="' + (y + 42) + '" fill="#cbd5e1" font-size="10">' + escapeHtml(shortText(detail, 34)) + '</text>'
+          + '</g>';
+      };
+      let svg = '<svg class="test-map-svg" viewBox="0 0 920 ' + height + '" role="img" aria-label="Test coverage map diagram">';
+      svg += '<defs><marker id="test-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="rgba(203,213,225,0.72)"></path></marker></defs>';
+      svg += '<text x="40" y="32" fill="#a9b5c9" font-size="11" font-weight="760">RUN TRIGGERS</text>';
+      svg += '<text x="330" y="32" fill="#a9b5c9" font-size="11" font-weight="760">TEST SUITES</text>';
+      svg += '<text x="650" y="32" fill="#a9b5c9" font-size="11" font-weight="760">COVERAGE AREAS</text>';
+      triggers.forEach((item, index) => {
+        const y = 56 + index * 72;
+        svg += node(40, y, 210, 52, item.trigger || 'Trigger', item.cadence || '', 'trigger');
+      });
+      suites.forEach((item, index) => {
+        const y = 56 + index * 64;
+        svg += node(330, y, 230, 52, item.name || item.script || 'Suite', item.status || '', item.outcome || 'unknown');
+        const triggerY = 82 + (index % Math.max(1, triggers.length)) * 72;
+        svg += '<path d="M250 ' + triggerY + ' C285 ' + triggerY + ', 290 ' + (y + 26) + ', 330 ' + (y + 26) + '" stroke="rgba(203,213,225,0.56)" stroke-width="1.2" fill="none" marker-end="url(#test-arrow)"></path>';
+      });
+      areas.forEach((item, index) => {
+        const y = 56 + index * 64;
+        svg += node(650, y, 230, 52, item.area || 'Area', item.evidence || '', item.covered ? 'pass' : 'gap');
+        const suiteY = 82 + (index % Math.max(1, suites.length)) * 64;
+        svg += '<path d="M560 ' + suiteY + ' C595 ' + suiteY + ', 610 ' + (y + 26) + ', 650 ' + (y + 26) + '" stroke="rgba(203,213,225,0.56)" stroke-width="1.2" fill="none" marker-end="url(#test-arrow)"></path>';
+      });
+      svg += '</svg>';
+      return svg;
+    }

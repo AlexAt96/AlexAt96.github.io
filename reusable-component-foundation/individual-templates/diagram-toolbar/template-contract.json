@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "1.0",
+  "id": "diagram-toolbar",
+  "capabilityId": "diagram-primitives",
+  "title": "Diagram toolbar",
+  "layer": "primitive",
+  "purpose": "Provide zoom, reset, refresh and export actions around an SVG or HTML diagram.",
+  "drivers": [
+    {
+      "name": "wireSourceConsumerDiagramActions",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function wireSourceConsumerDiagramActions(",
+      "startLine": 15901,
+      "endLine": 16072,
+      "codeFile": "app--wireSourceConsumerDiagramActions.reference.js"
+    }
+  ],
+  "inputs": [
+    "Diagram element",
+    "Current zoom",
+    "Export filename"
+  ],
+  "outputs": [
+    "Zoom/reset/export events"
+  ],
+  "behaviour": [
+    "Provide zoom, reset, refresh and export actions around an SVG or HTML diagram.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [
+    "data-diagram-action"
+  ],
+  "notes": [],
+  "capabilityTitle": "Diagram and dependency-map primitives",
+  "templateDataPath": "template-data/template-data.json#diagrams",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/11-system-map-visuals.css"
+  ],
+  "inheritedStates": [
+    "empty",
+    "partial",
+    "complete",
+    "selected node",
+    "focused edge",
+    "zoomed",
+    "exported"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Zoom/reset/export events. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

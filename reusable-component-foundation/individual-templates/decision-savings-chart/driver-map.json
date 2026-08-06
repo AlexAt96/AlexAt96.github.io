@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "decision-savings-chart",
+  "purpose": "Plot programme or BU cumulative savings over time with a legend and break-even context.",
+  "drivers": [
+    {
+      "name": "renderDecisionPrimaryChart",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionPrimaryChart(",
+      "startLine": 27293,
+      "endLine": 27303,
+      "codeFile": "app--renderDecisionPrimaryChart.reference.js"
+    },
+    {
+      "name": "renderDecisionSavingsChartSvg",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionSavingsChartSvg(",
+      "startLine": 27327,
+      "endLine": 27400,
+      "codeFile": "app--renderDecisionSavingsChartSvg.reference.js"
+    },
+    {
+      "name": "renderDecisionPrimaryChartLegend",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionPrimaryChartLegend(",
+      "startLine": 27305,
+      "endLine": 27312,
+      "codeFile": "app--renderDecisionPrimaryChartLegend.reference.js"
+    }
+  ]
+}

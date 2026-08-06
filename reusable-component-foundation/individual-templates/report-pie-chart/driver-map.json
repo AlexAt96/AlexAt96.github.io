@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "report-pie-chart",
+  "purpose": "Render an SVG pie chart, centre total and colour-keyed legend from label/value rows.",
+  "drivers": [
+    {
+      "name": "renderReportPieVisual",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderReportPieVisual(",
+      "startLine": 7114,
+      "endLine": 7159,
+      "codeFile": "app--renderReportPieVisual.reference.js"
+    },
+    {
+      "name": "renderReportPieSlice",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderReportPieSlice(",
+      "startLine": 7161,
+      "endLine": 7168,
+      "codeFile": "app--renderReportPieSlice.reference.js"
+    }
+  ]
+}

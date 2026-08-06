@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "dora-metric-builder",
+  "purpose": "Build the five DORA results, confidence/status labels, gauge data and required production contracts.",
+  "drivers": [
+    {
+      "name": "buildDoraMetrics",
+      "file": "server/lib/dora-metrics.js",
+      "role": "DORA data-model builder",
+      "signature": "function buildDoraMetrics(",
+      "startLine": 40,
+      "endLine": 244,
+      "codeFile": "dora-metrics--buildDoraMetrics.reference.js"
+    }
+  ]
+}

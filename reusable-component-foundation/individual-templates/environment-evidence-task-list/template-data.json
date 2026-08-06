@@ -1,0 +1,50 @@
+{
+  "environments": [
+    {
+      "id": "env-prod",
+      "name": "Production"
+    },
+    {
+      "id": "env-dev",
+      "name": "Development"
+    }
+  ],
+  "groups": [
+    {
+      "id": "metadata",
+      "label": "Metadata",
+      "items": [
+        {
+          "id": "terraform",
+          "label": "Terraform and Databricks metadata",
+          "statuses": {
+            "env-prod": "Submitted",
+            "env-dev": "Missing"
+          }
+        },
+        {
+          "id": "adf",
+          "label": "ADF profiler",
+          "statuses": {
+            "env-prod": "Reviewed",
+            "env-dev": "Not applicable"
+          }
+        }
+      ]
+    },
+    {
+      "id": "access",
+      "label": "Access",
+      "items": [
+        {
+          "id": "access-confirm",
+          "label": "Access confirmation",
+          "statuses": {
+            "env-prod": "Confirmed",
+            "env-dev": "Partial"
+          }
+        }
+      ]
+    }
+  ]
+}

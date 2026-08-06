@@ -1,0 +1,22 @@
+<!-- Reference extract: renderDoraMetricCard(...) from docs/reports/interactive-system-map.html:8152-8171. -->
+
+    function renderDoraMetricCard(item) {
+      const gauge = doraGaugeModel(item);
+      const className = 'dora-metric-card dora-tone-' + gauge.tone + ' dora-band-' + gauge.band + ' dora-direction-' + gauge.direction;
+      const status = doraStatusLabel(item.status);
+      const supportingData = item.status === 'needs-data'
+        ? 'Needs: ' + doraList(item.requiredData)
+        : (gauge.insight || item.interpretation || '');
+      const gaugeValueClass = doraGaugeValueClass(gauge.leverPosition);
+      return '<article class="' + escapeHtml(className) + '" title="' + escapeHtml(item.name || '') + ': ' + escapeHtml(gauge.displayValue) + '">'
+        + '<header><div><h3>' + escapeHtml(item.name || item.id || '') + '</h3><span>' + escapeHtml(item.group || 'DORA') + '</span></div><b class="dora-status-pill">' + escapeHtml(status) + '</b></header>'
+        + '<div class="dora-gauge" style="--dora-pos:' + gauge.leverPosition.toFixed(0) + '%;" aria-label="' + escapeHtml((item.name || 'Metric') + ' band ' + gauge.bandLabel) + '">'
+        + '<div class="dora-gauge-value ' + escapeHtml(gaugeValueClass) + '" title="' + escapeHtml(gauge.statLabel || '') + '">' + escapeHtml(gauge.displayValue) + '</div>'
+        + '<div class="dora-gauge-track"><span></span><span></span><span></span><i class="dora-gauge-needle"></i></div>'
+        + doraBoundaryLabels(gauge.boundaries)
+        + '<div class="dora-gauge-labels"><span>Low</span><span>Medium</span><span>High</span></div>'
+        + '</div>'
+        + '<div class="dora-band">' + escapeHtml(gauge.bandLabel) + '</div>'
+        + '<p>' + escapeHtml(supportingData) + '</p>'
+        + '</article>';
+    }

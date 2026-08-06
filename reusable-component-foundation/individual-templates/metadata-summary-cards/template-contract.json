@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "id": "metadata-summary-cards",
+  "capabilityId": "metadata-results-screen",
+  "title": "Metadata summary cards",
+  "layer": "composite",
+  "purpose": "Show counts and coverage for the current metadata-review context.",
+  "drivers": [
+    {
+      "name": "renderMetadataReviewStats",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMetadataReviewStats(",
+      "startLine": 14127,
+      "endLine": 14139,
+      "codeFile": "app--renderMetadataReviewStats.reference.js"
+    }
+  ],
+  "inputs": [
+    "Metadata review model",
+    "Context label"
+  ],
+  "outputs": [
+    "KPI card grid"
+  ],
+  "behaviour": [
+    "Show counts and coverage for the current metadata-review context.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Metadata results and advanced discovery",
+  "templateDataPath": "template-data/template-data.json#metadataResults",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "no metadata",
+    "partial parse",
+    "complete parse",
+    "cross-BU",
+    "BU filtered",
+    "expanded category",
+    "exporting"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: KPI card grid. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

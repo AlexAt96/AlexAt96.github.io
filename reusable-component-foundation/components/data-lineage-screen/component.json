@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0",
+  "id": "data-lineage-screen",
+  "title": "Data lineage and dependency explorer",
+  "requestedCoverage": "Data lineage screen",
+  "summary": "ADF lineage explorer, source/consumer dependency maps, external connection flows, touchpoint graphs and source traceability contracts.",
+  "routes": [
+    "app/adf-lineage-explorer.html",
+    "app/dependency-explorer.html",
+    "/api/data-map",
+    "/api/system-map"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "getAdfLineageModel",
+        "renderAdfLineageExplorer",
+        "renderAdfLineageTouchpointMap",
+        "buildAdfPipelineTouchpointGraph",
+        "renderAdfLineageMap",
+        "getAdfLineageLayout",
+        "renderSourceConsumerDependencyDiagram",
+        "buildExternalLocationGraph",
+        "renderExternalLocationDependencyMap"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/11-system-map-visuals.css",
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "states": [
+    "no lineage",
+    "partial",
+    "complete",
+    "pipeline focus",
+    "activity focus",
+    "source focus",
+    "target focus",
+    "evidence caveat"
+  ],
+  "dataContracts": [
+    "lineage node",
+    "lineage edge",
+    "pipeline",
+    "activity",
+    "dataset",
+    "source trace rule",
+    "evidence link",
+    "layout"
+  ],
+  "templateKey": "dataLineage",
+  "boundaries": [
+    "LineageExplorer",
+    "LineageGraph",
+    "LineageNode",
+    "LineageEdge",
+    "PipelineFilter",
+    "DetailsDrawer",
+    "CaveatList",
+    "SourceTraceLink"
+  ]
+}

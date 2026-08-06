@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "bu-report-tabs",
+  "purpose": "Switch between report document, source/review and client-readable states.",
+  "drivers": [
+    {
+      "name": "renderBuTechReportTabs",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuTechReportTabs(",
+      "startLine": 24780,
+      "endLine": 24795,
+      "codeFile": "app--renderBuTechReportTabs.reference.js"
+    },
+    {
+      "name": "getBuTechReportTabHref",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getBuTechReportTabHref(",
+      "startLine": 24770,
+      "endLine": 24778,
+      "codeFile": "app--getBuTechReportTabHref.reference.js"
+    }
+  ]
+}

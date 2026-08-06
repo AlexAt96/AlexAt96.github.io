@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "feedback-item-card",
+  "purpose": "Render one feedback request with source, author, status and destination task link.",
+  "drivers": [
+    {
+      "name": "renderFeedbackSection",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderFeedbackSection(",
+      "startLine": 4262,
+      "endLine": 4278,
+      "codeFile": "app--renderFeedbackSection.reference.js"
+    },
+    {
+      "name": "renderFeedbackItem",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderFeedbackItem(",
+      "startLine": 4280,
+      "endLine": 4300,
+      "codeFile": "app--renderFeedbackItem.reference.js"
+    }
+  ]
+}

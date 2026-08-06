@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "1.0",
+  "id": "multi-document-upload-wizard",
+  "capabilityId": "questionnaire-wizards",
+  "title": "Multi-document upload wizard",
+  "layer": "composite",
+  "purpose": "Upload multiple document types against selected environments with consistent review and validation.",
+  "drivers": [
+    {
+      "name": "renderMultiDocumentUploadWizard",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMultiDocumentUploadWizard(",
+      "startLine": 9761,
+      "endLine": 9811,
+      "codeFile": "app--renderMultiDocumentUploadWizard.reference.js"
+    },
+    {
+      "name": "renderTerraformExporterWizard",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderTerraformExporterWizard(",
+      "startLine": 9419,
+      "endLine": 9514,
+      "codeFile": "app--renderTerraformExporterWizard.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU id",
+    "Environment rows",
+    "Document-type definitions",
+    "Accepted formats"
+  ],
+  "outputs": [
+    "Tagged attachment payload"
+  ],
+  "behaviour": [
+    "Upload multiple document types against selected environments with consistent review and validation.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "wizard-shell"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Questionnaire and multi-step wizard patterns",
+  "templateDataPath": "template-data/template-data.json#questionnaire",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/05-collection-workflows.css",
+    "app/styles/01-foundation.css"
+  ],
+  "inheritedStates": [
+    "closed",
+    "step active",
+    "step complete",
+    "validation error",
+    "draft saved",
+    "submitted",
+    "read-only answers"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Tagged attachment payload. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

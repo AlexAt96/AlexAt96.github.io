@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0",
+  "id": "complexity-band-table",
+  "capabilityId": "bu-complexity-analysis",
+  "title": "Complexity band definition table",
+  "layer": "primitive",
+  "purpose": "Explain the governed thresholds behind size and complexity labels.",
+  "drivers": [
+    {
+      "name": "renderBandDefinitionTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBandDefinitionTable(",
+      "startLine": 11010,
+      "endLine": 11028,
+      "codeFile": "app--renderBandDefinitionTable.reference.js"
+    }
+  ],
+  "inputs": [
+    "title",
+    "Band definition rows"
+  ],
+  "outputs": [
+    "Reference table"
+  ],
+  "behaviour": [
+    "Explain the governed thresholds behind size and complexity labels.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Business-unit sizing and complexity analysis",
+  "templateDataPath": "template-data/template-data.json#buComplexity",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "not assessed",
+    "draft",
+    "calculated",
+    "low",
+    "medium",
+    "high",
+    "very high",
+    "saved",
+    "locked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Reference table. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

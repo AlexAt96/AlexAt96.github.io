@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "id": "environment-rationalisation",
+  "title": "Environment rationalisation and proposed topology",
+  "requestedCoverage": "Environment rationalisation",
+  "summary": "Editable migrate/merge/decommission decisions, target environments, proposed topology tables and live migration/structure diagrams.",
+  "routes": [
+    "app/document.html?phase=team-analysis&section=proposed-environment-rationalisation&bu=:businessUnitId",
+    "/api/business-units/:businessUnitId/environment-rationalisation"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "renderEnvironmentRationalisation",
+        "renderProposedTopologyTable",
+        "renderProposedTopologyFlowDiagram",
+        "renderEnvironmentMigrationFlowDiagram",
+        "renderProposedTopologyStructureDiagram",
+        "getEnvironmentRationalisationModel",
+        "normaliseEnvironmentRationalisationAction",
+        "wireEnvironmentRationalisationActions",
+        "refreshProposedTopologyDiagrams",
+        "parseEnvironmentRationalisationImportFile"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "states": [
+    "current",
+    "migrate",
+    "merge",
+    "decommission",
+    "target incomplete",
+    "diagram refreshed",
+    "saved"
+  ],
+  "dataContracts": [
+    "environment rationalisation row",
+    "migration action",
+    "merge target",
+    "proposed environment",
+    "topology structure",
+    "diagram node/edge"
+  ],
+  "templateKey": "environmentRationalisation",
+  "boundaries": [
+    "RationalisationTable",
+    "ActionSelect",
+    "MergeTargetSelect",
+    "TopologyTable",
+    "MigrationFlowDiagram",
+    "StructureDiagram",
+    "ImportExportPanel"
+  ]
+}

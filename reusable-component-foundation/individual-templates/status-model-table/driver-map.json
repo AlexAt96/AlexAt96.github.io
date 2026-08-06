@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "status-model-table",
+  "purpose": "Display the controlled status model and its ordering/meaning.",
+  "drivers": [
+    {
+      "name": "renderPhaseStatusModelTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderPhaseStatusModelTable(",
+      "startLine": 7994,
+      "endLine": 8016,
+      "codeFile": "app--renderPhaseStatusModelTable.reference.js"
+    }
+  ]
+}

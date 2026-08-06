@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0",
+  "id": "metadata-results-table",
+  "capabilityId": "data-tables-input-and-rendering",
+  "title": "Metadata results table",
+  "layer": "composite",
+  "purpose": "Render metadata/report rows with a caption, context and stable empty state.",
+  "drivers": [
+    {
+      "name": "renderMetadataTableSection",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMetadataTableSection(",
+      "startLine": 14589,
+      "endLine": 14602,
+      "codeFile": "app--renderMetadataTableSection.reference.js"
+    },
+    {
+      "name": "renderDataDictionaryTableSection",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDataDictionaryTableSection(",
+      "startLine": 6918,
+      "endLine": 6931,
+      "codeFile": "app--renderDataDictionaryTableSection.reference.js"
+    }
+  ],
+  "inputs": [
+    "title",
+    "context label",
+    "headers",
+    "rows",
+    "caption"
+  ],
+  "outputs": [
+    "Read-only metadata table"
+  ],
+  "behaviour": [
+    "Render metadata/report rows with a caption, context and stable empty state.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Editable and read-only data tables",
+  "templateDataPath": "template-data/template-data.json#tables",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/01-foundation.css",
+    "app/styles/05-collection-workflows.css",
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "empty",
+    "view",
+    "edit",
+    "row added",
+    "row copied",
+    "row removed",
+    "validation error",
+    "import preview",
+    "locked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Read-only metadata table. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

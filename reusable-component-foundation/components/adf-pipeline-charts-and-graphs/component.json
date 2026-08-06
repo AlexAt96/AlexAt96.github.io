@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0",
+  "id": "adf-pipeline-charts-and-graphs",
+  "title": "ADF pipeline charts, graphs and step explorer",
+  "requestedCoverage": "ADF pipeline chart and graphs",
+  "summary": "ADF complexity charts plus pipeline selectors, dependency ordering, activity lanes, detailed step maps and source-to-Databricks lineage.",
+  "routes": [
+    "app/adf-lineage-explorer.html",
+    "app/document.html?phase=team-analysis&section=adf-complexity-analysis&bu=:businessUnitId"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "getAdfPipelineStepFlows",
+        "orderAdfPipelineActivities",
+        "getAdfActivityDependencyLevels",
+        "createAdfPipelineStep",
+        "renderAdfPipelineStepExplorer",
+        "renderAdfPipelineSelector",
+        "renderAdfPipelineStory",
+        "renderAdfPipelineStep",
+        "renderAdfPipelineLaneSvg",
+        "renderAdfStepDetailBranchMap",
+        "buildAdfPipelineTouchpointGraph",
+        "renderAdfPipelineTouchpointSvg",
+        "renderBuAdfComplexityCharts"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/11-system-map-visuals.css"
+  ],
+  "states": [
+    "no pipeline",
+    "pipeline selected",
+    "step selected",
+    "branching",
+    "fan-in",
+    "Databricks activity",
+    "missing endpoint evidence"
+  ],
+  "dataContracts": [
+    "pipeline",
+    "activity",
+    "dependency",
+    "dataset",
+    "linked service",
+    "copy flow",
+    "Databricks notebook/job",
+    "complexity summary"
+  ],
+  "templateKey": "adfPipeline",
+  "boundaries": [
+    "PipelineSelector",
+    "PipelineStory",
+    "PipelineLane",
+    "ActivityNode",
+    "StepDetails",
+    "EndpointBlock",
+    "ComplexityChart"
+  ]
+}

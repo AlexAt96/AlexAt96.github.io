@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "kanban-column-and-task-card",
+  "purpose": "Render one status column and its linked task cards with owner/status context.",
+  "drivers": [
+    {
+      "name": "renderContributorKanbanColumn",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderContributorKanbanColumn(",
+      "startLine": 3984,
+      "endLine": 3997,
+      "codeFile": "app--renderContributorKanbanColumn.reference.js"
+    },
+    {
+      "name": "getSectionKanbanStatus",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getSectionKanbanStatus(",
+      "startLine": 3999,
+      "endLine": 4007,
+      "codeFile": "app--getSectionKanbanStatus.reference.js"
+    },
+    {
+      "name": "renderSectionLink",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderSectionLink(",
+      "startLine": 28281,
+      "endLine": 28371,
+      "codeFile": "app--renderSectionLink.reference.js"
+    },
+    {
+      "name": "moveKanbanCardToStatusColumn",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function moveKanbanCardToStatusColumn(",
+      "startLine": 35309,
+      "endLine": 35321,
+      "codeFile": "app--moveKanbanCardToStatusColumn.reference.js"
+    }
+  ]
+}

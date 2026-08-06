@@ -1,0 +1,1210 @@
+{
+  "schemaVersion": "1.0",
+  "sourceCommit": "7f5f816e5f691e3a4fd429b49d62311718d15f71",
+  "componentCount": 20,
+  "individualTemplateCount": 96,
+  "individualTemplateCatalogue": "individual-template-catalogue.json",
+  "templateData": "template-data/template-data.json",
+  "sourceSnapshot": "source-snapshot/",
+  "components": [
+    {
+      "id": "dashboard-shell-and-planning",
+      "title": "Dashboard shell, KPI cards and planning",
+      "requestedCoverage": "Dashboard",
+      "summary": "Programme dashboard with KPI cards, phase health, work queues, tabs, planning rows, Gantt-style bars and persisted plan settings.",
+      "routes": [
+        "app/index.html",
+        "/api/workspace",
+        "/api/programme/screens/project-plan-setup"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderDashboard",
+            "renderDashboardTabs",
+            "renderDashboardStatisticsTab",
+            "renderDiscoveryKpiCard",
+            "renderDiscoveryLineChart",
+            "renderDashboardPlanTab",
+            "renderDashboardPlanRow",
+            "renderDashboardPlanBar",
+            "getDashboardPlanModel",
+            "persistDashboardPlanSettings"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/03-dashboard-planning.css",
+        "app/styles/01-foundation.css"
+      ],
+      "states": [
+        "loading",
+        "empty",
+        "healthy",
+        "at-risk",
+        "blocked",
+        "draft plan",
+        "saved plan",
+        "undo available"
+      ],
+      "dataContracts": [
+        "dashboard KPI model",
+        "phase instances",
+        "work items",
+        "project plan settings",
+        "Gantt dependencies"
+      ],
+      "templateKey": "dashboard",
+      "boundaries": [
+        "DashboardShell",
+        "KpiCard",
+        "PhaseHealthSummary",
+        "PlanningGrid",
+        "GanttBar",
+        "PlanSettingsForm"
+      ]
+    },
+    {
+      "id": "graphs-and-charts",
+      "title": "Graphs and chart primitives",
+      "requestedCoverage": "Graphs and charts",
+      "summary": "Reusable SVG/CSS line, bar, pie, distribution, waterfall and KPI visual patterns used across dashboards, reports and decisions.",
+      "routes": [
+        "app/index.html",
+        "app/document.html",
+        "app/decision.html"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderDiscoveryLineChart",
+            "renderReportPieVisual",
+            "renderReportPieSlice",
+            "renderReportBarVisual",
+            "renderMetadataBarChart",
+            "renderAdvancedDiscoveryPieChart",
+            "renderAdvancedDiscoveryDistributionChart",
+            "renderCostBuComparisonChart",
+            "renderCostBridgeChart",
+            "renderDecisionSavingsChartSvg",
+            "renderDecisionWaterfallChart"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/03-dashboard-planning.css",
+        "app/styles/06-analysis-workflows.css",
+        "app/styles/07-outputs-decision.css"
+      ],
+      "states": [
+        "populated",
+        "empty",
+        "single series",
+        "multi-series",
+        "positive",
+        "warning",
+        "negative"
+      ],
+      "dataContracts": [
+        "label/value rows",
+        "time series",
+        "stacked series",
+        "waterfall steps",
+        "chart legend"
+      ],
+      "templateKey": "charts",
+      "boundaries": [
+        "LineChart",
+        "BarChart",
+        "PieChart",
+        "DistributionChart",
+        "WaterfallChart",
+        "ChartLegend",
+        "EmptyChart"
+      ]
+    },
+    {
+      "id": "diagram-primitives",
+      "title": "Diagram and dependency-map primitives",
+      "requestedCoverage": "Diagrams",
+      "summary": "Node/edge maps, topology flows, source-consumer dependencies, external-location diagrams and zoom/export interaction patterns.",
+      "routes": [
+        "app/dependency-explorer.html",
+        "app/adf-lineage-explorer.html",
+        "app/document.html?phase=team-analysis&section=external-location-mapping"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderExternalLocationDiagram",
+            "renderExternalLocationDependencyMap",
+            "renderSourceConsumerDependencyDiagram",
+            "renderSourceConsumerDependencyDiagramContent",
+            "renderProgramTopologyDiagram",
+            "renderProposedTopologyFlowDiagram",
+            "renderEnvironmentMigrationFlowDiagram",
+            "renderProposedTopologyStructureDiagram"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/06-analysis-workflows.css",
+        "app/styles/11-system-map-visuals.css"
+      ],
+      "states": [
+        "empty",
+        "partial",
+        "complete",
+        "selected node",
+        "focused edge",
+        "zoomed",
+        "exported"
+      ],
+      "dataContracts": [
+        "nodes",
+        "edges",
+        "lanes",
+        "node metadata",
+        "evidence links",
+        "layout coordinates"
+      ],
+      "templateKey": "diagrams",
+      "boundaries": [
+        "DiagramCanvas",
+        "NodeCard",
+        "Edge",
+        "Lane",
+        "DiagramToolbar",
+        "DiagramLegend",
+        "DiagramDetailsPanel"
+      ]
+    },
+    {
+      "id": "kanban-list-and-cards",
+      "title": "Kanban, list and task cards",
+      "requestedCoverage": "Kanban and list, including cards",
+      "summary": "Role-grouped phase work rendered as toggled Kanban or list views with owner filtering, status columns and movable task cards.",
+      "routes": [
+        "app/phase.html?phase=initiation",
+        "app/phase.html?phase=team-analysis&bu=:businessUnitId"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderPhaseDashboardViewToggle",
+            "renderPhaseDashboardOwnerFilter",
+            "renderPhaseSectionList",
+            "renderPhaseCombinedKanbanBoard",
+            "renderContributorKanbanColumn",
+            "getSectionKanbanStatus",
+            "setPhaseDashboardView",
+            "moveKanbanCardToStatusColumn",
+            "refreshKanbanColumnCounts"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/03-dashboard-planning.css",
+        "app/styles/04-phase-documents.css"
+      ],
+      "states": [
+        "not started",
+        "draft",
+        "in progress",
+        "in review",
+        "blocked",
+        "completed",
+        "filtered",
+        "empty column"
+      ],
+      "dataContracts": [
+        "task card",
+        "status column",
+        "owner group",
+        "phase",
+        "business-unit context"
+      ],
+      "templateKey": "kanban",
+      "boundaries": [
+        "ViewToggle",
+        "OwnerFilter",
+        "KanbanBoard",
+        "KanbanColumn",
+        "TaskCard",
+        "TaskList",
+        "EmptyColumn"
+      ]
+    },
+    {
+      "id": "data-tables-input-and-rendering",
+      "title": "Editable and read-only data tables",
+      "requestedCoverage": "Data tables, both input and rendering",
+      "summary": "Editable row grids, add/copy/remove controls, Excel import/export handoff, compact read-only tables, traceability tables and report tables.",
+      "routes": [
+        "app/document.html",
+        "app/input-centre.html",
+        "/api/business-units/:businessUnitId/*"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderEditDataTable",
+            "renderMiniTable",
+            "renderInputTraceabilityTable",
+            "renderMetadataTableSection",
+            "renderDataDictionaryTableSection",
+            "copyEditableTableRow",
+            "wireMetadataTableActions",
+            "parseImportTableRowsFromFile"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/01-foundation.css",
+        "app/styles/05-collection-workflows.css",
+        "app/styles/06-analysis-workflows.css"
+      ],
+      "states": [
+        "empty",
+        "view",
+        "edit",
+        "row added",
+        "row copied",
+        "row removed",
+        "validation error",
+        "import preview",
+        "locked"
+      ],
+      "dataContracts": [
+        "column definition",
+        "editable row",
+        "render row",
+        "validation errors",
+        "pagination/filter metadata",
+        "import aliases"
+      ],
+      "templateKey": "tables",
+      "boundaries": [
+        "DataTable",
+        "EditableDataTable",
+        "ColumnHeader",
+        "EditableRow",
+        "TableToolbar",
+        "ImportExportPanel",
+        "EmptyTable"
+      ]
+    },
+    {
+      "id": "tool-metadata-setup",
+      "title": "Tool metadata setup",
+      "requestedCoverage": "Metadata setup",
+      "summary": "Editable programme metadata for RICE measures, ADF complexity factors, workflow statuses and technology mappings.",
+      "routes": [
+        "app/admin.html?tab=tool-metadata",
+        "/api/programme/rice-definitions",
+        "/api/programme/adf-activity-factors",
+        "/api/programme/status-reference",
+        "/api/programme/technology-mappings"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderToolMetadata",
+            "renderMetadataDisclosure",
+            "renderRiceDefinitionsEditTable",
+            "renderAdfActivityFactorsEditTable",
+            "renderPhaseStatusModelTable",
+            "renderTechnologyMappingMetadataTable",
+            "saveToolMetadataSection"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/08-admin-integrations.css",
+        "app/styles/06-analysis-workflows.css"
+      ],
+      "states": [
+        "collapsed",
+        "expanded",
+        "editing",
+        "saving",
+        "saved",
+        "invalid",
+        "locked"
+      ],
+      "dataContracts": [
+        "RICE metric definition",
+        "ADF activity factor",
+        "status reference",
+        "technology mapping"
+      ],
+      "templateKey": "toolMetadata",
+      "boundaries": [
+        "MetadataSetupPage",
+        "MetadataDisclosure",
+        "DefinitionTable",
+        "StatusModel",
+        "SaveStatus"
+      ]
+    },
+    {
+      "id": "access-confirmation-flow",
+      "title": "Access confirmation and analysis verification",
+      "requestedCoverage": "Access confirmation flow and confirmation feedback",
+      "summary": "Collection-team access confirmation, knowledge/repository links, Databricks/Azure flags, analysis-team working/issue tests and save confirmation feedback.",
+      "routes": [
+        "app/document.html?phase=bu-data-collection&section=environment-access&bu=:businessUnitId",
+        "/api/business-units/:businessUnitId/environment-access",
+        "/api/business-units/:businessUnitId/environment-access-test"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderEnvironmentAccessTask",
+            "renderKnowledgeAccessTask",
+            "renderAnalysisAccessAndReferenceLinks",
+            "renderAnalysisAccessProduct",
+            "getEnvironmentAccessSummary",
+            "getEnvironmentAccessTestSummary",
+            "renderEnvironmentAccessTestControls",
+            "saveCollectionAccessForm",
+            "applyEnvironmentAccessSaveResult"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/05-collection-workflows.css",
+        "app/styles/06-analysis-workflows.css"
+      ],
+      "states": [
+        "not confirmed",
+        "partially confirmed",
+        "confirmed",
+        "analysis untested",
+        "working",
+        "issue",
+        "saving",
+        "saved"
+      ],
+      "dataContracts": [
+        "environment access confirmation",
+        "knowledge repository access",
+        "access test result",
+        "reviewer identity",
+        "confirmation timestamp"
+      ],
+      "templateKey": "accessConfirmation",
+      "boundaries": [
+        "AccessConfirmationForm",
+        "AccessFlag",
+        "AccessTestControl",
+        "AccessSummary",
+        "ConfirmationBanner",
+        "SaveToast"
+      ]
+    },
+    {
+      "id": "document-feedback-loop",
+      "title": "Document review and feedback loop",
+      "requestedCoverage": "Document feedback loop",
+      "summary": "Document comments, programme and BU feedback, return-to-author tasks, completion acknowledgement and app-native confirmation/toast behaviour.",
+      "routes": [
+        "app/document.html",
+        "/api/programme/screens/:sectionKey/report-commentary",
+        "/api/business-units/:businessUnitId/bu-tech-report"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderDocumentFeedbackSection",
+            "renderPhaseFeedbackSection",
+            "renderFeedbackSection",
+            "renderFeedbackItem",
+            "renderBuOutputDocumentFeedbackBanner",
+            "getOpenTaskFeedback",
+            "getOpenFeedbackItemsForPhase",
+            "buildFeedbackItemFromScreen",
+            "openBuOutputFeedbackDialog",
+            "wireBuOutputFeedbackDoneActions",
+            "sendBuTechReportSectionFeedback"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/04-phase-documents.css",
+        "app/styles/07-outputs-decision.css"
+      ],
+      "states": [
+        "no feedback",
+        "open feedback",
+        "changes requested",
+        "author response",
+        "resolved",
+        "reopened"
+      ],
+      "dataContracts": [
+        "feedback item",
+        "document key",
+        "section key",
+        "comment",
+        "author",
+        "reviewer",
+        "status",
+        "timestamps"
+      ],
+      "templateKey": "documentFeedback",
+      "boundaries": [
+        "FeedbackBanner",
+        "FeedbackThread",
+        "FeedbackItem",
+        "FeedbackComposer",
+        "ResolveAction",
+        "FeedbackBadge"
+      ]
+    },
+    {
+      "id": "questionnaire-wizards",
+      "title": "Questionnaire and multi-step wizard patterns",
+      "requestedCoverage": "Questionnaire wizards",
+      "summary": "Accessible multi-step modal wizards for product questionnaires, script outputs, Terraform metadata and multi-document uploads.",
+      "routes": [
+        "app/document.html?phase=bu-data-collection&section=questionnaire-response&bu=:businessUnitId",
+        "/api/business-units/:businessUnitId/questionnaire/products",
+        "/api/business-units/:businessUnitId/questionnaire/responses"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderWizard",
+            "renderQuestionnaireResponse",
+            "renderQuestionnaireAnswerWizard",
+            "renderQuestionnaireAnswersModal",
+            "wireQuestionnaireAnswerWizard",
+            "saveQuestionnaireAnswers",
+            "renderTerraformExporterWizard",
+            "renderScriptOutputWizard",
+            "renderMultiDocumentUploadWizard",
+            "openAccessibleModal",
+            "closeAccessibleModal"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/05-collection-workflows.css",
+        "app/styles/01-foundation.css"
+      ],
+      "states": [
+        "closed",
+        "step active",
+        "step complete",
+        "validation error",
+        "draft saved",
+        "submitted",
+        "read-only answers"
+      ],
+      "dataContracts": [
+        "wizard definition",
+        "step",
+        "question",
+        "answer",
+        "product context",
+        "submission status"
+      ],
+      "templateKey": "questionnaire",
+      "boundaries": [
+        "Wizard",
+        "WizardStep",
+        "QuestionField",
+        "WizardProgress",
+        "WizardNavigation",
+        "AnswerReview",
+        "SubmissionConfirmation"
+      ]
+    },
+    {
+      "id": "metadata-results-screen",
+      "title": "Metadata results and advanced discovery",
+      "requestedCoverage": "Metadata results screen",
+      "summary": "Cross-BU and BU metadata review with KPI summaries, category disclosures, inventory tables, Unity Catalog bindings and advanced-discovery charts.",
+      "routes": [
+        "app/document.html?phase=team-analysis&section=metadata-review",
+        "app/document.html?phase=team-analysis&section=advanced-discovery"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderMetadataReview",
+            "getMetadataReviewModel",
+            "getMetadataReviewSummary",
+            "renderMetadataReviewStats",
+            "renderDatabricksMetadataOverview",
+            "renderAdfMetadataOverview",
+            "renderDictionaryMetadataOverview",
+            "renderSizingMetadataOverview",
+            "renderMetadataReviewDisclosure",
+            "renderDatabricksInventoryResourceTable",
+            "renderUnityCatalogBindingTable",
+            "renderAdvancedDiscoveryMetadataTab"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/06-analysis-workflows.css"
+      ],
+      "states": [
+        "no metadata",
+        "partial parse",
+        "complete parse",
+        "cross-BU",
+        "BU filtered",
+        "expanded category",
+        "exporting"
+      ],
+      "dataContracts": [
+        "inventory resource",
+        "ADF metadata row",
+        "dictionary column",
+        "table sizing row",
+        "storage path",
+        "UC grant",
+        "workspace binding"
+      ],
+      "templateKey": "metadataResults",
+      "boundaries": [
+        "MetadataResultsPage",
+        "MetadataKpis",
+        "MetadataCategory",
+        "ResourceTable",
+        "AttributeDisclosure",
+        "MetadataChart",
+        "ExportAction"
+      ]
+    },
+    {
+      "id": "adf-pipeline-charts-and-graphs",
+      "title": "ADF pipeline charts, graphs and step explorer",
+      "requestedCoverage": "ADF pipeline chart and graphs",
+      "summary": "ADF complexity charts plus pipeline selectors, dependency ordering, activity lanes, detailed step maps and source-to-Databricks lineage.",
+      "routes": [
+        "app/adf-lineage-explorer.html",
+        "app/document.html?phase=team-analysis&section=adf-complexity-analysis&bu=:businessUnitId"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "getAdfPipelineStepFlows",
+            "orderAdfPipelineActivities",
+            "getAdfActivityDependencyLevels",
+            "createAdfPipelineStep",
+            "renderAdfPipelineStepExplorer",
+            "renderAdfPipelineSelector",
+            "renderAdfPipelineStory",
+            "renderAdfPipelineStep",
+            "renderAdfPipelineLaneSvg",
+            "renderAdfStepDetailBranchMap",
+            "buildAdfPipelineTouchpointGraph",
+            "renderAdfPipelineTouchpointSvg",
+            "renderBuAdfComplexityCharts"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/06-analysis-workflows.css",
+        "app/styles/11-system-map-visuals.css"
+      ],
+      "states": [
+        "no pipeline",
+        "pipeline selected",
+        "step selected",
+        "branching",
+        "fan-in",
+        "Databricks activity",
+        "missing endpoint evidence"
+      ],
+      "dataContracts": [
+        "pipeline",
+        "activity",
+        "dependency",
+        "dataset",
+        "linked service",
+        "copy flow",
+        "Databricks notebook/job",
+        "complexity summary"
+      ],
+      "templateKey": "adfPipeline",
+      "boundaries": [
+        "PipelineSelector",
+        "PipelineStory",
+        "PipelineLane",
+        "ActivityNode",
+        "StepDetails",
+        "EndpointBlock",
+        "ComplexityChart"
+      ]
+    },
+    {
+      "id": "bu-complexity-analysis",
+      "title": "Business-unit sizing and complexity analysis",
+      "requestedCoverage": "BU complexity analysis",
+      "summary": "BU size/complexity scoring, factor controls, calculated bands, ADF contribution, RICE lineage and topology context.",
+      "routes": [
+        "app/document.html?phase=team-analysis&section=bu-sizing-complexity-scoring&bu=:businessUnitId",
+        "/api/business-units/:businessUnitId/sizing-assessment"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderBuSizingComplexity",
+            "renderBuComplexityFactorControl",
+            "renderBuNumericComplexityControl",
+            "renderBuCalculatedComplexityControl",
+            "calculateBuSizeBand",
+            "calculateBuComplexityBand",
+            "getComplexityFactorScore",
+            "getBuSizingAdfBand",
+            "getBuSizingAdfScore",
+            "renderBandDefinitionTable",
+            "getRiceScoreLineageTooltip"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/06-analysis-workflows.css"
+      ],
+      "states": [
+        "not assessed",
+        "draft",
+        "calculated",
+        "low",
+        "medium",
+        "high",
+        "very high",
+        "saved",
+        "locked"
+      ],
+      "dataContracts": [
+        "sizing assessment",
+        "complexity factor",
+        "factor option",
+        "derived score",
+        "size band",
+        "complexity band",
+        "ADF contribution"
+      ],
+      "templateKey": "buComplexity",
+      "boundaries": [
+        "ComplexityAssessment",
+        "FactorControl",
+        "NumericMeasure",
+        "CalculatedMeasure",
+        "BandBadge",
+        "ScoreSummary",
+        "DefinitionTable"
+      ]
+    },
+    {
+      "id": "environment-rationalisation",
+      "title": "Environment rationalisation and proposed topology",
+      "requestedCoverage": "Environment rationalisation",
+      "summary": "Editable migrate/merge/decommission decisions, target environments, proposed topology tables and live migration/structure diagrams.",
+      "routes": [
+        "app/document.html?phase=team-analysis&section=proposed-environment-rationalisation&bu=:businessUnitId",
+        "/api/business-units/:businessUnitId/environment-rationalisation"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderEnvironmentRationalisation",
+            "renderProposedTopologyTable",
+            "renderProposedTopologyFlowDiagram",
+            "renderEnvironmentMigrationFlowDiagram",
+            "renderProposedTopologyStructureDiagram",
+            "getEnvironmentRationalisationModel",
+            "normaliseEnvironmentRationalisationAction",
+            "wireEnvironmentRationalisationActions",
+            "refreshProposedTopologyDiagrams",
+            "parseEnvironmentRationalisationImportFile"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/06-analysis-workflows.css"
+      ],
+      "states": [
+        "current",
+        "migrate",
+        "merge",
+        "decommission",
+        "target incomplete",
+        "diagram refreshed",
+        "saved"
+      ],
+      "dataContracts": [
+        "environment rationalisation row",
+        "migration action",
+        "merge target",
+        "proposed environment",
+        "topology structure",
+        "diagram node/edge"
+      ],
+      "templateKey": "environmentRationalisation",
+      "boundaries": [
+        "RationalisationTable",
+        "ActionSelect",
+        "MergeTargetSelect",
+        "TopologyTable",
+        "MigrationFlowDiagram",
+        "StructureDiagram",
+        "ImportExportPanel"
+      ]
+    },
+    {
+      "id": "environment-evidence-matrix",
+      "title": "Environment evidence matrix",
+      "requestedCoverage": "Environment evidence matrix",
+      "summary": "Per-environment evidence coverage, required/optional inputs, status icons, progress calculations and links to missing collection tasks.",
+      "routes": [
+        "app/phase.html?phase=bu-data-collection&bu=:businessUnitId",
+        "app/document.html?phase=bu-data-collection&section=environment-task-list&bu=:businessUnitId"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderCollectionDashboard",
+            "renderCollectionEvidenceMatrix",
+            "getCollectionProductEvidenceProgress",
+            "getCollectionProductsEvidenceProgress",
+            "renderCollectionEvidenceProgressBar",
+            "getCollectionEvidenceGroups",
+            "getEvidenceGroupStatus",
+            "renderEvidenceStatusIcon",
+            "renderEnvironmentTaskList"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/05-collection-workflows.css"
+      ],
+      "states": [
+        "missing",
+        "required",
+        "optional",
+        "partial",
+        "submitted",
+        "reviewed",
+        "not applicable"
+      ],
+      "dataContracts": [
+        "environment",
+        "evidence group",
+        "evidence item",
+        "requirement rule",
+        "status",
+        "source link",
+        "progress"
+      ],
+      "templateKey": "environmentEvidenceMatrix",
+      "boundaries": [
+        "EvidenceMatrix",
+        "EnvironmentColumn",
+        "EvidenceGroup",
+        "EvidenceCell",
+        "StatusIcon",
+        "ProgressBar",
+        "MissingEvidenceLink"
+      ]
+    },
+    {
+      "id": "evidence-review-queue",
+      "title": "Evidence review queue",
+      "requestedCoverage": "Evidence review queue",
+      "summary": "Review queue spanning uploaded versions and app-created artifacts, with filters, reviewer notes, follow-up questions, BU answers and confidence/status handling.",
+      "routes": [
+        "app/document.html?phase=team-analysis&section=evidence-review&bu=:businessUnitId",
+        "/api/business-units/:businessUnitId/evidence-review"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderEvidenceReview",
+            "renderEvidenceReviewRow",
+            "renderEvidenceReviewFollowUpSummary",
+            "renderEvidenceReviewBuAnswer",
+            "renderEvidenceReviewModal",
+            "getEvidenceReviewDocumentsForBu",
+            "getEvidenceReviewAppArtifactsForBu",
+            "createEvidenceReviewArtifact",
+            "normaliseEvidenceReviewState",
+            "wireEvidenceReviewActions",
+            "validateEvidenceReviewModalForm"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/06-analysis-workflows.css",
+        "app/styles/05-collection-workflows.css"
+      ],
+      "states": [
+        "not reviewed",
+        "in review",
+        "accepted",
+        "question raised",
+        "more info needed",
+        "further investigation",
+        "confirmed",
+        "rejected"
+      ],
+      "dataContracts": [
+        "review artifact",
+        "upload version",
+        "review status",
+        "confidence",
+        "review notes",
+        "follow-up question",
+        "BU answer",
+        "environment tags"
+      ],
+      "templateKey": "evidenceReviewQueue",
+      "boundaries": [
+        "ReviewQueue",
+        "ReviewFilters",
+        "ReviewRow",
+        "ReviewStatus",
+        "ReviewDialog",
+        "FollowUpSummary",
+        "EvidenceLink"
+      ]
+    },
+    {
+      "id": "final-bu-report-lifecycle",
+      "title": "Final BU report review, finalise, read and feedback states",
+      "requestedCoverage": "Final BU report: finalise/review plus complete read/feedback state",
+      "summary": "Section-by-section report drafting, source/task links, review controls, client-readable output, completion/approval, export and feedback loops.",
+      "routes": [
+        "app/document.html?phase=team-analysis&section=bu-tech-report-input&bu=:businessUnitId",
+        "app/document.html?phase=outputs&section=bu-tech-report&bu=:businessUnitId",
+        "/api/business-units/:businessUnitId/bu-tech-report",
+        "/api/business-units/:businessUnitId/outputs/approve"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderBuTechReportInput",
+            "getBuTechReportModel",
+            "renderBuTechReportInputSection",
+            "renderBuTechReportSummaryTable",
+            "renderBuTechReportEvidenceLinks",
+            "renderBuTechReport",
+            "renderBuTechReportTabs",
+            "renderBuTechReportClientReport",
+            "renderBuTechReportClientSection",
+            "renderBuOutputDocumentFeedbackBanner",
+            "wireBuTechReportActions",
+            "sendBuTechReportSectionFeedback"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/07-outputs-decision.css",
+        "app/styles/04-phase-documents.css"
+      ],
+      "states": [
+        "draft",
+        "review",
+        "changes requested",
+        "ready to finalise",
+        "finalised",
+        "complete read-only",
+        "feedback open",
+        "feedback resolved",
+        "approved"
+      ],
+      "dataContracts": [
+        "report section",
+        "saved narrative",
+        "source task",
+        "review control",
+        "feedback",
+        "approval",
+        "client report",
+        "export metadata"
+      ],
+      "templateKey": "finalBuReport",
+      "boundaries": [
+        "ReportEditor",
+        "ReportSectionEditor",
+        "SourceTaskLink",
+        "ReviewNavigator",
+        "FinaliseAction",
+        "ClientReport",
+        "ReportFeedback",
+        "ApprovalBanner"
+      ]
+    },
+    {
+      "id": "decision-screen",
+      "title": "Decision screen and scenario layout",
+      "requestedCoverage": "Decision screen and layout",
+      "summary": "Executive recommendation, scenario configuration, savings progression/waterfall charts, sequencing, accounting overview, options table and artifact hub.",
+      "routes": [
+        "app/decision.html",
+        "/api/programme/open-decisions",
+        "app/document.html?phase=decision"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "renderDecisionPage",
+            "renderDecisionCgiRecommendationPanel",
+            "renderDecisionExecutiveSummary",
+            "renderDecisionScenarioConfigurator",
+            "getDecisionScenarioSummary",
+            "renderDecisionPrimaryChart",
+            "renderDecisionSavingsChartSvg",
+            "renderDecisionWaterfallChart",
+            "renderDecisionRiceSequencingPanel",
+            "renderDecisionAccountingOverview",
+            "renderDecisionSavingsSummaryTable",
+            "renderDecisionTableSection",
+            "renderDecisionArtifactHub"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/07-outputs-decision.css"
+      ],
+      "states": [
+        "baseline",
+        "scenario changed",
+        "unsaved scenario",
+        "recommended",
+        "conditional",
+        "not recommended",
+        "decision ready",
+        "blocked"
+      ],
+      "dataContracts": [
+        "BU decision model",
+        "scenario action",
+        "savings point",
+        "waterfall contribution",
+        "RICE sequence",
+        "recommendation",
+        "artifact link"
+      ],
+      "templateKey": "decision",
+      "boundaries": [
+        "DecisionPage",
+        "RecommendationPanel",
+        "ScenarioConfigurator",
+        "SavingsChart",
+        "WaterfallChart",
+        "SequencingTable",
+        "OptionsTable",
+        "ArtifactHub"
+      ]
+    },
+    {
+      "id": "data-lineage-screen",
+      "title": "Data lineage and dependency explorer",
+      "requestedCoverage": "Data lineage screen",
+      "summary": "ADF lineage explorer, source/consumer dependency maps, external connection flows, touchpoint graphs and source traceability contracts.",
+      "routes": [
+        "app/adf-lineage-explorer.html",
+        "app/dependency-explorer.html",
+        "/api/data-map",
+        "/api/system-map"
+      ],
+      "symbols": [
+        {
+          "file": "app/src/app.js",
+          "names": [
+            "getAdfLineageModel",
+            "renderAdfLineageExplorer",
+            "renderAdfLineageTouchpointMap",
+            "buildAdfPipelineTouchpointGraph",
+            "renderAdfLineageMap",
+            "getAdfLineageLayout",
+            "renderSourceConsumerDependencyDiagram",
+            "buildExternalLocationGraph",
+            "renderExternalLocationDependencyMap"
+          ]
+        }
+      ],
+      "styles": [
+        "app/styles/11-system-map-visuals.css",
+        "app/styles/06-analysis-workflows.css"
+      ],
+      "states": [
+        "no lineage",
+        "partial",
+        "complete",
+        "pipeline focus",
+        "activity focus",
+        "source focus",
+        "target focus",
+        "evidence caveat"
+      ],
+      "dataContracts": [
+        "lineage node",
+        "lineage edge",
+        "pipeline",
+        "activity",
+        "dataset",
+        "source trace rule",
+        "evidence link",
+        "layout"
+      ],
+      "templateKey": "dataLineage",
+      "boundaries": [
+        "LineageExplorer",
+        "LineageGraph",
+        "LineageNode",
+        "LineageEdge",
+        "PipelineFilter",
+        "DetailsDrawer",
+        "CaveatList",
+        "SourceTraceLink"
+      ]
+    },
+    {
+      "id": "dora-metrics-screen",
+      "title": "DORA metrics dashboard",
+      "requestedCoverage": "DORA metrics",
+      "summary": "Five-metric DORA dashboard with true/proxy/missing status, confidence, low-medium-high gauges, supporting statistics and explicit production-data contracts.",
+      "routes": [
+        "docs/reports/interactive-system-map.html#doraMetrics",
+        "/api/system-map"
+      ],
+      "symbols": [
+        {
+          "file": "docs/reports/interactive-system-map.html",
+          "names": [
+            "normaliseDoraMetrics",
+            "renderDoraMetricsReport",
+            "renderDoraMetricCard",
+            "doraGaugeModel",
+            "renderDoraStatTable",
+            "doraMetricBoundaryDefaults",
+            "doraBandForMetric",
+            "doraMissingDataSummary"
+          ]
+        },
+        {
+          "file": "server/lib/dora-metrics.js",
+          "names": [
+            "buildDoraMetrics"
+          ]
+        }
+      ],
+      "styles": [
+        "docs/reports/interactive-system-map.html"
+      ],
+      "states": [
+        "true metric",
+        "proxy",
+        "missing data",
+        "good",
+        "watch",
+        "risk",
+        "low confidence",
+        "high confidence"
+      ],
+      "dataContracts": [
+        "DORA metric",
+        "dashboard gauge",
+        "deployment event",
+        "change event",
+        "incident event",
+        "service scope",
+        "missing-data contract"
+      ],
+      "templateKey": "doraMetrics",
+      "boundaries": [
+        "DoraDashboard",
+        "MetricCard",
+        "MetricGauge",
+        "MetricStatus",
+        "SupportingStats",
+        "DataContractTable",
+        "MissingDataNotice"
+      ]
+    },
+    {
+      "id": "test-coverage-screen",
+      "title": "Test coverage map and quality telemetry",
+      "requestedCoverage": "Test coverage screens",
+      "summary": "Coverage summary cards, suite inventory, cadence/status table, trigger-suite-area diagram and evidence-backed coverage-area gaps.",
+      "routes": [
+        "docs/reports/interactive-system-map.html#testTelemetry",
+        "/api/system-map"
+      ],
+      "symbols": [
+        {
+          "file": "docs/reports/interactive-system-map.html",
+          "names": [
+            "renderTestCoverageDiagram"
+          ]
+        },
+        {
+          "file": "server/lib/repo-quality-metrics.js",
+          "names": [
+            "buildRepoQualityMetrics",
+            "buildTestCoverageAreas",
+            "coverageArea",
+            "testSuite"
+          ]
+        }
+      ],
+      "styles": [
+        "docs/reports/interactive-system-map.html"
+      ],
+      "states": [
+        "covered",
+        "gap",
+        "available",
+        "passing",
+        "failing",
+        "not run",
+        "manual",
+        "automated"
+      ],
+      "dataContracts": [
+        "test telemetry summary",
+        "test suite",
+        "coverage area",
+        "cadence",
+        "trigger",
+        "evidence path",
+        "gap scope"
+      ],
+      "templateKey": "testCoverage",
+      "boundaries": [
+        "CoverageDashboard",
+        "CoverageSummary",
+        "SuiteTable",
+        "CoverageAreaTable",
+        "CoverageMap",
+        "CoverageNode",
+        "GapBadge"
+      ]
+    }
+  ]
+}

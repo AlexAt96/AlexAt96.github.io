@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "compact-readonly-table",
+  "purpose": "Render a captioned compact table for calculation references and report summaries.",
+  "drivers": [
+    {
+      "name": "renderMiniTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMiniTable(",
+      "startLine": 16976,
+      "endLine": 16978,
+      "codeFile": "app--renderMiniTable.reference.js"
+    }
+  ]
+}

@@ -1,0 +1,717 @@
+{
+  "id": "dcc-hackathon",
+  "name": "DCC Hackathon",
+  "description": "Documentation assurance against a reusable standards library, using source-linked AI findings and named human decisions.",
+  "screens": {
+    "dashboard": {
+      "documentTitle": "DCC documentation assurance overview",
+      "data": {
+        "title": "Documentation assurance overview",
+        "description": "Switch perspectives to understand standards coverage, AI findings, human review and supporting evidence for the current DCC assurance run.",
+        "defaultLens": "Coverage",
+        "lenses": {
+          "Coverage": {
+            "question": "How much of the selected standards has been assessed against the uploaded documentation?",
+            "chartTitle": "Requirement coverage",
+            "chartSummary": "Seven assurance checkpoints · requirements assessed",
+            "unit": "%",
+            "kpis": [
+              { "label": "Requirements assessed", "value": "214 / 252", "note": "85% across five standards", "tone": "info" },
+              { "label": "Standards selected", "value": "5", "note": "Four ready · one draft profile", "tone": "success" },
+              { "label": "Documents scanned", "value": "3", "note": "61 pages processed", "tone": "success" },
+              { "label": "Mapping gaps", "value": "11", "note": "Three need an assurance owner", "tone": "warning" }
+            ],
+            "trend": [
+              { "label": "C1", "value": 24, "note": "Standards library loaded" },
+              { "label": "C2", "value": 37, "note": "ISO controls mapped" },
+              { "label": "C3", "value": 51, "note": "Accessibility criteria added" },
+              { "label": "C4", "value": 63, "note": "Solution design scanned" },
+              { "label": "C5", "value": 72, "note": "Threat model scanned" },
+              { "label": "C6", "value": 80, "note": "Cross-standard matches reviewed" },
+              { "label": "C7", "value": 85, "note": "Current assurance position" }
+            ],
+            "allocationTitle": "Coverage by standard",
+            "allocation": [
+              { "label": "ISO/IEC 27001", "value": 91, "display": "85 / 93" },
+              { "label": "WCAG 2.2 AA", "value": 84, "display": "46 / 55" },
+              { "label": "GDS Service Standard", "value": 79, "display": "11 / 14" },
+              { "label": "NIST AI RMF", "value": 75, "display": "54 / 72" },
+              { "label": "DCC profile", "value": 100, "display": "18 / 18" }
+            ],
+            "matrixTitle": "Coverage health",
+            "matrix": [
+              { "label": "Governance", "value": "Watch", "tone": "warn", "note": "Security ownership is not assigned" },
+              { "label": "Accessibility", "value": "Watch", "tone": "warn", "note": "Contrast evidence remains incomplete" },
+              { "label": "AI oversight", "value": "On track", "tone": "good", "note": "Named human review is defined" },
+              { "label": "Operations", "value": "Gap", "tone": "bad", "note": "Recovery evidence is not linked" },
+              { "label": "Traceability", "value": "On track", "tone": "good", "note": "Findings retain source excerpts" },
+              { "label": "Reporting", "value": "Ready", "tone": "good", "note": "Reviewed results can be published" }
+            ],
+            "insight": {
+              "value": "85%",
+              "title": "Current coverage",
+              "body": "All three documents have been scanned. Eleven requirements still need a mapping or an explicit not-applicable decision."
+            }
+          },
+          "Findings": {
+            "question": "What did the AI-assisted assessment find, and which gaps need action?",
+            "chartTitle": "Findings identified",
+            "chartSummary": "Seven assurance checkpoints · cumulative findings",
+            "unit": "",
+            "kpis": [
+              { "label": "Total findings", "value": "27", "note": "Across three documents", "tone": "info" },
+              { "label": "Requirements met", "value": "8", "note": "Supported by linked evidence", "tone": "success" },
+              { "label": "Gaps identified", "value": "15", "note": "Five rated high priority", "tone": "warning" },
+              { "label": "Awaiting review", "value": "4", "note": "Human decision still required", "tone": "warning" }
+            ],
+            "trend": [
+              { "label": "C1", "value": 0, "note": "Run prepared" },
+              { "label": "C2", "value": 4, "note": "Initial mappings checked" },
+              { "label": "C3", "value": 9, "note": "Solution design findings added" },
+              { "label": "C4", "value": 15, "note": "Threat-model findings added" },
+              { "label": "C5", "value": 21, "note": "Accessibility findings added" },
+              { "label": "C6", "value": 25, "note": "Related requirements consolidated" },
+              { "label": "C7", "value": 27, "note": "Current finding set" }
+            ],
+            "allocationTitle": "Findings by document",
+            "allocation": [
+              { "label": "Solution design v0.8", "value": 13, "display": "13" },
+              { "label": "Threat model v0.4", "value": 9, "display": "9" },
+              { "label": "Accessibility statement", "value": 5, "display": "5" }
+            ],
+            "matrixTitle": "Finding priority",
+            "matrix": [
+              { "label": "High", "value": "5", "tone": "bad", "note": "Needs action before approval" },
+              { "label": "Medium", "value": "10", "tone": "warn", "note": "Owner and evidence required" },
+              { "label": "Low", "value": "4", "tone": "neutral", "note": "Can be tracked after the run" },
+              { "label": "Met", "value": "8", "tone": "good", "note": "Evidence supports the requirement" },
+              { "label": "Duplicates", "value": "3", "tone": "good", "note": "Related clauses were consolidated" },
+              { "label": "Uncertain", "value": "2", "tone": "warn", "note": "Reviewer interpretation needed" }
+            ],
+            "insight": {
+              "value": "5 high",
+              "title": "Priority position",
+              "body": "The most material gaps concern named security ownership, recovery evidence and accessibility contrast evidence."
+            }
+          },
+          "Review": {
+            "question": "Are the AI findings receiving timely, accountable human decisions?",
+            "chartTitle": "Review completion",
+            "chartSummary": "Seven assurance checkpoints · findings decided",
+            "unit": "%",
+            "kpis": [
+              { "label": "Reviewed", "value": "23 / 27", "note": "85% of findings decided", "tone": "info" },
+              { "label": "Approved", "value": "8", "note": "Requirement met", "tone": "success" },
+              { "label": "Remediation needed", "value": "11", "note": "Named follow-up required", "tone": "warning" },
+              { "label": "Pending", "value": "4", "note": "Two reviewers assigned", "tone": "warning" }
+            ],
+            "trend": [
+              { "label": "C1", "value": 0, "note": "No decisions recorded" },
+              { "label": "C2", "value": 7, "note": "First findings triaged" },
+              { "label": "C3", "value": 22, "note": "Security review started" },
+              { "label": "C4", "value": 37, "note": "Architecture review added" },
+              { "label": "C5", "value": 56, "note": "Accessibility review added" },
+              { "label": "C6", "value": 74, "note": "Related findings resolved" },
+              { "label": "C7", "value": 85, "note": "Current review completion" }
+            ],
+            "allocationTitle": "Decisions by reviewer",
+            "allocation": [
+              { "label": "Security assurance", "value": 9, "display": "9 decisions" },
+              { "label": "Solution architecture", "value": 7, "display": "7 decisions" },
+              { "label": "Accessibility lead", "value": 4, "display": "4 decisions" },
+              { "label": "AI governance", "value": 3, "display": "3 decisions" }
+            ],
+            "matrixTitle": "Review controls",
+            "matrix": [
+              { "label": "Named reviewer", "value": "100%", "tone": "good", "note": "Every finding has an accountable reviewer" },
+              { "label": "Source checked", "value": "91%", "tone": "good", "note": "Two excerpts need confirmation" },
+              { "label": "Decision reason", "value": "87%", "tone": "warn", "note": "Three reasons are incomplete" },
+              { "label": "Follow-up owner", "value": "73%", "tone": "warn", "note": "Three gaps still need an owner" },
+              { "label": "Independent check", "value": "100%", "tone": "good", "note": "AI did not publish a final decision" },
+              { "label": "Audit history", "value": "100%", "tone": "good", "note": "Every change is retained" }
+            ],
+            "insight": {
+              "value": "4 pending",
+              "title": "Review position",
+              "body": "Four findings remain provisional and cannot enter the published assurance result until a reviewer decides them."
+            }
+          },
+          "Evidence": {
+            "question": "Can every assurance decision be traced to a standard requirement and a source excerpt?",
+            "chartTitle": "Evidence linkage",
+            "chartSummary": "Seven assurance checkpoints · findings with complete links",
+            "unit": "%",
+            "kpis": [
+              { "label": "Fully traceable", "value": "20 / 27", "note": "Requirement and excerpt linked", "tone": "info" },
+              { "label": "Source excerpts", "value": "25", "note": "Two need page confirmation", "tone": "success" },
+              { "label": "Evidence gaps", "value": "7", "note": "Three affect high-priority findings", "tone": "warning" },
+              { "label": "Stale sources", "value": "1", "note": "Threat model update requested", "tone": "warning" }
+            ],
+            "trend": [
+              { "label": "C1", "value": 18, "note": "Standards imported" },
+              { "label": "C2", "value": 29, "note": "Clause identifiers normalised" },
+              { "label": "C3", "value": 41, "note": "Document pages indexed" },
+              { "label": "C4", "value": 52, "note": "Source excerpts attached" },
+              { "label": "C5", "value": 63, "note": "Evidence owners assigned" },
+              { "label": "C6", "value": 70, "note": "Review links verified" },
+              { "label": "C7", "value": 74, "note": "Current traceability position" }
+            ],
+            "allocationTitle": "Evidence by source",
+            "allocation": [
+              { "label": "Solution design", "value": 88, "display": "15 links" },
+              { "label": "Threat model", "value": 71, "display": "8 links" },
+              { "label": "Accessibility statement", "value": 60, "display": "5 links" },
+              { "label": "Reviewer notes", "value": 82, "display": "14 links" }
+            ],
+            "matrixTitle": "Evidence quality",
+            "matrix": [
+              { "label": "Requirement linked", "value": "100%", "tone": "good", "note": "Every finding names a requirement" },
+              { "label": "Excerpt linked", "value": "93%", "tone": "good", "note": "Two excerpts need confirmation" },
+              { "label": "Page retained", "value": "89%", "tone": "warn", "note": "Three page references are incomplete" },
+              { "label": "Owner named", "value": "81%", "tone": "warn", "note": "Five evidence items need an owner" },
+              { "label": "Current version", "value": "96%", "tone": "good", "note": "One source is stale" },
+              { "label": "Review retained", "value": "100%", "tone": "good", "note": "Decision history is available" }
+            ],
+            "insight": {
+              "value": "74%",
+              "title": "Traceability position",
+              "body": "The assurance trail is usable, but seven findings still need a complete evidence link before the report can be finalised."
+            }
+          }
+        }
+      }
+    },
+    "planning-backlog": {
+      "documentTitle": "DCC documentation assurance backlog",
+      "options": {
+        "title": "Documentation assurance backlog",
+        "description": "Prioritise the DCC hackathon work needed to load standards, scan documents, review AI findings and publish a human-approved result."
+      },
+      "data": [
+        {
+          "id": "dcc-scope",
+          "key": "DCC-01",
+          "title": "Confirm the assurance demonstration scope",
+          "phase": "Frame",
+          "priority": "Critical",
+          "status": "Done",
+          "owner": "Hackathon lead",
+          "estimate": 2,
+          "dependencies": [],
+          "acceptance": "The demo covers standards selection, document upload, AI-assisted assessment, human review and a published assurance result.",
+          "summary": "Agree the user journey, success measures and evidence boundary."
+        },
+        {
+          "id": "dcc-standards",
+          "key": "DCC-02",
+          "title": "Curate the standards library",
+          "phase": "Frame",
+          "priority": "Critical",
+          "status": "Done",
+          "owner": "Assurance lead",
+          "estimate": 3,
+          "dependencies": ["dcc-scope"],
+          "acceptance": "ISO/IEC 27001, WCAG 2.2 AA, the GDS Service Standard, NIST AI RMF and the DCC profile are searchable with stable requirement identifiers.",
+          "summary": "Prepare representative standards and requirement metadata."
+        },
+        {
+          "id": "dcc-mappings",
+          "key": "DCC-03",
+          "title": "Map related requirements across standards",
+          "phase": "Prepare",
+          "priority": "High",
+          "status": "In progress",
+          "owner": "Standards analyst",
+          "estimate": 5,
+          "dependencies": ["dcc-standards"],
+          "acceptance": "Equivalent and supporting requirements can be traced without replacing their source-standard identity.",
+          "summary": "Connect overlapping governance, accessibility and AI controls."
+        },
+        {
+          "id": "dcc-documents",
+          "key": "DCC-04",
+          "title": "Load representative project documents",
+          "phase": "Prepare",
+          "priority": "High",
+          "status": "Done",
+          "owner": "Solution architecture",
+          "estimate": 3,
+          "dependencies": ["dcc-scope"],
+          "acceptance": "The solution design, threat model and accessibility statement retain file name, version, owner, page count and upload date.",
+          "summary": "Upload three safe fictional documents for the assurance run."
+        },
+        {
+          "id": "dcc-scan",
+          "key": "DCC-05",
+          "title": "Run the AI-assisted assurance scan",
+          "phase": "Assure",
+          "priority": "Critical",
+          "status": "In progress",
+          "owner": "AI engineering",
+          "estimate": 8,
+          "dependencies": ["dcc-mappings", "dcc-documents"],
+          "acceptance": "Every proposed finding includes a standard requirement, source excerpt, confidence score and document location.",
+          "summary": "Compare the documents with the selected standards and prepare provisional findings."
+        },
+        {
+          "id": "dcc-review",
+          "key": "DCC-06",
+          "title": "Review and decide the generated findings",
+          "phase": "Assure",
+          "priority": "Critical",
+          "status": "In review",
+          "owner": "Human assurance panel",
+          "estimate": 5,
+          "dependencies": ["dcc-scan"],
+          "acceptance": "A named reviewer approves, declines or requests evidence for every finding, and the original AI proposal remains auditable.",
+          "summary": "Apply accountable human judgement before anything enters the report."
+        },
+        {
+          "id": "dcc-report",
+          "key": "DCC-07",
+          "title": "Publish the assurance result",
+          "phase": "Decide",
+          "priority": "High",
+          "status": "Blocked",
+          "owner": "Assurance lead",
+          "estimate": 3,
+          "dependencies": ["dcc-review"],
+          "acceptance": "The report separates met requirements, gaps, pending decisions and evidence limitations, with a named approval.",
+          "summary": "Create a traceable result once the final four reviews are complete."
+        }
+      ]
+    },
+    "gantt-chart": {
+      "documentTitle": "DCC hackathon assurance delivery plan",
+      "options": {
+        "weeks": 10
+      },
+      "data": [
+        { "id": "plan-scope", "key": "DCC-01", "title": "Confirm assurance scope", "phase": "Frame", "owner": "Hackathon lead", "status": "done", "progress": 100, "startWeek": 1, "durationWeeks": 1, "dependencies": [] },
+        { "id": "plan-standards", "key": "DCC-02", "title": "Curate standards library", "phase": "Frame", "owner": "Assurance", "status": "done", "progress": 100, "startWeek": 1, "durationWeeks": 2, "dependencies": ["plan-scope"] },
+        { "id": "plan-mappings", "key": "DCC-03", "title": "Map related requirements", "phase": "Prepare", "owner": "Standards analyst", "status": "in-progress", "progress": 65, "startWeek": 2, "durationWeeks": 3, "dependencies": ["plan-standards"] },
+        { "id": "plan-documents", "key": "DCC-04", "title": "Prepare sample documents", "phase": "Prepare", "owner": "Architecture", "status": "done", "progress": 100, "startWeek": 2, "durationWeeks": 2, "dependencies": ["plan-scope"] },
+        { "id": "plan-scan", "key": "DCC-05", "title": "Connect AI assurance scan", "phase": "Build", "owner": "AI engineering", "status": "in-progress", "progress": 58, "startWeek": 4, "durationWeeks": 3, "dependencies": ["plan-mappings", "plan-documents"] },
+        { "id": "plan-review", "key": "DCC-06", "title": "Complete human review route", "phase": "Assure", "owner": "Assurance panel", "status": "in-progress", "progress": 42, "startWeek": 6, "durationWeeks": 2, "dependencies": ["plan-scan"] },
+        { "id": "plan-evidence", "key": "DCC-07", "title": "Close evidence gaps", "phase": "Assure", "owner": "Document owners", "status": "blocked", "progress": 25, "startWeek": 7, "durationWeeks": 2, "dependencies": ["plan-review"] },
+        { "id": "plan-report", "key": "DCC-08", "title": "Publish assurance result", "phase": "Decide", "owner": "Assurance lead", "status": "not-started", "progress": 0, "startWeek": 9, "durationWeeks": 2, "dependencies": ["plan-review", "plan-evidence"] }
+      ]
+    },
+    "workflow-workbench": {
+      "documentTitle": "DCC document assurance workbench",
+      "data": {
+        "title": "Document assurance workbench",
+        "description": "Guide each uploaded document from standards selection through AI assessment, human review and a recorded assurance decision.",
+        "stages": ["Scope", "Standards", "Documents", "AI scan", "Human review", "Decision"],
+        "labels": {
+          "selector": "Assurance records",
+          "summary": "Assessment scope",
+          "measures": "Assurance measures",
+          "evidence": "Linked evidence",
+          "outcome": "Current assurance position",
+          "nextAction": "Required next action",
+          "action": "Record assurance decision"
+        },
+        "items": [
+          {
+            "id": "DOC-001",
+            "title": "Customer portal solution design v0.8",
+            "owner": "Solution architecture",
+            "status": "Human review in progress",
+            "stage": "Human review",
+            "summary": "Assure the proposed portal architecture against security, accessibility, service-delivery and AI-governance requirements.",
+            "metrics": [
+              { "label": "Requirements assessed", "target": "100%", "value": "91%", "status": "watch" },
+              { "label": "High-priority gaps", "target": "0", "value": "2", "status": "bad" },
+              { "label": "Source-linked findings", "target": "100%", "value": "96%", "status": "watch" }
+            ],
+            "sections": [
+              { "title": "Selected standards", "body": "ISO/IEC 27001, WCAG 2.2 AA, the GDS Service Standard, NIST AI RMF and the DCC assurance profile." },
+              { "title": "Assessment approach", "body": "Extract document sections, map them to requirements, generate provisional findings and retain the source excerpt used for each proposal." },
+              { "title": "Decision guardrail", "body": "AI findings cannot enter the report until a named reviewer records a decision and rationale." }
+            ],
+            "evidence": [
+              "34-page source document indexed",
+              "ISO/IEC 27001 clauses linked to governance sections",
+              "WCAG contrast evidence request sent to the experience team",
+              "Reviewer history retained for Assurance Run #018"
+            ],
+            "outcome": "The design provides a credible assurance trail, but security ownership and contrast evidence remain material gaps.",
+            "nextAction": "Assign the security owner and obtain approved contrast evidence before publishing the result.",
+            "confidence": "High",
+            "tags": ["Solution design", "Five standards", "Human decision"]
+          },
+          {
+            "id": "DOC-002",
+            "title": "Customer portal threat model v0.4",
+            "owner": "Cyber security",
+            "status": "AI scan complete",
+            "stage": "AI scan",
+            "summary": "Check whether the threat model provides enough traceable evidence for security operations, monitoring and recovery controls.",
+            "metrics": [
+              { "label": "Requirements assessed", "target": "100%", "value": "82%", "status": "watch" },
+              { "label": "High-priority gaps", "target": "0", "value": "1", "status": "bad" },
+              { "label": "Evidence links", "target": "100%", "value": "78%", "status": "watch" }
+            ],
+            "sections": [
+              { "title": "Selected standards", "body": "ISO/IEC 27001 and the DCC assurance profile, with related NIST AI RMF governance requirements." },
+              { "title": "Assessment approach", "body": "Compare documented threats and mitigations with control intent, ownership and evidence expectations." },
+              { "title": "Decision guardrail", "body": "Missing operational evidence remains a visible gap rather than being inferred from planned controls." }
+            ],
+            "evidence": [
+              "19-page threat model indexed",
+              "Control-to-threat mapping extracted",
+              "Monitoring evidence not supplied",
+              "Recovery-test record requested"
+            ],
+            "outcome": "The core threat analysis is present, but two planned controls have no linked implementation evidence.",
+            "nextAction": "Send the nine provisional findings to the cyber-security reviewer.",
+            "confidence": "Medium",
+            "tags": ["Threat model", "Security controls", "Evidence gaps"]
+          },
+          {
+            "id": "DOC-003",
+            "title": "Accessibility statement draft",
+            "owner": "Experience team",
+            "status": "Standards confirmed",
+            "stage": "Standards",
+            "summary": "Assess the draft statement and its supporting evidence against WCAG 2.2 AA and relevant GDS service requirements.",
+            "metrics": [
+              { "label": "Criteria selected", "target": "55", "value": "55", "status": "good" },
+              { "label": "Evidence artefacts", "target": "8", "value": "5", "status": "watch" },
+              { "label": "Known limitations", "target": "Recorded", "value": "Recorded", "status": "good" }
+            ],
+            "sections": [
+              { "title": "Selected standards", "body": "WCAG 2.2 AA and the GDS Service Standard, with DCC profile requirements for evidence ownership." },
+              { "title": "Assessment approach", "body": "Link every stated conformance claim to a current test result, issue or approved limitation." },
+              { "title": "Decision guardrail", "body": "The draft cannot be marked assured while brand-dependent contrast evidence remains unavailable." }
+            ],
+            "evidence": [
+              "Eight-page draft indexed",
+              "Keyboard test results linked",
+              "Screen-reader checks linked",
+              "Contrast report outstanding"
+            ],
+            "outcome": "The evidence set is ready for scanning once the final contrast report is attached.",
+            "nextAction": "Upload the contrast report and start the AI-assisted assessment.",
+            "confidence": "Medium",
+            "tags": ["Accessibility", "WCAG 2.2 AA", "Draft evidence"]
+          }
+        ]
+      }
+    },
+    "chatbot": {
+      "documentTitle": "DCC source-aware assurance assistant",
+      "data": {
+        "title": "Documentation assurance assistant",
+        "description": "Explore the current assurance run while keeping standard requirements, document excerpts and human review controls visible.",
+        "contextTitle": "Suggested assurance questions",
+        "assistantName": "DCC assurance assistant",
+        "assistantDescription": "Ask about selected standards, uploaded documents, source-linked findings, pending decisions or the next evidence action.",
+        "prompts": [
+          "Summarise Assurance Run #018",
+          "Which high-priority gaps need an owner?",
+          "Show findings still awaiting human review"
+        ],
+        "response": {
+          "body": "Assurance Run #018 contains 27 findings across three documents. Five are high priority, and four findings are still provisional because a human decision has not been recorded.",
+          "proposal": {
+            "tone": "warning",
+            "label": "Draft assurance action",
+            "recordId": "FINDING-ISO-5.3",
+            "title": "Assign security ownership evidence",
+            "description": "Ask Solution Architecture to name the accountable security owner and link the approved responsibility record before this finding can be closed.",
+            "sources": [
+              "ISO/IEC 27001:2022 · clause 5.3",
+              "Solution design v0.8 · page 9",
+              "Assurance Run #018 · finding history"
+            ]
+          }
+        }
+      }
+    },
+    "earned-value": {
+      "documentTitle": "DCC hackathon delivery performance",
+      "data": {
+        "title": "DCC assurance prototype delivery forecast",
+        "reference": "DCC documentation assurance hackathon",
+        "baselineLabel": "Approved hackathon baseline · Version 1",
+        "reportingLabel": "Checkpoint 7 of 10",
+        "unit": "hours",
+        "bac": 240,
+        "plannedPercent": 72,
+        "earnedPercent": 63,
+        "actualCost": 166,
+        "period": 7,
+        "totalPeriods": 10,
+        "assumption": "The remaining forecast uses the current delivery-efficiency index and retains dedicated time for human assurance review and evidence preparation.",
+        "workPackages": [
+          { "label": "Standards library", "budget": 42, "planned": 42, "earned": 42, "actual": 39, "status": "Complete" },
+          { "label": "Document intake", "budget": 36, "planned": 36, "earned": 34, "actual": 35, "status": "In review" },
+          { "label": "AI assurance scan", "budget": 78, "planned": 61, "earned": 48, "actual": 57, "status": "In progress" },
+          { "label": "Human review", "budget": 54, "planned": 27, "earned": 19, "actual": 25, "status": "In progress" },
+          { "label": "Assurance reporting", "budget": 30, "planned": 7, "earned": 8, "actual": 10, "status": "Not started" }
+        ]
+      }
+    },
+    "architecture-map": {
+      "documentTitle": "DCC documentation assurance system landscape",
+      "data": {
+        "name": "Documentation assurance system landscape",
+        "description": "Follow how standards, uploaded documents, AI-assisted findings, human decisions and assurance evidence move through the DCC hackathon prototype.",
+        "lanes": [
+          { "id": "experience", "label": "Assurance experiences", "shortLabel": "Experience" },
+          { "id": "access", "label": "Access & orchestration", "shortLabel": "Access" },
+          { "id": "services", "label": "Assessment services", "shortLabel": "Services" },
+          { "id": "data", "label": "Standards & evidence", "shortLabel": "Evidence" },
+          { "id": "external", "label": "External capabilities", "shortLabel": "External" }
+        ],
+        "nodes": [
+          {
+            "id": "assurance-workspace",
+            "layer": "experience",
+            "type": "Web application",
+            "title": "Assurance workspace",
+            "owner": "DCC assurance team",
+            "status": "Pilot",
+            "environment": "Pre-production",
+            "technology": "Responsive web UI",
+            "criticality": "High",
+            "data": "Standards selections, findings and decisions",
+            "description": "Primary workspace for document upload, finding review and the final named assurance decision.",
+            "evidence": ["Journey prototype", "Accessibility review", "Decision-control test"],
+            "tags": ["human-review", "assurance", "interactive"]
+          },
+          {
+            "id": "standards-console",
+            "layer": "experience",
+            "type": "Administration UI",
+            "title": "Standards librarian console",
+            "owner": "Standards analysts",
+            "status": "Pilot",
+            "environment": "Pre-production",
+            "technology": "Web UI",
+            "criticality": "Medium",
+            "data": "Standards, versions and requirement mappings",
+            "description": "Allows authorised analysts to curate standards and connect related requirements without losing source identity.",
+            "evidence": ["Standards data model", "Mapping review checklist"],
+            "tags": ["standards-library", "configuration"]
+          },
+          {
+            "id": "reporting-dashboard",
+            "layer": "experience",
+            "type": "Reporting application",
+            "title": "Assurance reporting dashboard",
+            "owner": "Assurance leadership",
+            "status": "Pilot",
+            "environment": "Pre-production",
+            "technology": "Dashboard UI",
+            "criticality": "Medium",
+            "data": "Coverage, findings, evidence and review metrics",
+            "description": "Presents decision-ready assurance status while keeping provisional and approved results separate.",
+            "evidence": ["Metric definitions", "Reporting prototype"],
+            "tags": ["reporting", "traceability"]
+          },
+          {
+            "id": "assurance-api",
+            "layer": "access",
+            "type": "API gateway",
+            "title": "Assurance API",
+            "owner": "Platform engineering",
+            "status": "Pilot",
+            "environment": "Pre-production",
+            "technology": "HTTPS / JSON API",
+            "criticality": "Critical",
+            "data": "Workspace commands and queries",
+            "description": "Applies validation and routing to standards, document, assessment and review operations.",
+            "evidence": ["OpenAPI contract", "Validation tests", "Request audit log"],
+            "tags": ["api", "validation", "routing"]
+          },
+          {
+            "id": "identity-service",
+            "layer": "access",
+            "type": "Identity",
+            "title": "Reviewer identity service",
+            "owner": "Identity platform",
+            "status": "Verified",
+            "environment": "All",
+            "technology": "OIDC / OAuth 2",
+            "criticality": "Critical",
+            "data": "Identity and reviewer-role claims",
+            "description": "Identifies standards editors, document owners and assurance reviewers for attributable decisions.",
+            "evidence": ["Role model", "Authentication test", "Access review"],
+            "tags": ["authentication", "accountability"]
+          },
+          {
+            "id": "assurance-orchestrator",
+            "layer": "access",
+            "type": "Workflow service",
+            "title": "Assurance run orchestrator",
+            "owner": "Assurance platform",
+            "status": "Pilot",
+            "environment": "Pre-production",
+            "technology": "Workflow engine",
+            "criticality": "Critical",
+            "data": "Run state, selected standards and processing jobs",
+            "description": "Coordinates document extraction, requirement matching, AI assessment and human-review gates.",
+            "evidence": ["Workflow definition", "Retry test", "Human-gate test"],
+            "tags": ["workflow", "human-gate", "orchestration"]
+          },
+          {
+            "id": "document-extractor",
+            "layer": "services",
+            "type": "Processing service",
+            "title": "Document extraction service",
+            "owner": "Document engineering",
+            "status": "Pilot",
+            "environment": "Pre-production",
+            "technology": "Text and layout extraction",
+            "criticality": "High",
+            "data": "Document text, headings and page locations",
+            "description": "Extracts source text while retaining document version and page-level provenance.",
+            "evidence": ["Format test pack", "Extraction accuracy sample", "Failure-path test"],
+            "tags": ["documents", "provenance", "extraction"]
+          },
+          {
+            "id": "requirement-matcher",
+            "layer": "services",
+            "type": "Rules service",
+            "title": "Requirement matching service",
+            "owner": "Standards engineering",
+            "status": "Pilot",
+            "environment": "Pre-production",
+            "technology": "Rules and semantic retrieval",
+            "criticality": "High",
+            "data": "Candidate requirement-to-section matches",
+            "description": "Narrows the relevant standards requirements for each document section and keeps the match rationale.",
+            "evidence": ["Matching benchmark", "Cross-standard mapping test"],
+            "tags": ["requirements", "retrieval", "mapping"]
+          },
+          {
+            "id": "finding-service",
+            "layer": "services",
+            "type": "Domain service",
+            "title": "Assurance finding service",
+            "owner": "AI assurance engineering",
+            "status": "Pilot",
+            "environment": "Pre-production",
+            "technology": "Assessment API",
+            "criticality": "Critical",
+            "data": "Provisional findings, confidence and source links",
+            "description": "Creates provisional findings and prevents publication until a named human decision is recorded.",
+            "evidence": ["Finding schema", "Approval-gate test", "Prompt evaluation"],
+            "tags": ["ai-assisted", "findings", "approval"]
+          },
+          {
+            "id": "standards-library",
+            "layer": "data",
+            "type": "Reference data",
+            "title": "Standards library",
+            "owner": "DCC assurance team",
+            "status": "Verified",
+            "environment": "All",
+            "technology": "Versioned document store",
+            "criticality": "Critical",
+            "data": "Standards, requirements and relationships",
+            "description": "Stores governed versions of ISO/IEC 27001, WCAG, GDS, NIST AI RMF and the DCC profile.",
+            "evidence": ["Source register", "Version history", "Requirement identifiers"],
+            "tags": ["standards", "versioned", "reference-data"]
+          },
+          {
+            "id": "document-repository",
+            "layer": "data",
+            "type": "Evidence store",
+            "title": "Assurance document repository",
+            "owner": "Information management",
+            "status": "Verified",
+            "environment": "Pre-production",
+            "technology": "Encrypted object storage",
+            "criticality": "Critical",
+            "data": "Uploaded documents and extracted text",
+            "description": "Retains approved sample documents, versions, checksums and extracted source locations for the hackathon run.",
+            "evidence": ["Retention rule", "Encryption check", "Checksum verification"],
+            "tags": ["documents", "evidence", "encrypted"]
+          },
+          {
+            "id": "assurance-register",
+            "layer": "data",
+            "type": "Operational data",
+            "title": "Assurance record store",
+            "owner": "Assurance platform",
+            "status": "Pilot",
+            "environment": "Pre-production",
+            "technology": "Relational database",
+            "criticality": "Critical",
+            "data": "Runs, findings, decisions and audit history",
+            "description": "Authoritative record for finding history, named review decisions and published assurance results.",
+            "evidence": ["Data model", "Audit-history test", "Backup check"],
+            "tags": ["system-of-record", "audit", "decisions"]
+          },
+          {
+            "id": "managed-llm",
+            "layer": "external",
+            "type": "Managed AI service",
+            "title": "Managed language-model endpoint",
+            "owner": "AI platform",
+            "status": "Verified",
+            "environment": "Pre-production",
+            "technology": "Private model API",
+            "criticality": "High",
+            "data": "Approved document excerpts and requirement context",
+            "description": "Generates bounded assessment drafts from approved excerpts; it does not publish decisions.",
+            "evidence": ["Data-handling review", "Model configuration", "Prompt evaluation"],
+            "tags": ["llm", "bounded-context", "draft-only"]
+          },
+          {
+            "id": "standards-registry",
+            "layer": "external",
+            "type": "External reference",
+            "title": "Source standards registry",
+            "owner": "Standards owners",
+            "status": "Live",
+            "environment": "Production",
+            "technology": "Published standards sources",
+            "criticality": "Medium",
+            "data": "Standard versions and publication metadata",
+            "description": "Provides authoritative publication and version information used by the local standards library.",
+            "evidence": ["Source URLs", "Version check record"],
+            "tags": ["external", "standards", "source"]
+          },
+          {
+            "id": "notification-service",
+            "layer": "external",
+            "type": "Messaging service",
+            "title": "Reviewer notification service",
+            "owner": "Collaboration platform",
+            "status": "Live",
+            "environment": "Production",
+            "technology": "Email and workspace messaging",
+            "criticality": "Medium",
+            "data": "Review assignments and evidence requests",
+            "description": "Notifies named reviewers and document owners without sending source document content.",
+            "evidence": ["Notification templates", "Data-minimisation check"],
+            "tags": ["notifications", "review", "data-minimisation"]
+          }
+        ],
+        "edges": [
+          { "from": "assurance-workspace", "to": "identity-service", "label": "authenticates", "protocol": "OIDC", "data": "Reviewer claims", "frequency": "Per session", "criticality": "Critical" },
+          { "from": "assurance-workspace", "to": "assurance-api", "label": "uses", "protocol": "HTTPS / JSON", "data": "Assurance commands and queries", "frequency": "Interactive", "criticality": "Critical" },
+          { "from": "standards-console", "to": "assurance-api", "label": "manages", "protocol": "HTTPS / JSON", "data": "Standards and mappings", "frequency": "On change", "criticality": "High" },
+          { "from": "reporting-dashboard", "to": "assurance-api", "label": "queries", "protocol": "HTTPS / JSON", "data": "Coverage and decision metrics", "frequency": "On demand", "criticality": "Medium" },
+          { "from": "assurance-api", "to": "assurance-orchestrator", "label": "starts", "protocol": "Service command", "data": "Assurance-run request", "frequency": "Per run", "criticality": "Critical" },
+          { "from": "assurance-api", "to": "standards-library", "label": "reads", "protocol": "Repository API", "data": "Standards catalogue", "frequency": "Interactive", "criticality": "High" },
+          { "from": "assurance-orchestrator", "to": "document-extractor", "label": "extracts", "protocol": "Async job", "data": "Document reference", "frequency": "Per document", "criticality": "High" },
+          { "from": "document-extractor", "to": "document-repository", "label": "stores", "protocol": "Object API", "data": "Text and page provenance", "frequency": "Per document", "criticality": "High" },
+          { "from": "assurance-orchestrator", "to": "requirement-matcher", "label": "matches", "protocol": "Service request", "data": "Sections and selected standards", "frequency": "Per section", "criticality": "High" },
+          { "from": "requirement-matcher", "to": "standards-library", "label": "retrieves", "protocol": "Repository query", "data": "Requirements and mappings", "frequency": "Per section", "criticality": "Critical" },
+          { "from": "assurance-orchestrator", "to": "finding-service", "label": "assesses", "protocol": "Async job", "data": "Matched evidence context", "frequency": "Per requirement", "criticality": "Critical" },
+          { "from": "finding-service", "to": "managed-llm", "label": "requests draft", "protocol": "Private HTTPS", "data": "Approved excerpts and requirement text", "frequency": "Per finding", "criticality": "High" },
+          { "from": "finding-service", "to": "assurance-register", "label": "records", "protocol": "Transactional write", "data": "Findings and source links", "frequency": "Per finding", "criticality": "Critical" },
+          { "from": "assurance-orchestrator", "to": "assurance-register", "label": "updates", "protocol": "Transactional write", "data": "Run and review state", "frequency": "Per transition", "criticality": "Critical" },
+          { "from": "assurance-orchestrator", "to": "notification-service", "label": "notifies", "protocol": "Message API", "data": "Assignment identifiers", "frequency": "Per assignment", "criticality": "Medium" },
+          { "from": "standards-library", "to": "standards-registry", "label": "verifies version", "protocol": "Published source", "data": "Version metadata", "frequency": "On update", "criticality": "Medium" }
+        ]
+      }
+    }
+  }
+}

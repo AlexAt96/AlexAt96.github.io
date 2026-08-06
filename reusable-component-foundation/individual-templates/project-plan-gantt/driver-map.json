@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "project-plan-gantt",
+  "purpose": "Render editable plan rows, duration bars and dependencies from saved project-plan settings.",
+  "drivers": [
+    {
+      "name": "renderDashboardPlanTab",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDashboardPlanTab(",
+      "startLine": 2115,
+      "endLine": 2181,
+      "codeFile": "app--renderDashboardPlanTab.reference.js"
+    },
+    {
+      "name": "renderDashboardPlanRow",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDashboardPlanRow(",
+      "startLine": 2183,
+      "endLine": 2194,
+      "codeFile": "app--renderDashboardPlanRow.reference.js"
+    },
+    {
+      "name": "renderDashboardPlanBar",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDashboardPlanBar(",
+      "startLine": 2196,
+      "endLine": 2217,
+      "codeFile": "app--renderDashboardPlanBar.reference.js"
+    },
+    {
+      "name": "getDashboardPlanModel",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getDashboardPlanModel(",
+      "startLine": 2241,
+      "endLine": 2316,
+      "codeFile": "app--getDashboardPlanModel.reference.js"
+    }
+  ]
+}

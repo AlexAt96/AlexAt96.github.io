@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "complexity-factor-control",
+  "purpose": "Select a governed complexity response and show its score/evidence note.",
+  "drivers": [
+    {
+      "name": "renderBuComplexityFactorControl",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuComplexityFactorControl(",
+      "startLine": 11030,
+      "endLine": 11044,
+      "codeFile": "app--renderBuComplexityFactorControl.reference.js"
+    },
+    {
+      "name": "getComplexityFactorScore",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getComplexityFactorScore(",
+      "startLine": 11089,
+      "endLine": 11091,
+      "codeFile": "app--getComplexityFactorScore.reference.js"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0",
+  "id": "evidence-status-icon",
+  "capabilityId": "environment-evidence-matrix",
+  "title": "Evidence status icon",
+  "layer": "primitive",
+  "purpose": "Render a consistent missing, partial, submitted, reviewed or not-applicable marker.",
+  "drivers": [
+    {
+      "name": "renderEvidenceStatusIcon",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEvidenceStatusIcon(",
+      "startLine": 9018,
+      "endLine": 9022,
+      "codeFile": "app--renderEvidenceStatusIcon.reference.js"
+    }
+  ],
+  "inputs": [
+    "Evidence status"
+  ],
+  "outputs": [
+    "Accessible icon and label"
+  ],
+  "behaviour": [
+    "Render a consistent missing, partial, submitted, reviewed or not-applicable marker.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Environment evidence matrix",
+  "templateDataPath": "template-data/template-data.json#environmentEvidenceMatrix",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/05-collection-workflows.css"
+  ],
+  "inheritedStates": [
+    "missing",
+    "required",
+    "optional",
+    "partial",
+    "submitted",
+    "reviewed",
+    "not applicable"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Accessible icon and label. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

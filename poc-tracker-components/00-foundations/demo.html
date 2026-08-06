@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Programme delivery workspace</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="components.css">
+</head>
+<body>
+  <main class="poc-page poc-stack">
+    <header class="poc-panel poc-stack">
+      <div class="poc-panel__header">
+        <div><p class="poc-eyebrow">Programme overview</p><h1>Delivery workspace</h1></div>
+        <button id="themeButton" class="poc-button" type="button">Change theme</button>
+      </div>
+      <p class="poc-muted">A clear view of delivery confidence, progress, decisions and blockers.</p>
+      <div class="poc-cluster">
+        <button class="poc-button poc-button--primary">Review progress</button>
+        <button class="poc-button">Open decisions</button>
+        <button class="poc-button poc-button--danger">Escalate blocker</button>
+      </div>
+    </header>
+
+    <section class="poc-metrics" aria-label="Example metrics">
+      <article class="poc-metric"><span>Delivery confidence</span><strong>High</strong></article>
+      <article class="poc-metric"><span>Work complete</span><strong>64%</strong></article>
+      <article class="poc-metric"><span>Open decisions</span><strong>3</strong></article>
+      <article class="poc-metric"><span>Blocked items</span><strong>1</strong></article>
+    </section>
+
+    <section class="poc-panel poc-stack">
+      <div class="poc-panel__header"><div><h2>Delivery status</h2><p>Every status is clear at a glance and in context.</p></div></div>
+      <div class="poc-cluster">
+        <span class="poc-pill poc-pill--success">Complete</span>
+        <span class="poc-pill poc-pill--info">In progress</span>
+        <span class="poc-pill poc-pill--warning">In review</span>
+        <span class="poc-pill poc-pill--danger">Blocked</span>
+        <span class="poc-pill poc-pill--primary">Conditional</span>
+        <span class="poc-pill">Not started</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem">
+        <label class="poc-field">Owner<input value="Delivery team"></label>
+        <label class="poc-field">Status<select><option>In progress</option><option>Complete</option></select></label>
+      </div>
+      <div class="poc-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64"><i style="width:64%"></i><b>64%</b></div>
+    </section>
+
+    <aside class="poc-notice poc-notice--warning" role="note"><strong>Dependency needs review</strong><span>Make the implication and the next action explicit.</span></aside>
+
+    <section class="poc-table-wrap">
+      <table class="poc-table"><thead><tr><th>Work item</th><th>Owner</th><th>Status</th></tr></thead><tbody><tr><td>Prepare representative data</td><td>Product team</td><td>In progress</td></tr><tr><td>Confirm acceptance route</td><td>Programme lead</td><td>In review</td></tr></tbody></table>
+    </section>
+  </main>
+  <script>
+    document.getElementById("themeButton").addEventListener("click", () => {
+      document.documentElement.dataset.theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    });
+  </script>
+</body>
+</html>

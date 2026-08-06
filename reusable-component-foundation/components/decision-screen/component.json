@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "1.0",
+  "id": "decision-screen",
+  "title": "Decision screen and scenario layout",
+  "requestedCoverage": "Decision screen and layout",
+  "summary": "Executive recommendation, scenario configuration, savings progression/waterfall charts, sequencing, accounting overview, options table and artifact hub.",
+  "routes": [
+    "app/decision.html",
+    "/api/programme/open-decisions",
+    "app/document.html?phase=decision"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "renderDecisionPage",
+        "renderDecisionCgiRecommendationPanel",
+        "renderDecisionExecutiveSummary",
+        "renderDecisionScenarioConfigurator",
+        "getDecisionScenarioSummary",
+        "renderDecisionPrimaryChart",
+        "renderDecisionSavingsChartSvg",
+        "renderDecisionWaterfallChart",
+        "renderDecisionRiceSequencingPanel",
+        "renderDecisionAccountingOverview",
+        "renderDecisionSavingsSummaryTable",
+        "renderDecisionTableSection",
+        "renderDecisionArtifactHub"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/07-outputs-decision.css"
+  ],
+  "states": [
+    "baseline",
+    "scenario changed",
+    "unsaved scenario",
+    "recommended",
+    "conditional",
+    "not recommended",
+    "decision ready",
+    "blocked"
+  ],
+  "dataContracts": [
+    "BU decision model",
+    "scenario action",
+    "savings point",
+    "waterfall contribution",
+    "RICE sequence",
+    "recommendation",
+    "artifact link"
+  ],
+  "templateKey": "decision",
+  "boundaries": [
+    "DecisionPage",
+    "RecommendationPanel",
+    "ScenarioConfigurator",
+    "SavingsChart",
+    "WaterfallChart",
+    "SequencingTable",
+    "OptionsTable",
+    "ArtifactHub"
+  ]
+}

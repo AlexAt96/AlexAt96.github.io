@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "script-output-wizard",
+  "purpose": "Guide an analyst through environment selection, run instructions, file selection and upload submission.",
+  "drivers": [
+    {
+      "name": "renderScriptOutputWizard",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderScriptOutputWizard(",
+      "startLine": 9516,
+      "endLine": 9595,
+      "codeFile": "app--renderScriptOutputWizard.reference.js"
+    },
+    {
+      "name": "getScriptRunCommand",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getScriptRunCommand(",
+      "startLine": 9597,
+      "endLine": 9602,
+      "codeFile": "app--getScriptRunCommand.reference.js"
+    }
+  ]
+}

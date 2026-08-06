@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "1.0",
+  "id": "dora-supporting-stat-table",
+  "capabilityId": "dora-metrics-screen",
+  "title": "DORA supporting-stat table",
+  "layer": "primitive",
+  "purpose": "Show the evidence and supporting counts behind one DORA metric.",
+  "drivers": [
+    {
+      "name": "renderDoraStatTable",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function renderDoraStatTable(",
+      "startLine": 8208,
+      "endLine": 8218,
+      "codeFile": "interactive-system-map--renderDoraStatTable.reference.html"
+    },
+    {
+      "name": "doraMissingDataSummary",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function doraMissingDataSummary(",
+      "startLine": 8288,
+      "endLine": 8296,
+      "codeFile": "interactive-system-map--doraMissingDataSummary.reference.html"
+    }
+  ],
+  "inputs": [
+    "DORA metric",
+    "Missing-data contracts"
+  ],
+  "outputs": [
+    "Supporting statistics",
+    "Missing-data explanation"
+  ],
+  "behaviour": [
+    "Show the evidence and supporting counts behind one DORA metric.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "DORA metrics dashboard",
+  "templateDataPath": "template-data/template-data.json#doraMetrics",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "docs/reports/interactive-system-map.html"
+  ],
+  "inheritedStates": [
+    "true metric",
+    "proxy",
+    "missing data",
+    "good",
+    "watch",
+    "risk",
+    "low confidence",
+    "high confidence"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Supporting statistics. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "adf-pipeline-selector",
+  "purpose": "Choose one pipeline flow while retaining the current explorer view.",
+  "drivers": [
+    {
+      "name": "renderAdfPipelineSelector",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfPipelineSelector(",
+      "startLine": 12086,
+      "endLine": 12101,
+      "codeFile": "app--renderAdfPipelineSelector.reference.js"
+    },
+    {
+      "name": "getSelectedAdfPipelineFlow",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getSelectedAdfPipelineFlow(",
+      "startLine": 12081,
+      "endLine": 12084,
+      "codeFile": "app--getSelectedAdfPipelineFlow.reference.js"
+    }
+  ]
+}

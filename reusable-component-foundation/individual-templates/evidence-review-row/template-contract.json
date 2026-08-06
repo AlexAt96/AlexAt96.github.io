@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0",
+  "id": "evidence-review-row",
+  "capabilityId": "evidence-review-queue",
+  "title": "Evidence review row",
+  "layer": "composite",
+  "purpose": "Show one evidence artifact, environment tags, current review status and follow-up state.",
+  "drivers": [
+    {
+      "name": "renderEvidenceReviewRow",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEvidenceReviewRow(",
+      "startLine": 10208,
+      "endLine": 10250,
+      "codeFile": "app--renderEvidenceReviewRow.reference.js"
+    },
+    {
+      "name": "createEvidenceReviewArtifact",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function createEvidenceReviewArtifact(",
+      "startLine": 10626,
+      "endLine": 10642,
+      "codeFile": "app--createEvidenceReviewArtifact.reference.js"
+    },
+    {
+      "name": "normaliseEvidenceReviewState",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function normaliseEvidenceReviewState(",
+      "startLine": 10644,
+      "endLine": 10654,
+      "codeFile": "app--normaliseEvidenceReviewState.reference.js"
+    }
+  ],
+  "inputs": [
+    "Normalised review artifact"
+  ],
+  "outputs": [
+    "Open evidence",
+    "Open review dialog"
+  ],
+  "behaviour": [
+    "Show one evidence artifact, environment tags, current review status and follow-up state.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Evidence review queue",
+  "templateDataPath": "template-data/template-data.json#evidenceReviewQueue",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/05-collection-workflows.css"
+  ],
+  "inheritedStates": [
+    "not reviewed",
+    "in review",
+    "accepted",
+    "question raised",
+    "more info needed",
+    "further investigation",
+    "confirmed",
+    "rejected"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Open evidence. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

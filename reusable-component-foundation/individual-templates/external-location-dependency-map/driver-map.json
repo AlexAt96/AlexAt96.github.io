@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "external-location-dependency-map",
+  "purpose": "Map external sources, Databricks environments and external targets into three dependency lanes.",
+  "drivers": [
+    {
+      "name": "buildExternalLocationGraph",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function buildExternalLocationGraph(",
+      "startLine": 14722,
+      "endLine": 14775,
+      "codeFile": "app--buildExternalLocationGraph.reference.js"
+    },
+    {
+      "name": "renderExternalLocationDependencyMap",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderExternalLocationDependencyMap(",
+      "startLine": 14789,
+      "endLine": 14872,
+      "codeFile": "app--renderExternalLocationDependencyMap.reference.js"
+    },
+    {
+      "name": "renderExternalLocationDiagram",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderExternalLocationDiagram(",
+      "startLine": 14636,
+      "endLine": 14720,
+      "codeFile": "app--renderExternalLocationDiagram.reference.js"
+    }
+  ]
+}

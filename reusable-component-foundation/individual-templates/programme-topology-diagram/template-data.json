@@ -1,0 +1,45 @@
+{
+  "nodes": [
+    {
+      "id": "source-crm",
+      "label": "CRM",
+      "kind": "source",
+      "lane": "source",
+      "metadata": {
+        "owner": "Sales"
+      }
+    },
+    {
+      "id": "pipeline-orders",
+      "label": "Orders pipeline",
+      "kind": "process",
+      "lane": "processing",
+      "metadata": {
+        "platform": "ADF"
+      }
+    },
+    {
+      "id": "target-lakehouse",
+      "label": "Orders lakehouse",
+      "kind": "target",
+      "lane": "target",
+      "metadata": {
+        "platform": "Databricks"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1",
+      "from": "source-crm",
+      "to": "pipeline-orders",
+      "label": "Daily extract"
+    },
+    {
+      "id": "edge-2",
+      "from": "pipeline-orders",
+      "to": "target-lakehouse",
+      "label": "Delta write"
+    }
+  ]
+}

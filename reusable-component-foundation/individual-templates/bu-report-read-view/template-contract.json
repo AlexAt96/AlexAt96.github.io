@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0",
+  "id": "bu-report-read-view",
+  "capabilityId": "final-bu-report-lifecycle",
+  "title": "Complete BU report read view",
+  "layer": "screen",
+  "purpose": "Render the completed report with all calculated tables, diagrams, sections and feedback state.",
+  "drivers": [
+    {
+      "name": "renderBuTechReport",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuTechReport(",
+      "startLine": 24728,
+      "endLine": 24762,
+      "codeFile": "app--renderBuTechReport.reference.js"
+    },
+    {
+      "name": "renderBuTechReportClientReport",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuTechReportClientReport(",
+      "startLine": 26707,
+      "endLine": 26745,
+      "codeFile": "app--renderBuTechReportClientReport.reference.js"
+    },
+    {
+      "name": "renderBuTechReportClientSection",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuTechReportClientSection(",
+      "startLine": 26747,
+      "endLine": 26758,
+      "codeFile": "app--renderBuTechReportClientSection.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU",
+    "Complete report model",
+    "Active tab",
+    "Feedback/approval status"
+  ],
+  "outputs": [
+    "Export action",
+    "Feedback action",
+    "Approval navigation"
+  ],
+  "behaviour": [
+    "Render the completed report with all calculated tables, diagrams, sections and feedback state.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "bu-report-tabs",
+    "report-feedback-banner"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Final BU report review, finalise, read and feedback states",
+  "templateDataPath": "template-data/template-data.json#finalBuReport",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/07-outputs-decision.css",
+    "app/styles/04-phase-documents.css"
+  ],
+  "inheritedStates": [
+    "draft",
+    "review",
+    "changes requested",
+    "ready to finalise",
+    "finalised",
+    "complete read-only",
+    "feedback open",
+    "feedback resolved",
+    "approved"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Export action. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

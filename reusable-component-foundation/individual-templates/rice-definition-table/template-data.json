@@ -1,0 +1,50 @@
+{
+  "riceDefinitions": [
+    {
+      "id": "reach",
+      "label": "Reach",
+      "min": 1,
+      "max": 10,
+      "description": "Relative breadth of benefit"
+    }
+  ],
+  "adfActivityFactors": [
+    {
+      "activityType": "Copy",
+      "factor": 1
+    },
+    {
+      "activityType": "Data Flow",
+      "factor": 3
+    },
+    {
+      "activityType": "Databricks Notebook",
+      "factor": 4
+    }
+  ],
+  "statuses": [
+    {
+      "id": "not-started",
+      "label": "Not started",
+      "order": 10
+    },
+    {
+      "id": "in-review",
+      "label": "In review",
+      "order": 40
+    },
+    {
+      "id": "completed",
+      "label": "Completed",
+      "order": 60
+    }
+  ],
+  "technologyMappings": [
+    {
+      "source": "Azure Data Factory",
+      "target": "AWS Step Functions",
+      "priority": "Review",
+      "rationale": "Pattern-dependent mapping"
+    }
+  ]
+}

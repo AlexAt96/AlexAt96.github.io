@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "metadata-results-page",
+  "purpose": "Compose metadata statistics, category summaries, inventory tables and advanced-discovery navigation.",
+  "drivers": [
+    {
+      "name": "renderMetadataReview",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMetadataReview(",
+      "startLine": 13006,
+      "endLine": 13059,
+      "codeFile": "app--renderMetadataReview.reference.js"
+    },
+    {
+      "name": "getMetadataReviewModel",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getMetadataReviewModel(",
+      "startLine": 14018,
+      "endLine": 14034,
+      "codeFile": "app--getMetadataReviewModel.reference.js"
+    },
+    {
+      "name": "getMetadataReviewSummary",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getMetadataReviewSummary(",
+      "startLine": 14036,
+      "endLine": 14068,
+      "codeFile": "app--getMetadataReviewSummary.reference.js"
+    }
+  ]
+}

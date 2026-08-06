@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "id": "report-bar-chart",
+  "capabilityId": "graphs-and-charts",
+  "title": "Report bar chart",
+  "layer": "primitive",
+  "purpose": "Render ranked horizontal bars with values and an explicit empty state.",
+  "drivers": [
+    {
+      "name": "renderReportBarVisual",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderReportBarVisual(",
+      "startLine": 7170,
+      "endLine": 7205,
+      "codeFile": "app--renderReportBarVisual.reference.js"
+    }
+  ],
+  "inputs": [
+    "title",
+    "eyebrow",
+    "label/value rows",
+    "value suffix",
+    "max rows"
+  ],
+  "outputs": [
+    "Accessible bar-chart markup"
+  ],
+  "behaviour": [
+    "Render ranked horizontal bars with values and an explicit empty state.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Graphs and chart primitives",
+  "templateDataPath": "template-data/template-data.json#charts",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/03-dashboard-planning.css",
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/07-outputs-decision.css"
+  ],
+  "inheritedStates": [
+    "populated",
+    "empty",
+    "single series",
+    "multi-series",
+    "positive",
+    "warning",
+    "negative"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Accessible bar-chart markup. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

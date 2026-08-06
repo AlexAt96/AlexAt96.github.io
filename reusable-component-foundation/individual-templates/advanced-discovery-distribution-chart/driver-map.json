@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "advanced-discovery-distribution-chart",
+  "purpose": "Render ranked metadata or ADF distributions for the advanced-discovery screen.",
+  "drivers": [
+    {
+      "name": "renderAdvancedDiscoveryDistributionChart",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdvancedDiscoveryDistributionChart(",
+      "startLine": 13277,
+      "endLine": 13306,
+      "codeFile": "app--renderAdvancedDiscoveryDistributionChart.reference.js"
+    },
+    {
+      "name": "getAdvancedDiscoveryChartRows",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getAdvancedDiscoveryChartRows(",
+      "startLine": 13319,
+      "endLine": 13333,
+      "codeFile": "app--getAdvancedDiscoveryChartRows.reference.js"
+    }
+  ]
+}

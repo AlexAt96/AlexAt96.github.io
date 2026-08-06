@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0",
+  "id": "adf-complexity-charts",
+  "capabilityId": "adf-pipeline-charts-and-graphs",
+  "title": "ADF complexity charts",
+  "layer": "composite",
+  "purpose": "Visualise ADF activity counts, weighted complexity and environment distribution.",
+  "drivers": [
+    {
+      "name": "renderBuAdfComplexityCharts",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuAdfComplexityCharts(",
+      "startLine": 12882,
+      "endLine": 12909,
+      "codeFile": "app--renderBuAdfComplexityCharts.reference.js"
+    },
+    {
+      "name": "getAdfActivityTypeRows",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getAdfActivityTypeRows(",
+      "startLine": 12864,
+      "endLine": 12880,
+      "codeFile": "app--getAdfActivityTypeRows.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU",
+    "ADF complexity model"
+  ],
+  "outputs": [
+    "Activity and environment charts"
+  ],
+  "behaviour": [
+    "Visualise ADF activity counts, weighted complexity and environment distribution.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "ADF pipeline charts, graphs and step explorer",
+  "templateDataPath": "template-data/template-data.json#adfPipeline",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/11-system-map-visuals.css"
+  ],
+  "inheritedStates": [
+    "no pipeline",
+    "pipeline selected",
+    "step selected",
+    "branching",
+    "fan-in",
+    "Databricks activity",
+    "missing endpoint evidence"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Activity and environment charts. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

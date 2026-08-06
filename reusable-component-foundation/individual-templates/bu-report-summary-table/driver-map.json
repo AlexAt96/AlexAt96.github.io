@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "bu-report-summary-table",
+  "purpose": "Summarise sizing, complexity, RICE and open-decision evidence near the report editor.",
+  "drivers": [
+    {
+      "name": "renderBuTechReportSummaryTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuTechReportSummaryTable(",
+      "startLine": 23221,
+      "endLine": 23262,
+      "codeFile": "app--renderBuTechReportSummaryTable.reference.js"
+    },
+    {
+      "name": "renderBuTechReportEvidenceLinks",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuTechReportEvidenceLinks(",
+      "startLine": 23397,
+      "endLine": 23408,
+      "codeFile": "app--renderBuTechReportEvidenceLinks.reference.js"
+    }
+  ]
+}

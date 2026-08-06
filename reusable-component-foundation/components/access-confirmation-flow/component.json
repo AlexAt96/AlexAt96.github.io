@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "id": "access-confirmation-flow",
+  "title": "Access confirmation and analysis verification",
+  "requestedCoverage": "Access confirmation flow and confirmation feedback",
+  "summary": "Collection-team access confirmation, knowledge/repository links, Databricks/Azure flags, analysis-team working/issue tests and save confirmation feedback.",
+  "routes": [
+    "app/document.html?phase=bu-data-collection&section=environment-access&bu=:businessUnitId",
+    "/api/business-units/:businessUnitId/environment-access",
+    "/api/business-units/:businessUnitId/environment-access-test"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "renderEnvironmentAccessTask",
+        "renderKnowledgeAccessTask",
+        "renderAnalysisAccessAndReferenceLinks",
+        "renderAnalysisAccessProduct",
+        "getEnvironmentAccessSummary",
+        "getEnvironmentAccessTestSummary",
+        "renderEnvironmentAccessTestControls",
+        "saveCollectionAccessForm",
+        "applyEnvironmentAccessSaveResult"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/05-collection-workflows.css",
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "states": [
+    "not confirmed",
+    "partially confirmed",
+    "confirmed",
+    "analysis untested",
+    "working",
+    "issue",
+    "saving",
+    "saved"
+  ],
+  "dataContracts": [
+    "environment access confirmation",
+    "knowledge repository access",
+    "access test result",
+    "reviewer identity",
+    "confirmation timestamp"
+  ],
+  "templateKey": "accessConfirmation",
+  "boundaries": [
+    "AccessConfirmationForm",
+    "AccessFlag",
+    "AccessTestControl",
+    "AccessSummary",
+    "ConfirmationBanner",
+    "SaveToast"
+  ]
+}

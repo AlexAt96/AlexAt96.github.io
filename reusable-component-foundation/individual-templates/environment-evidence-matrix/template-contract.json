@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "1.0",
+  "id": "environment-evidence-matrix",
+  "capabilityId": "environment-evidence-matrix",
+  "title": "Environment evidence matrix",
+  "layer": "composite",
+  "purpose": "Cross-reference evidence requirements and statuses against every environment in a BU.",
+  "drivers": [
+    {
+      "name": "renderCollectionEvidenceMatrix",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderCollectionEvidenceMatrix(",
+      "startLine": 8162,
+      "endLine": 8187,
+      "codeFile": "app--renderCollectionEvidenceMatrix.reference.js"
+    },
+    {
+      "name": "getCollectionEvidenceGroups",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getCollectionEvidenceGroups(",
+      "startLine": 8949,
+      "endLine": 8982,
+      "codeFile": "app--getCollectionEvidenceGroups.reference.js"
+    },
+    {
+      "name": "getEvidenceGroupStatus",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getEvidenceGroupStatus(",
+      "startLine": 9012,
+      "endLine": 9016,
+      "codeFile": "app--getEvidenceGroupStatus.reference.js"
+    }
+  ],
+  "inputs": [
+    "Phase",
+    "BU",
+    "Environment rows",
+    "Evidence artifacts"
+  ],
+  "outputs": [
+    "Evidence task navigation",
+    "Coverage summary"
+  ],
+  "behaviour": [
+    "Cross-reference evidence requirements and statuses against every environment in a BU.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "evidence-progress-bar",
+    "evidence-status-icon"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Environment evidence matrix",
+  "templateDataPath": "template-data/template-data.json#environmentEvidenceMatrix",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/05-collection-workflows.css"
+  ],
+  "inheritedStates": [
+    "missing",
+    "required",
+    "optional",
+    "partial",
+    "submitted",
+    "reviewed",
+    "not applicable"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Evidence task navigation. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

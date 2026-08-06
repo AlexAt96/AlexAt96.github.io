@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "1.0",
+  "id": "dashboard-shell-and-planning",
+  "title": "Dashboard shell, KPI cards and planning",
+  "requestedCoverage": "Dashboard",
+  "summary": "Programme dashboard with KPI cards, phase health, work queues, tabs, planning rows, Gantt-style bars and persisted plan settings.",
+  "routes": [
+    "app/index.html",
+    "/api/workspace",
+    "/api/programme/screens/project-plan-setup"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "renderDashboard",
+        "renderDashboardTabs",
+        "renderDashboardStatisticsTab",
+        "renderDiscoveryKpiCard",
+        "renderDiscoveryLineChart",
+        "renderDashboardPlanTab",
+        "renderDashboardPlanRow",
+        "renderDashboardPlanBar",
+        "getDashboardPlanModel",
+        "persistDashboardPlanSettings"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/03-dashboard-planning.css",
+    "app/styles/01-foundation.css"
+  ],
+  "states": [
+    "loading",
+    "empty",
+    "healthy",
+    "at-risk",
+    "blocked",
+    "draft plan",
+    "saved plan",
+    "undo available"
+  ],
+  "dataContracts": [
+    "dashboard KPI model",
+    "phase instances",
+    "work items",
+    "project plan settings",
+    "Gantt dependencies"
+  ],
+  "templateKey": "dashboard",
+  "boundaries": [
+    "DashboardShell",
+    "KpiCard",
+    "PhaseHealthSummary",
+    "PlanningGrid",
+    "GanttBar",
+    "PlanSettingsForm"
+  ]
+}

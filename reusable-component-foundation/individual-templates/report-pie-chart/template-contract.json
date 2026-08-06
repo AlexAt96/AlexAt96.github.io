@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0",
+  "id": "report-pie-chart",
+  "capabilityId": "graphs-and-charts",
+  "title": "Report pie chart",
+  "layer": "primitive",
+  "purpose": "Render an SVG pie chart, centre total and colour-keyed legend from label/value rows.",
+  "drivers": [
+    {
+      "name": "renderReportPieVisual",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderReportPieVisual(",
+      "startLine": 7114,
+      "endLine": 7159,
+      "codeFile": "app--renderReportPieVisual.reference.js"
+    },
+    {
+      "name": "renderReportPieSlice",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderReportPieSlice(",
+      "startLine": 7161,
+      "endLine": 7168,
+      "codeFile": "app--renderReportPieSlice.reference.js"
+    }
+  ],
+  "inputs": [
+    "title",
+    "eyebrow",
+    "label/value rows",
+    "total label",
+    "variant",
+    "empty message"
+  ],
+  "outputs": [
+    "Accessible SVG and legend"
+  ],
+  "behaviour": [
+    "Render an SVG pie chart, centre total and colour-keyed legend from label/value rows.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Graphs and chart primitives",
+  "templateDataPath": "template-data/template-data.json#charts",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/03-dashboard-planning.css",
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/07-outputs-decision.css"
+  ],
+  "inheritedStates": [
+    "populated",
+    "empty",
+    "single series",
+    "multi-series",
+    "positive",
+    "warning",
+    "negative"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Accessible SVG and legend. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

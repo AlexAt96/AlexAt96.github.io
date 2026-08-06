@@ -1,0 +1,13 @@
+<!-- Reference extract: renderDoraStatTable(...) from docs/reports/interactive-system-map.html:8208-8218. -->
+
+    function renderDoraStatTable(item) {
+      const gauge = doraGaugeModel(item);
+      const rows = [{ label: 'Headline', value: gauge.displayValue }, ...(Array.isArray(gauge.stats) ? gauge.stats : []).slice(0, 3)];
+      const rowHtml = rows.length
+        ? rows.map((stat) => '<tr><td>' + escapeHtml(stat.label || '') + '</td><td>' + escapeHtml(stat.value || '') + '</td></tr>').join('')
+        : '<tr><td>Status</td><td>' + escapeHtml(gauge.bandLabel || 'Needs data') + '</td></tr>';
+      return '<article class="dora-mini-stat-panel dora-mini-tone-' + escapeHtml(gauge.tone || 'missing') + '" title="' + escapeHtml((item.name || '') + ' supporting stats') + '">'
+        + '<header><strong>' + escapeHtml(item.name || item.id || 'Metric') + '</strong><span>' + escapeHtml(gauge.bandLabel || '') + '</span></header>'
+        + '<table><tbody>' + rowHtml + '</tbody></table>'
+        + '</article>';
+    }

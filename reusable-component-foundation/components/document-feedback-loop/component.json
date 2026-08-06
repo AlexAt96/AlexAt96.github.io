@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0",
+  "id": "document-feedback-loop",
+  "title": "Document review and feedback loop",
+  "requestedCoverage": "Document feedback loop",
+  "summary": "Document comments, programme and BU feedback, return-to-author tasks, completion acknowledgement and app-native confirmation/toast behaviour.",
+  "routes": [
+    "app/document.html",
+    "/api/programme/screens/:sectionKey/report-commentary",
+    "/api/business-units/:businessUnitId/bu-tech-report"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "renderDocumentFeedbackSection",
+        "renderPhaseFeedbackSection",
+        "renderFeedbackSection",
+        "renderFeedbackItem",
+        "renderBuOutputDocumentFeedbackBanner",
+        "getOpenTaskFeedback",
+        "getOpenFeedbackItemsForPhase",
+        "buildFeedbackItemFromScreen",
+        "openBuOutputFeedbackDialog",
+        "wireBuOutputFeedbackDoneActions",
+        "sendBuTechReportSectionFeedback"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/04-phase-documents.css",
+    "app/styles/07-outputs-decision.css"
+  ],
+  "states": [
+    "no feedback",
+    "open feedback",
+    "changes requested",
+    "author response",
+    "resolved",
+    "reopened"
+  ],
+  "dataContracts": [
+    "feedback item",
+    "document key",
+    "section key",
+    "comment",
+    "author",
+    "reviewer",
+    "status",
+    "timestamps"
+  ],
+  "templateKey": "documentFeedback",
+  "boundaries": [
+    "FeedbackBanner",
+    "FeedbackThread",
+    "FeedbackItem",
+    "FeedbackComposer",
+    "ResolveAction",
+    "FeedbackBadge"
+  ]
+}

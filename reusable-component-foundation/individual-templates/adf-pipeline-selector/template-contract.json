@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0",
+  "id": "adf-pipeline-selector",
+  "capabilityId": "adf-pipeline-charts-and-graphs",
+  "title": "ADF pipeline selector",
+  "layer": "primitive",
+  "purpose": "Choose one pipeline flow while retaining the current explorer view.",
+  "drivers": [
+    {
+      "name": "renderAdfPipelineSelector",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfPipelineSelector(",
+      "startLine": 12086,
+      "endLine": 12101,
+      "codeFile": "app--renderAdfPipelineSelector.reference.js"
+    },
+    {
+      "name": "getSelectedAdfPipelineFlow",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getSelectedAdfPipelineFlow(",
+      "startLine": 12081,
+      "endLine": 12084,
+      "codeFile": "app--getSelectedAdfPipelineFlow.reference.js"
+    }
+  ],
+  "inputs": [
+    "Pipeline flows",
+    "Selected pipeline"
+  ],
+  "outputs": [
+    "Pipeline selection"
+  ],
+  "behaviour": [
+    "Choose one pipeline flow while retaining the current explorer view.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "ADF pipeline charts, graphs and step explorer",
+  "templateDataPath": "template-data/template-data.json#adfPipeline",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/11-system-map-visuals.css"
+  ],
+  "inheritedStates": [
+    "no pipeline",
+    "pipeline selected",
+    "step selected",
+    "branching",
+    "fan-in",
+    "Databricks activity",
+    "missing endpoint evidence"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Pipeline selection. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

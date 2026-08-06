@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0",
+  "id": "adf-lineage-map",
+  "capabilityId": "data-lineage-screen",
+  "title": "ADF full lineage map",
+  "layer": "composite",
+  "purpose": "Lay out sources, ADF activities, Databricks operations and targets as a directed graph.",
+  "drivers": [
+    {
+      "name": "renderAdfLineageMap",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfLineageMap(",
+      "startLine": 12690,
+      "endLine": 12737,
+      "codeFile": "app--renderAdfLineageMap.reference.js"
+    },
+    {
+      "name": "getAdfLineageLayout",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getAdfLineageLayout(",
+      "startLine": 12739,
+      "endLine": 12757,
+      "codeFile": "app--getAdfLineageLayout.reference.js"
+    },
+    {
+      "name": "dedupeAdfLineageEdges",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function dedupeAdfLineageEdges(",
+      "startLine": 12784,
+      "endLine": 12792,
+      "codeFile": "app--dedupeAdfLineageEdges.reference.js"
+    }
+  ],
+  "inputs": [
+    "ADF lineage nodes/edges"
+  ],
+  "outputs": [
+    "Laid-out SVG graph",
+    "Node focus"
+  ],
+  "behaviour": [
+    "Lay out sources, ADF activities, Databricks operations and targets as a directed graph.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Data lineage and dependency explorer",
+  "templateDataPath": "template-data/template-data.json#dataLineage",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/11-system-map-visuals.css",
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "no lineage",
+    "partial",
+    "complete",
+    "pipeline focus",
+    "activity focus",
+    "source focus",
+    "target focus",
+    "evidence caveat"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Laid-out SVG graph. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

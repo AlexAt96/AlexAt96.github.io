@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "bu-report-editor-page",
+  "purpose": "Compose section editors, source-task links, review statuses and finalisation controls.",
+  "drivers": [
+    {
+      "name": "renderBuTechReportInput",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuTechReportInput(",
+      "startLine": 22817,
+      "endLine": 22843,
+      "codeFile": "app--renderBuTechReportInput.reference.js"
+    },
+    {
+      "name": "getBuTechReportModel",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getBuTechReportModel(",
+      "startLine": 22845,
+      "endLine": 22892,
+      "codeFile": "app--getBuTechReportModel.reference.js"
+    }
+  ]
+}

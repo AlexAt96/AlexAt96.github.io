@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "1.0",
+  "id": "wizard-shell",
+  "capabilityId": "questionnaire-wizards",
+  "title": "Generic wizard shell",
+  "layer": "primitive",
+  "purpose": "Provide an accessible modal shell, progress steps, navigation controls and submit action.",
+  "drivers": [
+    {
+      "name": "renderWizard",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderWizard(",
+      "startLine": 9379,
+      "endLine": 9417,
+      "codeFile": "app--renderWizard.reference.js"
+    },
+    {
+      "name": "openAccessibleModal",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function openAccessibleModal(",
+      "startLine": 38676,
+      "endLine": 38719,
+      "codeFile": "app--openAccessibleModal.reference.js"
+    },
+    {
+      "name": "closeAccessibleModal",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function closeAccessibleModal(",
+      "startLine": 38721,
+      "endLine": 38729,
+      "codeFile": "app--closeAccessibleModal.reference.js"
+    }
+  ],
+  "inputs": [
+    "Wizard id",
+    "Title",
+    "Description",
+    "Steps",
+    "Hidden fields",
+    "Submit label"
+  ],
+  "outputs": [
+    "Back/next/submit/close events"
+  ],
+  "behaviour": [
+    "Provide an accessible modal shell, progress steps, navigation controls and submit action.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Questionnaire and multi-step wizard patterns",
+  "templateDataPath": "template-data/template-data.json#questionnaire",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/05-collection-workflows.css",
+    "app/styles/01-foundation.css"
+  ],
+  "inheritedStates": [
+    "closed",
+    "step active",
+    "step complete",
+    "validation error",
+    "draft saved",
+    "submitted",
+    "read-only answers"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Back/next/submit/close events. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "lineage-caveat-panel",
+  "purpose": "Explain missing, inferred or fallback lineage so the graph is not over-trusted.",
+  "drivers": [
+    {
+      "name": "getAdfLineageCaveats",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getAdfLineageCaveats(",
+      "startLine": 12794,
+      "endLine": 12799,
+      "codeFile": "app--getAdfLineageCaveats.reference.js"
+    }
+  ]
+}

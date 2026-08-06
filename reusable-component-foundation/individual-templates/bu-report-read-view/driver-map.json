@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "bu-report-read-view",
+  "purpose": "Render the completed report with all calculated tables, diagrams, sections and feedback state.",
+  "drivers": [
+    {
+      "name": "renderBuTechReport",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuTechReport(",
+      "startLine": 24728,
+      "endLine": 24762,
+      "codeFile": "app--renderBuTechReport.reference.js"
+    },
+    {
+      "name": "renderBuTechReportClientReport",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuTechReportClientReport(",
+      "startLine": 26707,
+      "endLine": 26745,
+      "codeFile": "app--renderBuTechReportClientReport.reference.js"
+    },
+    {
+      "name": "renderBuTechReportClientSection",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuTechReportClientSection(",
+      "startLine": 26747,
+      "endLine": 26758,
+      "codeFile": "app--renderBuTechReportClientSection.reference.js"
+    }
+  ]
+}

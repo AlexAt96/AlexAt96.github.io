@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "adf-complexity-page",
+  "purpose": "Compose ADF scope controls, complexity summary, charts and lineage explorer launch.",
+  "drivers": [
+    {
+      "name": "renderAdfComplexity",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfComplexity(",
+      "startLine": 11396,
+      "endLine": 11496,
+      "codeFile": "app--renderAdfComplexity.reference.js"
+    },
+    {
+      "name": "getAdfComplexityModel",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getAdfComplexityModel(",
+      "startLine": 11498,
+      "endLine": 11541,
+      "codeFile": "app--getAdfComplexityModel.reference.js"
+    }
+  ]
+}

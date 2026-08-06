@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "phase-kanban-board",
+  "purpose": "Group phase tasks into status columns and coordinate column counts and empty states.",
+  "drivers": [
+    {
+      "name": "renderPhaseSectionList",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderPhaseSectionList(",
+      "startLine": 3381,
+      "endLine": 3394,
+      "codeFile": "app--renderPhaseSectionList.reference.js"
+    },
+    {
+      "name": "renderPhaseCombinedKanbanBoard",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderPhaseCombinedKanbanBoard(",
+      "startLine": 3396,
+      "endLine": 3403,
+      "codeFile": "app--renderPhaseCombinedKanbanBoard.reference.js"
+    },
+    {
+      "name": "refreshKanbanColumnCounts",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function refreshKanbanColumnCounts(",
+      "startLine": 35331,
+      "endLine": 35337,
+      "codeFile": "app--refreshKanbanColumnCounts.reference.js"
+    }
+  ]
+}

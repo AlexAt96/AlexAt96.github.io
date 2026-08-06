@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1.0",
+  "id": "editable-data-table",
+  "capabilityId": "data-tables-input-and-rendering",
+  "title": "Editable data table",
+  "layer": "composite",
+  "purpose": "Render addable, copyable and removable form rows with screen-supplied columns and cells.",
+  "drivers": [
+    {
+      "name": "renderEditDataTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEditDataTable(",
+      "startLine": 6013,
+      "endLine": 6033,
+      "codeFile": "app--renderEditDataTable.reference.js"
+    },
+    {
+      "name": "copyEditableTableRow",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function copyEditableTableRow(",
+      "startLine": 40080,
+      "endLine": 40099,
+      "codeFile": "app--copyEditableTableRow.reference.js"
+    }
+  ],
+  "inputs": [
+    "Table id",
+    "Column definitions",
+    "Rendered editable cells",
+    "Add label",
+    "Row class"
+  ],
+  "outputs": [
+    "Add/copy/remove/edit events",
+    "Current row values"
+  ],
+  "behaviour": [
+    "Render addable, copyable and removable form rows with screen-supplied columns and cells.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Editable and read-only data tables",
+  "templateDataPath": "template-data/template-data.json#tables",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/01-foundation.css",
+    "app/styles/05-collection-workflows.css",
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "empty",
+    "view",
+    "edit",
+    "row added",
+    "row copied",
+    "row removed",
+    "validation error",
+    "import preview",
+    "locked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Add/copy/remove/edit events. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

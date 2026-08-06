@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "1.0",
+  "id": "topology-structure-diagram",
+  "capabilityId": "environment-rationalisation",
+  "title": "Proposed topology structure diagram",
+  "layer": "composite",
+  "purpose": "Visualise account, environment and workspace structure for the target topology.",
+  "drivers": [
+    {
+      "name": "renderProposedTopologyStructureDiagram",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderProposedTopologyStructureDiagram(",
+      "startLine": 21537,
+      "endLine": 21891,
+      "codeFile": "app--renderProposedTopologyStructureDiagram.reference.js"
+    }
+  ],
+  "inputs": [
+    "Proposed topology structure"
+  ],
+  "outputs": [
+    "Structure diagram"
+  ],
+  "behaviour": [
+    "Visualise account, environment and workspace structure for the target topology.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Environment rationalisation and proposed topology",
+  "templateDataPath": "template-data/template-data.json#environmentRationalisation",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "current",
+    "migrate",
+    "merge",
+    "decommission",
+    "target incomplete",
+    "diagram refreshed",
+    "saved"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Structure diagram. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0",
+  "id": "adf-complexity-page",
+  "capabilityId": "adf-pipeline-charts-and-graphs",
+  "title": "ADF complexity page",
+  "layer": "screen",
+  "purpose": "Compose ADF scope controls, complexity summary, charts and lineage explorer launch.",
+  "drivers": [
+    {
+      "name": "renderAdfComplexity",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfComplexity(",
+      "startLine": 11396,
+      "endLine": 11496,
+      "codeFile": "app--renderAdfComplexity.reference.js"
+    },
+    {
+      "name": "getAdfComplexityModel",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getAdfComplexityModel(",
+      "startLine": 11498,
+      "endLine": 11541,
+      "codeFile": "app--getAdfComplexityModel.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU",
+    "ADF activity rows",
+    "Environment scope"
+  ],
+  "outputs": [
+    "Scope save",
+    "Lineage navigation"
+  ],
+  "behaviour": [
+    "Compose ADF scope controls, complexity summary, charts and lineage explorer launch.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "adf-complexity-charts",
+    "adf-pipeline-selector",
+    "adf-pipeline-story"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "ADF pipeline charts, graphs and step explorer",
+  "templateDataPath": "template-data/template-data.json#adfPipeline",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/11-system-map-visuals.css"
+  ],
+  "inheritedStates": [
+    "no pipeline",
+    "pipeline selected",
+    "step selected",
+    "branching",
+    "fan-in",
+    "Databricks activity",
+    "missing endpoint evidence"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Scope save. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "analysis-access-summary",
+  "purpose": "Summarise collection confirmations by product/environment for the analysis team.",
+  "drivers": [
+    {
+      "name": "renderAnalysisAccessAndReferenceLinks",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAnalysisAccessAndReferenceLinks(",
+      "startLine": 8278,
+      "endLine": 8319,
+      "codeFile": "app--renderAnalysisAccessAndReferenceLinks.reference.js"
+    },
+    {
+      "name": "renderAnalysisAccessProduct",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAnalysisAccessProduct(",
+      "startLine": 8321,
+      "endLine": 8350,
+      "codeFile": "app--renderAnalysisAccessProduct.reference.js"
+    },
+    {
+      "name": "getEnvironmentAccessSummary",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getEnvironmentAccessSummary(",
+      "startLine": 8352,
+      "endLine": 8368,
+      "codeFile": "app--getEnvironmentAccessSummary.reference.js"
+    }
+  ]
+}

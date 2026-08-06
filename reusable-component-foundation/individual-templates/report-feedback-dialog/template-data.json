@@ -1,0 +1,26 @@
+{
+  "document": {
+    "key": "bu-tech-report",
+    "title": "BU Technical Report",
+    "version": 3,
+    "status": "In review"
+  },
+  "items": [
+    {
+      "id": "feedback-1",
+      "sectionKey": "executive-summary",
+      "author": "Reviewer",
+      "comment": "Add the production cutover dependency.",
+      "status": "Changes requested",
+      "createdAt": "2026-08-03T12:00:00Z"
+    },
+    {
+      "id": "feedback-2",
+      "sectionKey": "metadata-review",
+      "author": "Report Author",
+      "comment": "Dependency added with evidence link.",
+      "status": "Resolved",
+      "createdAt": "2026-08-04T15:20:00Z"
+    }
+  ]
+}

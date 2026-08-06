@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "1.0",
+  "id": "questionnaire-answer-review",
+  "capabilityId": "questionnaire-wizards",
+  "title": "Questionnaire answer review",
+  "layer": "composite",
+  "purpose": "Show saved questionnaire answers read-only and allow an authorised user to reopen the wizard at a chosen step.",
+  "drivers": [
+    {
+      "name": "renderQuestionnaireAnswersModal",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderQuestionnaireAnswersModal(",
+      "startLine": 10119,
+      "endLine": 10142,
+      "codeFile": "app--renderQuestionnaireAnswersModal.reference.js"
+    },
+    {
+      "name": "renderQuestionnaireAnswersView",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderQuestionnaireAnswersView(",
+      "startLine": 39322,
+      "endLine": 39349,
+      "codeFile": "app--renderQuestionnaireAnswersView.reference.js"
+    },
+    {
+      "name": "launchQuestionnaireEditorFromModal",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function launchQuestionnaireEditorFromModal(",
+      "startLine": 39253,
+      "endLine": 39265,
+      "codeFile": "app--launchQuestionnaireEditorFromModal.reference.js"
+    }
+  ],
+  "inputs": [
+    "Questions",
+    "Saved answers",
+    "Edit permission"
+  ],
+  "outputs": [
+    "Close",
+    "Edit from step"
+  ],
+  "behaviour": [
+    "Show saved questionnaire answers read-only and allow an authorised user to reopen the wizard at a chosen step.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "wizard-shell"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Questionnaire and multi-step wizard patterns",
+  "templateDataPath": "template-data/template-data.json#questionnaire",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/05-collection-workflows.css",
+    "app/styles/01-foundation.css"
+  ],
+  "inheritedStates": [
+    "closed",
+    "step active",
+    "step complete",
+    "validation error",
+    "draft saved",
+    "submitted",
+    "read-only answers"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Close. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

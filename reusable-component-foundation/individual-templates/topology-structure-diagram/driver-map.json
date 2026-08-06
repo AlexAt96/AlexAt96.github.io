@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "topology-structure-diagram",
+  "purpose": "Visualise account, environment and workspace structure for the target topology.",
+  "drivers": [
+    {
+      "name": "renderProposedTopologyStructureDiagram",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderProposedTopologyStructureDiagram(",
+      "startLine": 21537,
+      "endLine": 21891,
+      "codeFile": "app--renderProposedTopologyStructureDiagram.reference.js"
+    }
+  ]
+}

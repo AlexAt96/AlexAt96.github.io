@@ -1,0 +1,61 @@
+<!-- Reference extract: renderTestTelemetryReport(...) from docs/reports/interactive-system-map.html:7730-7788. -->
+
+    function renderTestTelemetryReport() {
+      const metrics = testTelemetryMetrics();
+      const summary = metrics.summary || {};
+      const suites = Array.isArray(metrics.suites) ? metrics.suites : [];
+      const coverageAreas = Array.isArray(metrics.coverageAreas) ? metrics.coverageAreas : [];
+      const cadence = Array.isArray(metrics.cadence) ? metrics.cadence : [];
+      const logItems = Array.isArray(metrics.recentLog) ? metrics.recentLog : [];
+      const gaps = Array.isArray(metrics.gaps) ? metrics.gaps : [];
+      const suiteCards = suites.map((item) => {
+        const outcome = ["pass", "fail", "unknown"].includes(item.outcome) ? item.outcome : "unknown";
+        return '<article class="test-suite-card test-suite-' + outcome + '">'
+          + '<strong>' + escapeHtml(item.name || item.script || 'Test suite') + '</strong>'
+          + '<span>' + escapeHtml((item.status || 'Unknown') + ' / ' + (item.script || 'script') + ' / ' + (item.cadence || 'Manual')) + '</span>'
+          + '<span>' + escapeHtml(item.coverage || item.command || '') + '</span>'
+          + '</article>';
+      }).join('') || '<p>No configured test suites were found.</p>';
+      const coverageRows = coverageAreas.map((item) => '<tr><td><strong>' + escapeHtml(item.area || '') + '</strong><br><span class="muted">' + escapeHtml(item.scope || '') + '</span></td><td>' + escapeHtml(item.covered ? 'Covered' : 'Gap') + '</td><td>' + escapeHtml(item.evidence || '') + '</td></tr>').join('') || '<tr><td colspan="3">No test coverage map is available yet.</td></tr>';
+      const cadenceRows = cadence.map((item) => '<tr><td>' + escapeHtml(item.trigger || '') + '</td><td>' + escapeHtml(item.cadence || '') + '</td><td>' + escapeHtml(item.source || '') + '</td></tr>').join('') || '<tr><td colspan="3">No run cadence has been detected yet.</td></tr>';
+      const logCards = logItems.slice(0, 16).map((item) => {
+        return '<article class="test-log-item">'
+          + '<strong>' + escapeHtml((item.signal || 'Quality change') + ' / ' + (item.shortSha || '')) + '</strong>'
+          + '<span>' + escapeHtml(formatDateTime(item.date) + ' / ' + (item.status || 'recorded')) + '</span>'
+          + '<span>' + escapeHtml(item.subject || '') + '</span>'
+          + '</article>';
+      }).join('') || '<p>No recent test or quality log entries were found.</p>';
+      const gapRows = gaps.map((item) => '<tr><td>' + escapeHtml(item) + '</td></tr>').join('') || '<tr><td>No test telemetry gaps are currently listed.</td></tr>';
+      els.consistencyReport.innerHTML = ''
+        + '<div class="report-shell">'
+        + '<section class="report-hero">'
+        + '<div>'
+        + '<h2>Test coverage map</h2>'
+        + '<p>Suite coverage, run cadence, latest known success rate, and recent test-related repository activity. Source: ' + escapeHtml(metrics.source || 'test telemetry scan') + '.</p>'
+        + '</div>'
+        + '<div class="report-score-card"><span>Success rate</span><strong>' + formatNumber(summary.successRatePct || 0) + '%</strong></div>'
+        + '</section>'
+        + '<section class="report-summary-grid" aria-label="Test coverage summary">'
+        + '<div class="report-summary-item"><span>Coverage map</span><strong>' + formatNumber(summary.coveragePercent || 0) + '%</strong></div>'
+        + '<div class="report-summary-item"><span>Suites</span><strong>' + formatNumber(summary.suiteCount || suites.length) + '</strong></div>'
+        + '<div class="report-summary-item"><span>Passing</span><strong>' + formatNumber(summary.passingSuites || 0) + '</strong></div>'
+        + '<div class="report-summary-item"><span>Failing</span><strong>' + formatNumber(summary.failingSuites || 0) + '</strong></div>'
+        + '<div class="report-summary-item"><span>Tracked test files</span><strong>' + formatNumber(summary.trackedTestFiles || 0) + '</strong></div>'
+        + '<div class="report-summary-item"><span>CI</span><strong>' + escapeHtml(summary.ciEnabled ? 'Enabled' : 'Missing') + '</strong></div>'
+        + '</section>'
+        + '<div class="report-note-grid">'
+        + reportNote('Default gate', summary.defaultGate || 'npm run test:tier1')
+        + reportNote('Status basis', metrics.note || 'Latest known suite statuses are inferred from local scripts and review evidence.')
+        + '</div>'
+        + '<section class="test-map-grid">'
+        + '<div class="test-map-panel"><h3>System test map</h3><p>Triggers feed suites, and suites protect the current coverage areas.</p>' + renderTestCoverageDiagram(metrics) + '</div>'
+        + '<div class="test-map-panel"><h3>Suite status</h3><p>Latest known outcome by configured validation lane.</p><div class="test-suite-list">' + suiteCards + '</div></div>'
+        + '</section>'
+        + '<div class="consistency-table-wrap"><table class="consistency-table"><thead><tr><th>Coverage area</th><th>Status</th><th>Evidence</th></tr></thead><tbody>' + coverageRows + '</tbody></table></div>'
+        + '<div class="consistency-table-wrap"><table class="consistency-table"><thead><tr><th>Run trigger</th><th>Cadence</th><th>Source</th></tr></thead><tbody>' + cadenceRows + '</tbody></table></div>'
+        + '<section class="test-map-grid">'
+        + '<div class="test-map-panel"><h3>Recent log</h3><p>Recent commits touching tests, tools, workflow, or report snapshots.</p><div class="test-log-list">' + logCards + '</div></div>'
+        + '<div class="test-map-panel"><h3>Telemetry gaps</h3><p>What is still needed before this becomes a true historical test dashboard.</p><div class="consistency-table-wrap"><table class="consistency-table"><tbody>' + gapRows + '</tbody></table></div></div>'
+        + '</section>'
+        + '</div>';
+    }

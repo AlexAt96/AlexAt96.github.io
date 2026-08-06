@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PoC Tracker interactive showcase</title>
+  <link rel="stylesheet" href="00-foundations/tokens.css">
+  <link rel="stylesheet" href="00-foundations/base.css">
+  <link rel="stylesheet" href="00-foundations/components.css">
+  <style>
+    .template-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:var(--space-4)}
+    .template-card{min-height:210px;display:grid;align-content:start;gap:var(--space-2);color:inherit;text-decoration:none;transition:transform var(--motion-fast),box-shadow var(--motion-fast),border-color var(--motion-fast)}
+    .template-card:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow-raised)}
+    .template-card>b{color:var(--primary-strong);font-size:var(--text-xs);letter-spacing:.08em;text-transform:uppercase}.template-card span{margin-top:auto;padding-top:var(--space-3);color:var(--primary-strong);font-weight:800}
+  </style>
+</head>
+<body>
+  <main class="poc-page poc-stack">
+    <header class="poc-panel poc-stack">
+      <p class="poc-eyebrow">PoC Tracker · Interactive showcase</p>
+      <h1>Seven product experiences, ready to explore</h1>
+      <p class="poc-muted">Move through a focused collection of programme dashboards, planning tools and guided workflows. Every experience uses realistic fictional data and works across desktop and mobile.</p>
+    </header>
+    <section class="template-grid" aria-label="Product experiences">
+      <a class="poc-panel template-card" href="01-dashboard/demo.html"><b>Programme insight</b><h2>Dashboard</h2><p class="poc-muted">Compare delivery, capacity, evidence and quality signals with decision-ready context.</p><span>Explore experience →</span></a>
+      <a class="poc-panel template-card" href="02-planning-backlog/demo.html"><b>Delivery planning</b><h2>Planning backlog</h2><p class="poc-muted">Prioritise work, filter by owner and status, and keep dependencies in view.</p><span>Explore experience →</span></a>
+      <a class="poc-panel template-card" href="03-gantt-chart/demo.html"><b>Delivery planning</b><h2>Gantt chart</h2><p class="poc-muted">Move, resize and regroup work across a clear weekly delivery plan.</p><span>Explore experience →</span></a>
+      <a class="poc-panel template-card" href="06-workflow-workbench/demo.html"><b>Governed workflow</b><h2>Workflow workbench</h2><p class="poc-muted">Guide records through stages, measures, evidence and clear next actions.</p><span>Explore experience →</span></a>
+      <a class="poc-panel template-card" href="07-chatbot/demo.html"><b>Assisted workflow</b><h2>Workspace assistant</h2><p class="poc-muted">Review source-linked answers and proposed changes with confidence.</p><span>Explore experience →</span></a>
+      <a class="poc-panel template-card" href="08-earned-value/demo.html"><b>Performance insight</b><h2>Earned value</h2><p class="poc-muted">Test scenarios, compare variances and understand the forecast in plain language.</p><span>Explore experience →</span></a>
+      <a class="poc-panel template-card" href="09-architecture-system-map/demo.html"><b>Architecture landscape</b><h2>Architecture map</h2><p class="poc-muted">Follow interfaces across five layers and inspect ownership, technology and evidence.</p><span>Explore experience →</span></a>
+    </section>
+  </main>
+</body>
+</html>

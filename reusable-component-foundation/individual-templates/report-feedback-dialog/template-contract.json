@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "1.0",
+  "id": "report-feedback-dialog",
+  "capabilityId": "document-feedback-loop",
+  "title": "Report feedback dialog",
+  "layer": "composite",
+  "purpose": "Collect a section-specific review comment and send it back to the report author.",
+  "drivers": [
+    {
+      "name": "openBuOutputFeedbackDialog",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function openBuOutputFeedbackDialog(",
+      "startLine": 32721,
+      "endLine": 32787,
+      "codeFile": "app--openBuOutputFeedbackDialog.reference.js"
+    },
+    {
+      "name": "sendBuTechReportSectionFeedback",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "async function sendBuTechReportSectionFeedback(",
+      "startLine": 37161,
+      "endLine": 37197,
+      "codeFile": "app--sendBuTechReportSectionFeedback.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU id",
+    "Document key",
+    "Section definition"
+  ],
+  "outputs": [
+    "Feedback comment",
+    "Request-changes event",
+    "Saved/error status"
+  ],
+  "behaviour": [
+    "Collect a section-specific review comment and send it back to the report author.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [
+    "PUT /api/business-units/:businessUnitId/bu-tech-report"
+  ],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Document review and feedback loop",
+  "templateDataPath": "template-data/template-data.json#documentFeedback",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/04-phase-documents.css",
+    "app/styles/07-outputs-decision.css"
+  ],
+  "inheritedStates": [
+    "no feedback",
+    "open feedback",
+    "changes requested",
+    "author response",
+    "resolved",
+    "reopened"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Feedback comment. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}
