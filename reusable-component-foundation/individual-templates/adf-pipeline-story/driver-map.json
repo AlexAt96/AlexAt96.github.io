@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "adf-pipeline-story",
+  "purpose": "Order activities by dependency level and render the full pipeline as a connected lane.",
+  "drivers": [
+    {
+      "name": "getAdfPipelineStepFlows",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getAdfPipelineStepFlows(",
+      "startLine": 11781,
+      "endLine": 11840,
+      "codeFile": "app--getAdfPipelineStepFlows.reference.js"
+    },
+    {
+      "name": "orderAdfPipelineActivities",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function orderAdfPipelineActivities(",
+      "startLine": 11842,
+      "endLine": 11877,
+      "codeFile": "app--orderAdfPipelineActivities.reference.js"
+    },
+    {
+      "name": "getAdfActivityDependencyLevels",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getAdfActivityDependencyLevels(",
+      "startLine": 11879,
+      "endLine": 11907,
+      "codeFile": "app--getAdfActivityDependencyLevels.reference.js"
+    },
+    {
+      "name": "renderAdfPipelineStory",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfPipelineStory(",
+      "startLine": 12103,
+      "endLine": 12169,
+      "codeFile": "app--renderAdfPipelineStory.reference.js"
+    },
+    {
+      "name": "renderAdfPipelineLaneSvg",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfPipelineLaneSvg(",
+      "startLine": 12229,
+      "endLine": 12274,
+      "codeFile": "app--renderAdfPipelineLaneSvg.reference.js"
+    }
+  ]
+}

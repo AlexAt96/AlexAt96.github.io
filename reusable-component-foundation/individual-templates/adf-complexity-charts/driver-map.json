@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "adf-complexity-charts",
+  "purpose": "Visualise ADF activity counts, weighted complexity and environment distribution.",
+  "drivers": [
+    {
+      "name": "renderBuAdfComplexityCharts",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuAdfComplexityCharts(",
+      "startLine": 12882,
+      "endLine": 12909,
+      "codeFile": "app--renderBuAdfComplexityCharts.reference.js"
+    },
+    {
+      "name": "getAdfActivityTypeRows",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getAdfActivityTypeRows(",
+      "startLine": 12864,
+      "endLine": 12880,
+      "codeFile": "app--getAdfActivityTypeRows.reference.js"
+    }
+  ]
+}

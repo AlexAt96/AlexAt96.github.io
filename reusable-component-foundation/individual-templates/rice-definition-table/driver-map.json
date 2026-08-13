@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "rice-definition-table",
+  "purpose": "Edit the labels, definitions and scoring guidance for RICE measures.",
+  "drivers": [
+    {
+      "name": "renderRiceDefinitionsEditTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderRiceDefinitionsEditTable(",
+      "startLine": 7917,
+      "endLine": 7935,
+      "codeFile": "app--renderRiceDefinitionsEditTable.reference.js"
+    }
+  ]
+}

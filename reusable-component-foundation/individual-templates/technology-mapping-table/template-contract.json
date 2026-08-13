@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "1.0",
+  "id": "technology-mapping-table",
+  "capabilityId": "tool-metadata-setup",
+  "title": "Technology-mapping metadata table",
+  "layer": "composite",
+  "purpose": "Edit source-to-target technology mappings, priorities and rationale.",
+  "drivers": [
+    {
+      "name": "renderTechnologyMappingMetadataTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderTechnologyMappingMetadataTable(",
+      "startLine": 8046,
+      "endLine": 8065,
+      "codeFile": "app--renderTechnologyMappingMetadataTable.reference.js"
+    },
+    {
+      "name": "renderTechnologyMappingPriorityTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderTechnologyMappingPriorityTable(",
+      "startLine": 8067,
+      "endLine": 8077,
+      "codeFile": "app--renderTechnologyMappingPriorityTable.reference.js"
+    },
+    {
+      "name": "renderTechnologyMappingMetadataEditCells",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderTechnologyMappingMetadataEditCells(",
+      "startLine": 8113,
+      "endLine": 8136,
+      "codeFile": "app--renderTechnologyMappingMetadataEditCells.reference.js"
+    }
+  ],
+  "inputs": [
+    "Technology mapping rows",
+    "Priority options"
+  ],
+  "outputs": [
+    "Edited mapping rows"
+  ],
+  "behaviour": [
+    "Edit source-to-target technology mappings, priorities and rationale.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [
+    "PUT /api/programme/technology-mappings"
+  ],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Tool metadata setup",
+  "templateDataPath": "template-data/template-data.json#toolMetadata",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/08-admin-integrations.css",
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "collapsed",
+    "expanded",
+    "editing",
+    "saving",
+    "saved",
+    "invalid",
+    "locked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Edited mapping rows. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

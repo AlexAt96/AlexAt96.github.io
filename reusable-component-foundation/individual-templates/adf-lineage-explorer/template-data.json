@@ -1,0 +1,49 @@
+{
+  "nodes": [
+    {
+      "id": "crm-orders",
+      "kind": "source",
+      "label": "CRM Orders",
+      "evidenceId": "review-1"
+    },
+    {
+      "id": "adf-extract",
+      "kind": "activity",
+      "label": "ADF Extract Orders",
+      "pipelineId": "pipeline-orders"
+    },
+    {
+      "id": "dbx-transform",
+      "kind": "databricks",
+      "label": "Orders Transform Notebook",
+      "notebookPath": "/Shared/orders_transform"
+    },
+    {
+      "id": "orders-mart",
+      "kind": "target",
+      "label": "Orders Mart",
+      "catalog": "sales",
+      "schema": "reporting"
+    }
+  ],
+  "edges": [
+    {
+      "from": "crm-orders",
+      "to": "adf-extract",
+      "label": "read"
+    },
+    {
+      "from": "adf-extract",
+      "to": "dbx-transform",
+      "label": "invoke"
+    },
+    {
+      "from": "dbx-transform",
+      "to": "orders-mart",
+      "label": "write"
+    }
+  ],
+  "caveats": [
+    "Column-level lineage is not included in the source extract."
+  ]
+}

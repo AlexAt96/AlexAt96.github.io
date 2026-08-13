@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0",
+  "id": "data-tables-input-and-rendering",
+  "title": "Editable and read-only data tables",
+  "requestedCoverage": "Data tables, both input and rendering",
+  "summary": "Editable row grids, add/copy/remove controls, Excel import/export handoff, compact read-only tables, traceability tables and report tables.",
+  "routes": [
+    "app/document.html",
+    "app/input-centre.html",
+    "/api/business-units/:businessUnitId/*"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "renderEditDataTable",
+        "renderMiniTable",
+        "renderInputTraceabilityTable",
+        "renderMetadataTableSection",
+        "renderDataDictionaryTableSection",
+        "copyEditableTableRow",
+        "wireMetadataTableActions",
+        "parseImportTableRowsFromFile"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/01-foundation.css",
+    "app/styles/05-collection-workflows.css",
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "states": [
+    "empty",
+    "view",
+    "edit",
+    "row added",
+    "row copied",
+    "row removed",
+    "validation error",
+    "import preview",
+    "locked"
+  ],
+  "dataContracts": [
+    "column definition",
+    "editable row",
+    "render row",
+    "validation errors",
+    "pagination/filter metadata",
+    "import aliases"
+  ],
+  "templateKey": "tables",
+  "boundaries": [
+    "DataTable",
+    "EditableDataTable",
+    "ColumnHeader",
+    "EditableRow",
+    "TableToolbar",
+    "ImportExportPanel",
+    "EmptyTable"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "report-feedback-banner",
+  "purpose": "Show unresolved BU output feedback above a completed/read-only report and offer review/resolve actions.",
+  "drivers": [
+    {
+      "name": "renderBuOutputDocumentFeedbackBanner",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuOutputDocumentFeedbackBanner(",
+      "startLine": 24369,
+      "endLine": 24398,
+      "codeFile": "app--renderBuOutputDocumentFeedbackBanner.reference.js"
+    },
+    {
+      "name": "wireBuOutputFeedbackDoneActions",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function wireBuOutputFeedbackDoneActions(",
+      "startLine": 32573,
+      "endLine": 32583,
+      "codeFile": "app--wireBuOutputFeedbackDoneActions.reference.js"
+    }
+  ]
+}

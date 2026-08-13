@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "unity-catalog-binding-table",
+  "purpose": "Render catalog/workspace bindings with status and ownership context.",
+  "drivers": [
+    {
+      "name": "renderUnityCatalogBindingTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderUnityCatalogBindingTable(",
+      "startLine": 14299,
+      "endLine": 14327,
+      "codeFile": "app--renderUnityCatalogBindingTable.reference.js"
+    },
+    {
+      "name": "renderUnityCatalogBindingStatus",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderUnityCatalogBindingStatus(",
+      "startLine": 14604,
+      "endLine": 14613,
+      "codeFile": "app--renderUnityCatalogBindingStatus.reference.js"
+    }
+  ]
+}

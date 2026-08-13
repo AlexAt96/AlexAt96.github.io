@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "chart-empty-state",
+  "purpose": "Keep chart layouts stable and explain which source data is required when no values exist.",
+  "drivers": [
+    {
+      "name": "renderAdvancedDiscoveryEmptyChart",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdvancedDiscoveryEmptyChart(",
+      "startLine": 13308,
+      "endLine": 13317,
+      "codeFile": "app--renderAdvancedDiscoveryEmptyChart.reference.js"
+    }
+  ]
+}

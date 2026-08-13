@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "wizard-shell",
+  "purpose": "Provide an accessible modal shell, progress steps, navigation controls and submit action.",
+  "drivers": [
+    {
+      "name": "renderWizard",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderWizard(",
+      "startLine": 9379,
+      "endLine": 9417,
+      "codeFile": "app--renderWizard.reference.js"
+    },
+    {
+      "name": "openAccessibleModal",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function openAccessibleModal(",
+      "startLine": 38676,
+      "endLine": 38719,
+      "codeFile": "app--openAccessibleModal.reference.js"
+    },
+    {
+      "name": "closeAccessibleModal",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function closeAccessibleModal(",
+      "startLine": 38721,
+      "endLine": 38729,
+      "codeFile": "app--closeAccessibleModal.reference.js"
+    }
+  ]
+}

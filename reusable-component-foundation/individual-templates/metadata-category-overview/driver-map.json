@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "metadata-category-overview",
+  "purpose": "Combine category statistics and a distribution chart inside an expandable overview.",
+  "drivers": [
+    {
+      "name": "renderMetadataSectionOverview",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMetadataSectionOverview(",
+      "startLine": 14214,
+      "endLine": 14229,
+      "codeFile": "app--renderMetadataSectionOverview.reference.js"
+    },
+    {
+      "name": "renderMetadataReviewDisclosure",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMetadataReviewDisclosure(",
+      "startLine": 14281,
+      "endLine": 14297,
+      "codeFile": "app--renderMetadataReviewDisclosure.reference.js"
+    }
+  ]
+}

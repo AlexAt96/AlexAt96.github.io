@@ -1,0 +1,21 @@
+<!-- Reference extract: doraGaugeModel(...) from docs/reports/interactive-system-map.html:8173-8191. -->
+
+    function doraGaugeModel(item) {
+      const dashboard = item.dashboard || {};
+      const rawValue = item.numericValue;
+      const numericValue = Number(rawValue);
+      const hasNumber = rawValue !== null && rawValue !== undefined && rawValue !== '' && Number.isFinite(numericValue);
+      const band = dashboard.band || doraBandForMetric(item, hasNumber ? numericValue : null);
+      return {
+        band,
+        bandLabel: dashboard.bandLabel || doraBandLabel(item, band),
+        leverPosition: clamp(Number(dashboard.leverPosition ?? doraLeverPositionForBand(band)), 0, 100),
+        direction: dashboard.direction || (item.id === 'deployment-frequency' ? 'higher' : 'lower'),
+        boundaries: Array.isArray(dashboard.boundaries) ? dashboard.boundaries : doraMetricBoundaryDefaults(item),
+        tone: dashboard.tone || doraToneForBand(item, band),
+        displayValue: dashboard.displayValue || item.value || (hasNumber ? String(numericValue) : 'Needs data'),
+        statLabel: dashboard.statLabel || item.unit || (hasNumber ? 'current value' : 'production data missing'),
+        insight: dashboard.insight || item.interpretation || '',
+        stats: Array.isArray(dashboard.stats) ? dashboard.stats : []
+      };
+    }

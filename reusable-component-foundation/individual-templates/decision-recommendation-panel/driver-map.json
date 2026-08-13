@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "decision-recommendation-panel",
+  "purpose": "Explain the recommended action, readiness and confidence for each BU.",
+  "drivers": [
+    {
+      "name": "renderDecisionCgiRecommendationPanel",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionCgiRecommendationPanel(",
+      "startLine": 27071,
+      "endLine": 27097,
+      "codeFile": "app--renderDecisionCgiRecommendationPanel.reference.js"
+    },
+    {
+      "name": "renderDecisionCgiRecommendationRows",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionCgiRecommendationRows(",
+      "startLine": 27099,
+      "endLine": 27113,
+      "codeFile": "app--renderDecisionCgiRecommendationRows.reference.js"
+    },
+    {
+      "name": "getDecisionReadinessSignal",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getDecisionReadinessSignal(",
+      "startLine": 27141,
+      "endLine": 27150,
+      "codeFile": "app--getDecisionReadinessSignal.reference.js"
+    }
+  ]
+}

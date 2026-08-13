@@ -1,0 +1,45 @@
+{
+  "summary": {
+    "recommendation": "Proceed with conditions",
+    "confidence": "Medium",
+    "totalFiveYearSaving": 1240000,
+    "migrationCost": 390000,
+    "netSaving": 850000
+  },
+  "businessUnits": [
+    {
+      "id": "bu-a",
+      "name": "Commerce Analytics",
+      "action": "Migrate",
+      "riceScore": 7.8,
+      "readiness": "Ready with conditions",
+      "fiveYearNetSaving": 460000
+    },
+    {
+      "id": "bu-b",
+      "name": "Operations Reporting",
+      "action": "Replatform",
+      "riceScore": 6.2,
+      "readiness": "Needs evidence",
+      "fiveYearNetSaving": 270000
+    },
+    {
+      "id": "bu-c",
+      "name": "Legacy Insights",
+      "action": "Decommission",
+      "riceScore": 4.1,
+      "readiness": "Decision required",
+      "fiveYearNetSaving": 120000
+    }
+  ],
+  "openDecisions": [
+    {
+      "id": "decision-1",
+      "title": "Confirm identity integration",
+      "owner": "Security Lead",
+      "dueDate": "2026-08-12",
+      "priority": "High",
+      "status": "Open"
+    }
+  ]
+}

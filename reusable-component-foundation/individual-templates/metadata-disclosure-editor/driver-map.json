@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "metadata-disclosure-editor",
+  "purpose": "Wrap one metadata editor in a collapsible section with status, description and save controls.",
+  "drivers": [
+    {
+      "name": "renderMetadataDisclosure",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMetadataDisclosure(",
+      "startLine": 7714,
+      "endLine": 7741,
+      "codeFile": "app--renderMetadataDisclosure.reference.js"
+    },
+    {
+      "name": "saveToolMetadataSection",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "async function saveToolMetadataSection(",
+      "startLine": 35417,
+      "endLine": 35435,
+      "codeFile": "app--saveToolMetadataSection.reference.js"
+    }
+  ]
+}

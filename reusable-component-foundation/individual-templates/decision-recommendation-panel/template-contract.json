@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0",
+  "id": "decision-recommendation-panel",
+  "capabilityId": "decision-screen",
+  "title": "Decision recommendation panel",
+  "layer": "composite",
+  "purpose": "Explain the recommended action, readiness and confidence for each BU.",
+  "drivers": [
+    {
+      "name": "renderDecisionCgiRecommendationPanel",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionCgiRecommendationPanel(",
+      "startLine": 27071,
+      "endLine": 27097,
+      "codeFile": "app--renderDecisionCgiRecommendationPanel.reference.js"
+    },
+    {
+      "name": "renderDecisionCgiRecommendationRows",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionCgiRecommendationRows(",
+      "startLine": 27099,
+      "endLine": 27113,
+      "codeFile": "app--renderDecisionCgiRecommendationRows.reference.js"
+    },
+    {
+      "name": "getDecisionReadinessSignal",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getDecisionReadinessSignal(",
+      "startLine": 27141,
+      "endLine": 27150,
+      "codeFile": "app--getDecisionReadinessSignal.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU decision models",
+    "Scenario summary"
+  ],
+  "outputs": [
+    "Recommendation rows",
+    "Source navigation"
+  ],
+  "behaviour": [
+    "Explain the recommended action, readiness and confidence for each BU.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Decision screen and scenario layout",
+  "templateDataPath": "template-data/template-data.json#decision",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/07-outputs-decision.css"
+  ],
+  "inheritedStates": [
+    "baseline",
+    "scenario changed",
+    "unsaved scenario",
+    "recommended",
+    "conditional",
+    "not recommended",
+    "decision ready",
+    "blocked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Recommendation rows. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

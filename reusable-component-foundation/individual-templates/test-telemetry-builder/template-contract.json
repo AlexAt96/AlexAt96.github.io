@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0",
+  "id": "test-telemetry-builder",
+  "capabilityId": "test-coverage-screen",
+  "title": "Test telemetry data builder",
+  "layer": "backend",
+  "purpose": "Scan scripts, CI and test files into suite status, coverage-area and gap records.",
+  "drivers": [
+    {
+      "name": "buildRepoQualityMetrics",
+      "file": "server/lib/repo-quality-metrics.js",
+      "role": "Test and quality telemetry builder",
+      "signature": "function buildRepoQualityMetrics(",
+      "startLine": 181,
+      "endLine": 215,
+      "codeFile": "repo-quality-metrics--buildRepoQualityMetrics.reference.js"
+    },
+    {
+      "name": "buildTestCoverageAreas",
+      "file": "server/lib/repo-quality-metrics.js",
+      "role": "Test and quality telemetry builder",
+      "signature": "function buildTestCoverageAreas(",
+      "startLine": 998,
+      "endLine": 1013,
+      "codeFile": "repo-quality-metrics--buildTestCoverageAreas.reference.js"
+    },
+    {
+      "name": "testSuite",
+      "file": "server/lib/repo-quality-metrics.js",
+      "role": "Test and quality telemetry builder",
+      "signature": "function testSuite(",
+      "startLine": 941,
+      "endLine": 952,
+      "codeFile": "repo-quality-metrics--testSuite.reference.js"
+    },
+    {
+      "name": "coverageArea",
+      "file": "server/lib/repo-quality-metrics.js",
+      "role": "Test and quality telemetry builder",
+      "signature": "function coverageArea(",
+      "startLine": 1015,
+      "endLine": 1017,
+      "codeFile": "repo-quality-metrics--coverageArea.reference.js"
+    }
+  ],
+  "inputs": [
+    "package scripts",
+    "CI configuration",
+    "Tracked test/tool files",
+    "Latest quality evidence"
+  ],
+  "outputs": [
+    "Test telemetry payload"
+  ],
+  "behaviour": [
+    "Scan scripts, CI and test files into suite status, coverage-area and gap records.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Test coverage map and quality telemetry",
+  "templateDataPath": "template-data/template-data.json#testCoverage",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "docs/reports/interactive-system-map.html"
+  ],
+  "inheritedStates": [
+    "covered",
+    "gap",
+    "available",
+    "passing",
+    "failing",
+    "not run",
+    "manual",
+    "automated"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Test telemetry payload. Show the state change immediately."
+    },
+    {
+      "id": "edge-case",
+      "title": "Edge case",
+      "instruction": "Run an invalid, missing-data or boundary input and expose the structured result/error."
+    }
+  ]
+}

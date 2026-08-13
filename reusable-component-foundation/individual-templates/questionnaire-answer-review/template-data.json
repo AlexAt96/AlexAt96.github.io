@@ -1,0 +1,49 @@
+{
+  "id": "questionnaire-template",
+  "title": "Migration discovery questionnaire",
+  "steps": [
+    {
+      "id": "context",
+      "title": "Context",
+      "questions": [
+        {
+          "id": "criticality",
+          "label": "How critical is this workload?",
+          "type": "select",
+          "options": [
+            "Low",
+            "Medium",
+            "High"
+          ],
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "constraints",
+      "title": "Constraints",
+      "questions": [
+        {
+          "id": "freeze-window",
+          "label": "Describe change-freeze windows",
+          "type": "textarea"
+        },
+        {
+          "id": "pii",
+          "label": "Contains personal data",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "id": "review",
+      "title": "Review and submit",
+      "questions": []
+    }
+  ],
+  "answers": {
+    "criticality": "High",
+    "freeze-window": "No production changes during month-end close.",
+    "pii": true
+  }
+}

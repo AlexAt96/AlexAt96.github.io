@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "decision-artifact-hub",
+  "purpose": "Collect report, evidence and source links needed for decision playback.",
+  "drivers": [
+    {
+      "name": "renderDecisionArtifactHub",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionArtifactHub(",
+      "startLine": 27925,
+      "endLine": 27975,
+      "codeFile": "app--renderDecisionArtifactHub.reference.js"
+    },
+    {
+      "name": "renderDecisionArtifactsTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionArtifactsTable(",
+      "startLine": 27977,
+      "endLine": 28004,
+      "codeFile": "app--renderDecisionArtifactsTable.reference.js"
+    },
+    {
+      "name": "renderDecisionTableSection",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionTableSection(",
+      "startLine": 27882,
+      "endLine": 27887,
+      "codeFile": "app--renderDecisionTableSection.reference.js"
+    }
+  ]
+}

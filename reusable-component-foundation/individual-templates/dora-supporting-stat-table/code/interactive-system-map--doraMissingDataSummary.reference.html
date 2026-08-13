@@ -1,0 +1,11 @@
+<!-- Reference extract: doraMissingDataSummary(...) from docs/reports/interactive-system-map.html:8288-8296. -->
+
+    function doraMissingDataSummary(metrics) {
+      const contracts = (metrics.missingData || [])
+        .map((item) => item.platformContract || item.data || '')
+        .filter(Boolean)
+        .slice(0, 5);
+      return contracts.length
+        ? 'Missing production data: ' + contracts.join('; ') + '. Without these records the dashboard will keep showing estimates rather than true DORA performance.'
+        : 'No missing DORA data is currently listed.';
+    }

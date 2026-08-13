@@ -1,0 +1,62 @@
+{
+  "pipeline": {
+    "id": "pipeline-orders",
+    "name": "pl_orders_daily",
+    "environment": "Production",
+    "complexityScore": 18
+  },
+  "activities": [
+    {
+      "id": "extract",
+      "name": "Extract orders",
+      "type": "Copy",
+      "level": 0,
+      "source": "CRM Orders",
+      "target": "Landing/orders"
+    },
+    {
+      "id": "transform",
+      "name": "Transform orders",
+      "type": "Databricks Notebook",
+      "level": 1,
+      "notebook": "/Shared/orders_transform"
+    },
+    {
+      "id": "publish",
+      "name": "Publish marts",
+      "type": "Copy",
+      "level": 2,
+      "source": "Delta/orders",
+      "target": "SQL/orders_mart"
+    }
+  ],
+  "dependencies": [
+    {
+      "from": "extract",
+      "to": "transform",
+      "condition": "Succeeded"
+    },
+    {
+      "from": "transform",
+      "to": "publish",
+      "condition": "Succeeded"
+    }
+  ],
+  "activityTypeSummary": [
+    {
+      "label": "Copy",
+      "count": 8,
+      "complexity": 8
+    },
+    {
+      "label": "Databricks Notebook",
+      "count": 2,
+      "complexity": 8
+    },
+    {
+      "label": "Lookup",
+      "count": 2,
+      "complexity": 2
+    }
+  ]
+}

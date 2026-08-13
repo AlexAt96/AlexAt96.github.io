@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0",
+  "id": "dora-metric-builder",
+  "capabilityId": "dora-metrics-screen",
+  "title": "DORA metric data builder",
+  "layer": "backend",
+  "purpose": "Build the five DORA results, confidence/status labels, gauge data and required production contracts.",
+  "drivers": [
+    {
+      "name": "buildDoraMetrics",
+      "file": "server/lib/dora-metrics.js",
+      "role": "DORA data-model builder",
+      "signature": "function buildDoraMetrics(",
+      "startLine": 40,
+      "endLine": 244,
+      "codeFile": "dora-metrics--buildDoraMetrics.reference.js"
+    }
+  ],
+  "inputs": [
+    "Git/deployment/change/incident data",
+    "Service scope",
+    "Build estimate"
+  ],
+  "outputs": [
+    "DORA metrics payload"
+  ],
+  "behaviour": [
+    "Build the five DORA results, confidence/status labels, gauge data and required production contracts.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "DORA metrics dashboard",
+  "templateDataPath": "template-data/template-data.json#doraMetrics",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "docs/reports/interactive-system-map.html"
+  ],
+  "inheritedStates": [
+    "true metric",
+    "proxy",
+    "missing data",
+    "good",
+    "watch",
+    "risk",
+    "low confidence",
+    "high confidence"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: DORA metrics payload. Show the state change immediately."
+    },
+    {
+      "id": "edge-case",
+      "title": "Edge case",
+      "instruction": "Run an invalid, missing-data or boundary input and expose the structured result/error."
+    }
+  ]
+}

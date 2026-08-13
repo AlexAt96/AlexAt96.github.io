@@ -1,0 +1,90 @@
+.aa-install-card{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:10000;
+  animation:aa-install-enter .28s cubic-bezier(.2,.8,.2,1) both;
+}
+.aa-install-app{
+  min-width:214px;
+  min-height:54px;
+  padding:8px 10px;
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) 22px;
+  align-items:center;
+  gap:9px;
+  border:1px solid #050d14;
+  border-radius:4px;
+  background:linear-gradient(105deg,#071d33,#0d2d49);
+  color:#f7f3e9;
+  box-shadow:3px 4px 0 #ef3156,0 12px 30px rgba(7,29,51,.28);
+  text-align:left;
+  cursor:pointer;
+}
+.aa-install-app img{
+  width:32px;
+  height:32px;
+  padding:4px;
+  border:1px solid rgba(121,213,255,.28);
+  border-radius:3px;
+  background:#f7f3e9;
+}
+.aa-install-app span{display:flex;flex-direction:column;gap:3px}
+.aa-install-app strong{font-size:11px;font-weight:850;letter-spacing:.01em}
+.aa-install-app small{color:#a9c4d6;font:750 8px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.035em;text-transform:uppercase}
+.aa-install-app>b{display:grid;place-items:center;color:#79d5ff;font-size:19px}
+.aa-install-app:hover{transform:translateY(-1px);box-shadow:3px 5px 0 #ef3156,0 15px 34px rgba(7,29,51,.32)}
+.aa-install-app:active{transform:translateY(1px);box-shadow:2px 2px 0 #ef3156,0 7px 18px rgba(7,29,51,.24)}
+.aa-install-app:focus-visible{outline:3px solid #79d5ff;outline-offset:3px}
+.aa-install-dismiss{
+  position:absolute;
+  top:-9px;
+  right:-9px;
+  width:25px;
+  height:25px;
+  display:grid;
+  place-items:center;
+  border:1px solid #050d14;
+  border-radius:50%;
+  background:#f7f3e9;
+  color:#071d33;
+  font:900 16px/1 var(--font-source-sans),sans-serif;
+  cursor:pointer;
+  box-shadow:2px 2px 0 #ef3156;
+}
+.aa-install-dismiss:hover{transform:translateY(-1px)}
+.aa-install-dismiss:focus-visible{outline:3px solid #79d5ff;outline-offset:2px}
+@keyframes aa-install-enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.aa-install-help-backdrop{
+  position:fixed;
+  z-index:10001;
+  inset:0;
+  padding:20px;
+  display:grid;
+  place-items:center;
+  background:rgba(5,13,20,.68);
+  backdrop-filter:blur(8px);
+}
+.aa-install-help{
+  width:min(480px,100%);
+  padding:24px;
+  display:grid;
+  grid-template-columns:54px minmax(0,1fr);
+  gap:18px;
+  border:1px solid #050d14;
+  border-radius:5px;
+  background:#f7f3e9;
+  color:#101820;
+  box-shadow:6px 7px 0 #ef3156,0 24px 70px rgba(0,0,0,.35);
+}
+.aa-install-help>img{border-radius:8px}
+.aa-install-help small{color:#ef3156;font:900 7px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em}
+.aa-install-help h2{margin:7px 0 14px;font-size:24px;line-height:1.05;letter-spacing:-.035em}
+.aa-install-help ol{margin:0;padding-left:19px}.aa-install-help li{margin:8px 0;font-size:13px;line-height:1.45}
+.aa-install-help p{margin:15px 0 0;color:#59646c;font-size:12px;line-height:1.5}
+.aa-install-help>button{grid-column:2;justify-self:start;min-height:38px;padding:0 16px;border:1px solid #050d14;border-radius:3px;background:#071d33;color:#fff;font:850 10px/1 var(--font-source-sans),sans-serif;cursor:pointer;box-shadow:3px 3px 0 #ef3156}
+.aa-install-help>button:hover{transform:translateY(-1px)}
+.aa-install-help>button:focus-visible{outline:3px solid #2566d4;outline-offset:3px}
+@media(max-width:520px){.aa-install-card{right:12px;bottom:12px;left:12px}.aa-install-app{width:100%}}
+@media(max-width:520px){.aa-install-help{padding:20px;grid-template-columns:42px minmax(0,1fr);gap:14px}.aa-install-help>img{width:42px;height:42px}.aa-install-help>button{grid-column:1/-1}}
+@media(prefers-reduced-motion:reduce){.aa-install-card{animation:none}.aa-install-app{transition:none}}

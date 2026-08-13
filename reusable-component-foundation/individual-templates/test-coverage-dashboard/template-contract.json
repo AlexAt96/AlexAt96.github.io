@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0",
+  "id": "test-coverage-dashboard",
+  "capabilityId": "test-coverage-screen",
+  "title": "Test coverage dashboard",
+  "layer": "screen",
+  "purpose": "Compose coverage summary, suite cards, coverage table, cadence, recent log and gaps.",
+  "drivers": [
+    {
+      "name": "testTelemetryMetrics",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function testTelemetryMetrics(",
+      "startLine": 7664,
+      "endLine": 7666,
+      "codeFile": "interactive-system-map--testTelemetryMetrics.reference.html"
+    },
+    {
+      "name": "renderTestTelemetryReport",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function renderTestTelemetryReport(",
+      "startLine": 7730,
+      "endLine": 7788,
+      "codeFile": "interactive-system-map--renderTestTelemetryReport.reference.html"
+    }
+  ],
+  "inputs": [
+    "Test telemetry payload"
+  ],
+  "outputs": [
+    "Test coverage report view"
+  ],
+  "behaviour": [
+    "Compose coverage summary, suite cards, coverage table, cadence, recent log and gaps.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "test-coverage-map"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Test coverage map and quality telemetry",
+  "templateDataPath": "template-data/template-data.json#testCoverage",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "docs/reports/interactive-system-map.html"
+  ],
+  "inheritedStates": [
+    "covered",
+    "gap",
+    "available",
+    "passing",
+    "failing",
+    "not run",
+    "manual",
+    "automated"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Test coverage report view. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "evidence-review-page",
+  "purpose": "Compose the review queue, counts, filters, rows and review modal for one BU.",
+  "drivers": [
+    {
+      "name": "renderEvidenceReview",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEvidenceReview(",
+      "startLine": 10151,
+      "endLine": 10206,
+      "codeFile": "app--renderEvidenceReview.reference.js"
+    },
+    {
+      "name": "getEvidenceReviewDocumentsForBu",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getEvidenceReviewDocumentsForBu(",
+      "startLine": 10447,
+      "endLine": 10479,
+      "codeFile": "app--getEvidenceReviewDocumentsForBu.reference.js"
+    },
+    {
+      "name": "getEvidenceReviewAppArtifactsForBu",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getEvidenceReviewAppArtifactsForBu(",
+      "startLine": 10510,
+      "endLine": 10624,
+      "codeFile": "app--getEvidenceReviewAppArtifactsForBu.reference.js"
+    }
+  ]
+}

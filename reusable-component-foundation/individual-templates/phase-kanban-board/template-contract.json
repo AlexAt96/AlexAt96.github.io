@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0",
+  "id": "phase-kanban-board",
+  "capabilityId": "kanban-list-and-cards",
+  "title": "Phase Kanban board",
+  "layer": "composite",
+  "purpose": "Group phase tasks into status columns and coordinate column counts and empty states.",
+  "drivers": [
+    {
+      "name": "renderPhaseSectionList",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderPhaseSectionList(",
+      "startLine": 3381,
+      "endLine": 3394,
+      "codeFile": "app--renderPhaseSectionList.reference.js"
+    },
+    {
+      "name": "renderPhaseCombinedKanbanBoard",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderPhaseCombinedKanbanBoard(",
+      "startLine": 3396,
+      "endLine": 3403,
+      "codeFile": "app--renderPhaseCombinedKanbanBoard.reference.js"
+    },
+    {
+      "name": "refreshKanbanColumnCounts",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function refreshKanbanColumnCounts(",
+      "startLine": 35331,
+      "endLine": 35337,
+      "codeFile": "app--refreshKanbanColumnCounts.reference.js"
+    }
+  ],
+  "inputs": [
+    "Phase",
+    "Grouped tasks",
+    "BU id",
+    "Owner filter"
+  ],
+  "outputs": [
+    "Rendered board/list",
+    "Task navigation"
+  ],
+  "behaviour": [
+    "Group phase tasks into status columns and coordinate column counts and empty states.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "phase-view-toggle",
+    "phase-owner-filter",
+    "kanban-column-and-task-card"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Kanban, list and task cards",
+  "templateDataPath": "template-data/template-data.json#kanban",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/03-dashboard-planning.css",
+    "app/styles/04-phase-documents.css"
+  ],
+  "inheritedStates": [
+    "not started",
+    "draft",
+    "in progress",
+    "in review",
+    "blocked",
+    "completed",
+    "filtered",
+    "empty column"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Rendered board/list. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

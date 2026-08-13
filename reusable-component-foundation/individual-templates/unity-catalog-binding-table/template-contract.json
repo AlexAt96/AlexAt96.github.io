@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "1.0",
+  "id": "unity-catalog-binding-table",
+  "capabilityId": "metadata-results-screen",
+  "title": "Unity Catalog binding table",
+  "layer": "composite",
+  "purpose": "Render catalog/workspace bindings with status and ownership context.",
+  "drivers": [
+    {
+      "name": "renderUnityCatalogBindingTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderUnityCatalogBindingTable(",
+      "startLine": 14299,
+      "endLine": 14327,
+      "codeFile": "app--renderUnityCatalogBindingTable.reference.js"
+    },
+    {
+      "name": "renderUnityCatalogBindingStatus",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderUnityCatalogBindingStatus(",
+      "startLine": 14604,
+      "endLine": 14613,
+      "codeFile": "app--renderUnityCatalogBindingStatus.reference.js"
+    }
+  ],
+  "inputs": [
+    "Workspace binding rows",
+    "Context label"
+  ],
+  "outputs": [
+    "Binding status table"
+  ],
+  "behaviour": [
+    "Render catalog/workspace bindings with status and ownership context.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Metadata results and advanced discovery",
+  "templateDataPath": "template-data/template-data.json#metadataResults",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "no metadata",
+    "partial parse",
+    "complete parse",
+    "cross-BU",
+    "BU filtered",
+    "expanded category",
+    "exporting"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Binding status table. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "environment-rationalisation-page",
+  "purpose": "Compose rationalisation inputs, proposed topology and live diagrams for one BU.",
+  "drivers": [
+    {
+      "name": "renderEnvironmentRationalisation",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEnvironmentRationalisation(",
+      "startLine": 20781,
+      "endLine": 20869,
+      "codeFile": "app--renderEnvironmentRationalisation.reference.js"
+    },
+    {
+      "name": "getEnvironmentRationalisationModel",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getEnvironmentRationalisationModel(",
+      "startLine": 21918,
+      "endLine": 21965,
+      "codeFile": "app--getEnvironmentRationalisationModel.reference.js"
+    }
+  ]
+}

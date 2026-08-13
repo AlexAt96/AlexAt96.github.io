@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0",
+  "id": "evidence-review-queue",
+  "title": "Evidence review queue",
+  "requestedCoverage": "Evidence review queue",
+  "summary": "Review queue spanning uploaded versions and app-created artifacts, with filters, reviewer notes, follow-up questions, BU answers and confidence/status handling.",
+  "routes": [
+    "app/document.html?phase=team-analysis&section=evidence-review&bu=:businessUnitId",
+    "/api/business-units/:businessUnitId/evidence-review"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "renderEvidenceReview",
+        "renderEvidenceReviewRow",
+        "renderEvidenceReviewFollowUpSummary",
+        "renderEvidenceReviewBuAnswer",
+        "renderEvidenceReviewModal",
+        "getEvidenceReviewDocumentsForBu",
+        "getEvidenceReviewAppArtifactsForBu",
+        "createEvidenceReviewArtifact",
+        "normaliseEvidenceReviewState",
+        "wireEvidenceReviewActions",
+        "validateEvidenceReviewModalForm"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/05-collection-workflows.css"
+  ],
+  "states": [
+    "not reviewed",
+    "in review",
+    "accepted",
+    "question raised",
+    "more info needed",
+    "further investigation",
+    "confirmed",
+    "rejected"
+  ],
+  "dataContracts": [
+    "review artifact",
+    "upload version",
+    "review status",
+    "confidence",
+    "review notes",
+    "follow-up question",
+    "BU answer",
+    "environment tags"
+  ],
+  "templateKey": "evidenceReviewQueue",
+  "boundaries": [
+    "ReviewQueue",
+    "ReviewFilters",
+    "ReviewRow",
+    "ReviewStatus",
+    "ReviewDialog",
+    "FollowUpSummary",
+    "EvidenceLink"
+  ]
+}

@@ -1,0 +1,29 @@
+/**
+ * Compass UI semantic colour tokens
+ * Use the semantic names in components so the palette can evolve safely.
+ */
+
+:root {
+  --compass-ink: #172033;
+  --compass-text: #344055;
+  --compass-muted: #667186;
+  --compass-soft: #8a94a3;
+
+  --compass-canvas: #f7f8fa;
+  --compass-surface: #ffffff;
+  --compass-surface-soft: #fbfcfd;
+  --compass-border: #dfe4eb;
+  --compass-divider: #edf0f4;
+
+  --compass-primary: #64357b;
+  --compass-primary-strong: #452357;
+  --compass-primary-soft: #f4edf7;
+  --compass-accent: #e31937;
+
+  --compass-success: #15936b;
+  --compass-success-soft: #e6f6ee;
+  --compass-warning: #b77a00;
+  --compass-warning-soft: #fff4d6;
+  --compass-danger: #a30f2b;
+  --compass-danger-soft: #ffeaed;
+}

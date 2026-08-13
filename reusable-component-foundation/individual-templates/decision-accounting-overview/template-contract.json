@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "1.0",
+  "id": "decision-accounting-overview",
+  "capabilityId": "decision-screen",
+  "title": "Decision accounting overview",
+  "layer": "composite",
+  "purpose": "Summarise savings, migration cost, net benefit and BU economics.",
+  "drivers": [
+    {
+      "name": "renderDecisionAccountingOverview",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionAccountingOverview(",
+      "startLine": 27750,
+      "endLine": 27778,
+      "codeFile": "app--renderDecisionAccountingOverview.reference.js"
+    },
+    {
+      "name": "renderDecisionAccountingBars",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionAccountingBars(",
+      "startLine": 27780,
+      "endLine": 27786,
+      "codeFile": "app--renderDecisionAccountingBars.reference.js"
+    },
+    {
+      "name": "renderDecisionSavingsSummaryTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionSavingsSummaryTable(",
+      "startLine": 27829,
+      "endLine": 27842,
+      "codeFile": "app--renderDecisionSavingsSummaryTable.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU decision models",
+    "Scenario summary"
+  ],
+  "outputs": [
+    "Accounting bars",
+    "BU economics table",
+    "Savings summary"
+  ],
+  "behaviour": [
+    "Summarise savings, migration cost, net benefit and BU economics.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Decision screen and scenario layout",
+  "templateDataPath": "template-data/template-data.json#decision",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/07-outputs-decision.css"
+  ],
+  "inheritedStates": [
+    "baseline",
+    "scenario changed",
+    "unsaved scenario",
+    "recommended",
+    "conditional",
+    "not recommended",
+    "decision ready",
+    "blocked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Accounting bars. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

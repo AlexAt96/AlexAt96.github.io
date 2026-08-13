@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "topology-flow-diagram",
+  "purpose": "Visualise how proposed environments relate in the target estate.",
+  "drivers": [
+    {
+      "name": "renderProposedTopologyFlowDiagram",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderProposedTopologyFlowDiagram(",
+      "startLine": 21000,
+      "endLine": 21285,
+      "codeFile": "app--renderProposedTopologyFlowDiagram.reference.js"
+    },
+    {
+      "name": "renderEnvironmentMigrationFlowDiagram",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEnvironmentMigrationFlowDiagram(",
+      "startLine": 21287,
+      "endLine": 21491,
+      "codeFile": "app--renderEnvironmentMigrationFlowDiagram.reference.js"
+    }
+  ]
+}

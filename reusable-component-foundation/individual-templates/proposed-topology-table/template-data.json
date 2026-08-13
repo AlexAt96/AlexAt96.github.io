@@ -1,0 +1,44 @@
+{
+  "rows": [
+    {
+      "id": "env-prod",
+      "currentName": "Production",
+      "action": "Migrate",
+      "targetName": "Production AWS",
+      "rationale": "Retain isolated production boundary",
+      "status": "Ready"
+    },
+    {
+      "id": "env-test",
+      "currentName": "Test",
+      "action": "Merge",
+      "mergeTargetId": "env-dev",
+      "targetName": "Non-production AWS",
+      "rationale": "Consolidate low-utilisation workspaces",
+      "status": "Review"
+    },
+    {
+      "id": "env-legacy",
+      "currentName": "Legacy Sandbox",
+      "action": "Decommission",
+      "targetName": "",
+      "rationale": "No active workloads",
+      "status": "Review"
+    }
+  ],
+  "topology": {
+    "account": "aws-account-analytics",
+    "environments": [
+      {
+        "id": "target-prod",
+        "name": "Production AWS",
+        "type": "Production"
+      },
+      {
+        "id": "target-nonprod",
+        "name": "Non-production AWS",
+        "type": "Non-production"
+      }
+    ]
+  }
+}

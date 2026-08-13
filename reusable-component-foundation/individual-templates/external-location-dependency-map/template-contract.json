@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "1.0",
+  "id": "external-location-dependency-map",
+  "capabilityId": "diagram-primitives",
+  "title": "External-location dependency map",
+  "layer": "composite",
+  "purpose": "Map external sources, Databricks environments and external targets into three dependency lanes.",
+  "drivers": [
+    {
+      "name": "buildExternalLocationGraph",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function buildExternalLocationGraph(",
+      "startLine": 14722,
+      "endLine": 14775,
+      "codeFile": "app--buildExternalLocationGraph.reference.js"
+    },
+    {
+      "name": "renderExternalLocationDependencyMap",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderExternalLocationDependencyMap(",
+      "startLine": 14789,
+      "endLine": 14872,
+      "codeFile": "app--renderExternalLocationDependencyMap.reference.js"
+    },
+    {
+      "name": "renderExternalLocationDiagram",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderExternalLocationDiagram(",
+      "startLine": 14636,
+      "endLine": 14720,
+      "codeFile": "app--renderExternalLocationDiagram.reference.js"
+    }
+  ],
+  "inputs": [
+    "External connection rows",
+    "BU/environment context"
+  ],
+  "outputs": [
+    "Node/edge graph",
+    "Selected-node navigation"
+  ],
+  "behaviour": [
+    "Map external sources, Databricks environments and external targets into three dependency lanes.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "diagram-toolbar"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Diagram and dependency-map primitives",
+  "templateDataPath": "template-data/template-data.json#diagrams",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/11-system-map-visuals.css"
+  ],
+  "inheritedStates": [
+    "empty",
+    "partial",
+    "complete",
+    "selected node",
+    "focused edge",
+    "zoomed",
+    "exported"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Node/edge graph. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

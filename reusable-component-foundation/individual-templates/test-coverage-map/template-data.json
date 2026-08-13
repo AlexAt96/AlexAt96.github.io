@@ -1,0 +1,57 @@
+{
+  "summary": {
+    "coveragePercent": 80,
+    "suiteCount": 5,
+    "passingCount": 4,
+    "gapCount": 2
+  },
+  "suites": [
+    {
+      "id": "tier1",
+      "name": "Tier 1 static checks",
+      "command": "npm run test:tier1",
+      "status": "Passing",
+      "cadence": "Every change",
+      "coverage": "Static UI, docs, security and contracts"
+    },
+    {
+      "id": "tier2",
+      "name": "Tier 2 browser smoke",
+      "command": "npm run test:tier2",
+      "status": "Available",
+      "cadence": "UI changes",
+      "coverage": "Browser behaviour"
+    },
+    {
+      "id": "tier3",
+      "name": "Tier 3 server smoke",
+      "command": "npm run test:tier3",
+      "status": "Available",
+      "cadence": "API/data changes",
+      "coverage": "Persistence and API flows"
+    }
+  ],
+  "coverageAreas": [
+    {
+      "id": "ui",
+      "area": "Static UI and accessibility",
+      "covered": true,
+      "evidence": "tools/check-static.cjs",
+      "scope": "HTML, routes and accessibility smoke"
+    },
+    {
+      "id": "api",
+      "area": "Server/API",
+      "covered": true,
+      "evidence": "tools/run-server-smoke.cjs",
+      "scope": "Routes and persistence"
+    },
+    {
+      "id": "visual",
+      "area": "Visual regression",
+      "covered": false,
+      "evidence": "",
+      "scope": "Component screenshots across themes"
+    }
+  ]
+}

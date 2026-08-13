@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "1.0",
+  "id": "dora-dashboard",
+  "capabilityId": "dora-metrics-screen",
+  "title": "DORA dashboard",
+  "layer": "screen",
+  "purpose": "Compose summary counts, metric cards, supporting statistics and data-contract table.",
+  "drivers": [
+    {
+      "name": "renderDoraMetricsReport",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function renderDoraMetricsReport(",
+      "startLine": 8102,
+      "endLine": 8150,
+      "codeFile": "interactive-system-map--renderDoraMetricsReport.reference.html"
+    }
+  ],
+  "inputs": [
+    "Normalised DORA metrics"
+  ],
+  "outputs": [
+    "DORA report view"
+  ],
+  "behaviour": [
+    "Compose summary counts, metric cards, supporting statistics and data-contract table.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "dora-metric-card",
+    "dora-supporting-stat-table"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "DORA metrics dashboard",
+  "templateDataPath": "template-data/template-data.json#doraMetrics",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "docs/reports/interactive-system-map.html"
+  ],
+  "inheritedStates": [
+    "true metric",
+    "proxy",
+    "missing data",
+    "good",
+    "watch",
+    "risk",
+    "low confidence",
+    "high confidence"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: DORA report view. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

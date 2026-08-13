@@ -1,0 +1,64 @@
+{
+  "editable": {
+    "columns": [
+      {
+        "key": "name",
+        "label": "Environment",
+        "required": true
+      },
+      {
+        "key": "type",
+        "label": "Type",
+        "editor": "select"
+      },
+      {
+        "key": "inScope",
+        "label": "In scope",
+        "editor": "checkbox"
+      }
+    ],
+    "rows": [
+      {
+        "id": "env-1",
+        "name": "Production",
+        "type": "Production",
+        "inScope": true
+      },
+      {
+        "id": "env-2",
+        "name": "Development",
+        "type": "Development",
+        "inScope": true
+      }
+    ]
+  },
+  "readOnly": {
+    "columns": [
+      {
+        "key": "resource",
+        "label": "Resource"
+      },
+      {
+        "key": "count",
+        "label": "Count",
+        "align": "right"
+      },
+      {
+        "key": "status",
+        "label": "Status"
+      }
+    ],
+    "rows": [
+      {
+        "resource": "Pipelines",
+        "count": 14,
+        "status": "Reviewed"
+      },
+      {
+        "resource": "Tables",
+        "count": 186,
+        "status": "In review"
+      }
+    ]
+  }
+}

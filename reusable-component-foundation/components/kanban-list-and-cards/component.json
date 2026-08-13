@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "id": "kanban-list-and-cards",
+  "title": "Kanban, list and task cards",
+  "requestedCoverage": "Kanban and list, including cards",
+  "summary": "Role-grouped phase work rendered as toggled Kanban or list views with owner filtering, status columns and movable task cards.",
+  "routes": [
+    "app/phase.html?phase=initiation",
+    "app/phase.html?phase=team-analysis&bu=:businessUnitId"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "renderPhaseDashboardViewToggle",
+        "renderPhaseDashboardOwnerFilter",
+        "renderPhaseSectionList",
+        "renderPhaseCombinedKanbanBoard",
+        "renderContributorKanbanColumn",
+        "getSectionKanbanStatus",
+        "setPhaseDashboardView",
+        "moveKanbanCardToStatusColumn",
+        "refreshKanbanColumnCounts"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/03-dashboard-planning.css",
+    "app/styles/04-phase-documents.css"
+  ],
+  "states": [
+    "not started",
+    "draft",
+    "in progress",
+    "in review",
+    "blocked",
+    "completed",
+    "filtered",
+    "empty column"
+  ],
+  "dataContracts": [
+    "task card",
+    "status column",
+    "owner group",
+    "phase",
+    "business-unit context"
+  ],
+  "templateKey": "kanban",
+  "boundaries": [
+    "ViewToggle",
+    "OwnerFilter",
+    "KanbanBoard",
+    "KanbanColumn",
+    "TaskCard",
+    "TaskList",
+    "EmptyColumn"
+  ]
+}

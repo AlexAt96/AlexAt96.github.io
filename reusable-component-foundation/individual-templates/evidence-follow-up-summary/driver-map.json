@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "evidence-follow-up-summary",
+  "purpose": "Show the question, BU answer and current follow-up disposition outside the modal.",
+  "drivers": [
+    {
+      "name": "renderEvidenceReviewFollowUpSummary",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEvidenceReviewFollowUpSummary(",
+      "startLine": 10252,
+      "endLine": 10261,
+      "codeFile": "app--renderEvidenceReviewFollowUpSummary.reference.js"
+    },
+    {
+      "name": "renderEvidenceReviewBuAnswer",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderEvidenceReviewBuAnswer(",
+      "startLine": 10263,
+      "endLine": 10282,
+      "codeFile": "app--renderEvidenceReviewBuAnswer.reference.js"
+    }
+  ]
+}

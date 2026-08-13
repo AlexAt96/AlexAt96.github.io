@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "1.0",
+  "id": "kanban-column-and-task-card",
+  "capabilityId": "kanban-list-and-cards",
+  "title": "Kanban column and task card",
+  "layer": "primitive",
+  "purpose": "Render one status column and its linked task cards with owner/status context.",
+  "drivers": [
+    {
+      "name": "renderContributorKanbanColumn",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderContributorKanbanColumn(",
+      "startLine": 3984,
+      "endLine": 3997,
+      "codeFile": "app--renderContributorKanbanColumn.reference.js"
+    },
+    {
+      "name": "getSectionKanbanStatus",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getSectionKanbanStatus(",
+      "startLine": 3999,
+      "endLine": 4007,
+      "codeFile": "app--getSectionKanbanStatus.reference.js"
+    },
+    {
+      "name": "renderSectionLink",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderSectionLink(",
+      "startLine": 28281,
+      "endLine": 28371,
+      "codeFile": "app--renderSectionLink.reference.js"
+    },
+    {
+      "name": "moveKanbanCardToStatusColumn",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function moveKanbanCardToStatusColumn(",
+      "startLine": 35309,
+      "endLine": 35321,
+      "codeFile": "app--moveKanbanCardToStatusColumn.reference.js"
+    }
+  ],
+  "inputs": [
+    "Column definition",
+    "Task rows",
+    "Phase",
+    "BU id",
+    "Show-owner flag"
+  ],
+  "outputs": [
+    "Task navigation",
+    "Optional status move"
+  ],
+  "behaviour": [
+    "Render one status column and its linked task cards with owner/status context.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [
+    "data-kanban-column",
+    "data-section-key"
+  ],
+  "notes": [],
+  "capabilityTitle": "Kanban, list and task cards",
+  "templateDataPath": "template-data/template-data.json#kanban",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/03-dashboard-planning.css",
+    "app/styles/04-phase-documents.css"
+  ],
+  "inheritedStates": [
+    "not started",
+    "draft",
+    "in progress",
+    "in review",
+    "blocked",
+    "completed",
+    "filtered",
+    "empty column"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Task navigation. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

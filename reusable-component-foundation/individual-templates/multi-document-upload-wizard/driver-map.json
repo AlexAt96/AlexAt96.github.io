@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "multi-document-upload-wizard",
+  "purpose": "Upload multiple document types against selected environments with consistent review and validation.",
+  "drivers": [
+    {
+      "name": "renderMultiDocumentUploadWizard",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMultiDocumentUploadWizard(",
+      "startLine": 9761,
+      "endLine": 9811,
+      "codeFile": "app--renderMultiDocumentUploadWizard.reference.js"
+    },
+    {
+      "name": "renderTerraformExporterWizard",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderTerraformExporterWizard(",
+      "startLine": 9419,
+      "endLine": 9514,
+      "codeFile": "app--renderTerraformExporterWizard.reference.js"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "id": "diagram-primitives",
+  "title": "Diagram and dependency-map primitives",
+  "requestedCoverage": "Diagrams",
+  "summary": "Node/edge maps, topology flows, source-consumer dependencies, external-location diagrams and zoom/export interaction patterns.",
+  "routes": [
+    "app/dependency-explorer.html",
+    "app/adf-lineage-explorer.html",
+    "app/document.html?phase=team-analysis&section=external-location-mapping"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "renderExternalLocationDiagram",
+        "renderExternalLocationDependencyMap",
+        "renderSourceConsumerDependencyDiagram",
+        "renderSourceConsumerDependencyDiagramContent",
+        "renderProgramTopologyDiagram",
+        "renderProposedTopologyFlowDiagram",
+        "renderEnvironmentMigrationFlowDiagram",
+        "renderProposedTopologyStructureDiagram"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/11-system-map-visuals.css"
+  ],
+  "states": [
+    "empty",
+    "partial",
+    "complete",
+    "selected node",
+    "focused edge",
+    "zoomed",
+    "exported"
+  ],
+  "dataContracts": [
+    "nodes",
+    "edges",
+    "lanes",
+    "node metadata",
+    "evidence links",
+    "layout coordinates"
+  ],
+  "templateKey": "diagrams",
+  "boundaries": [
+    "DiagramCanvas",
+    "NodeCard",
+    "Edge",
+    "Lane",
+    "DiagramToolbar",
+    "DiagramLegend",
+    "DiagramDetailsPanel"
+  ]
+}

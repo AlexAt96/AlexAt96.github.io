@@ -1,0 +1,3667 @@
+<!doctype html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Environment Dependency Visualiser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #020817;
+      --panel: rgba(2, 8, 23, 0.88);
+      --border: #1e293b;
+      --text: #e5eefb;
+      --muted: #94a3b8;
+      --faint: rgba(148, 163, 184, 0.16);
+      --line: rgba(148, 163, 184, 0.54);
+      --hot: #f8fafc;
+      --danger: #fb7185;
+      --accent: #38bdf8;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 1px 1px, rgba(148, 163, 184, 0.24) 1px, transparent 0) 0 0 / 22px 22px,
+        linear-gradient(135deg, rgba(15, 23, 42, 0.78), rgba(2, 8, 23, 0.92)),
+        var(--bg);
+      color: var(--text);
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      letter-spacing: 0;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: rgba(15, 23, 42, 0.86);
+      color: var(--text);
+      cursor: pointer;
+      transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+    }
+
+    button:hover {
+      border-color: rgba(148, 163, 184, 0.74);
+      background: rgba(30, 41, 59, 0.92);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .app {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .topbar {
+      position: absolute;
+      z-index: 12;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      pointer-events: none;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      pointer-events: auto;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      border-radius: 50%;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .brand h1 {
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: clamp(14px, 1.4vw, 18px);
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      pointer-events: auto;
+    }
+
+    .toolbar button,
+    .upload-label {
+      min-height: 34px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: rgba(15, 23, 42, 0.86);
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .upload-label:hover {
+      border-color: rgba(148, 163, 184, 0.74);
+      background: rgba(30, 41, 59, 0.92);
+    }
+
+    .status {
+      max-width: min(520px, 38vw);
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.3;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .canvas-wrap {
+      position: absolute;
+      inset: 0;
+      cursor: grab;
+    }
+
+    .canvas-wrap.panning {
+      cursor: grabbing;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .zone-fill {
+      fill: rgba(15, 23, 42, 0.18);
+      stroke: rgba(148, 163, 184, 0.08);
+      stroke-width: 1;
+    }
+
+    .zone-fill.standalone {
+      display: none;
+    }
+
+    .zone-divider {
+      display: none;
+      stroke: rgba(148, 163, 184, 0.18);
+      stroke-width: 1;
+      stroke-dasharray: 7 10;
+    }
+
+    .zone-label {
+      position: absolute;
+      z-index: 5;
+      top: 88px;
+      color: rgba(148, 163, 184, 0.26);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0;
+      pointer-events: none;
+      text-transform: uppercase;
+    }
+
+    .zone-label.left {
+      left: 24px;
+    }
+
+    .zone-label.right {
+      display: none;
+      right: 24px;
+    }
+
+    .edge {
+      fill: none;
+      stroke: var(--line);
+      stroke-width: 1.7;
+      opacity: 0.72;
+      transition: opacity 120ms ease, stroke-width 120ms ease;
+    }
+
+    .edge.hidden-edge {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .edge.focus-edge {
+      stroke-width: 2.5;
+      opacity: 1;
+    }
+
+    .edge.return {
+      stroke-dasharray: 5 5;
+      opacity: 0.58;
+    }
+
+    .edge-count {
+      fill: rgba(226, 232, 240, 0.78);
+      paint-order: stroke;
+      stroke: rgba(2, 8, 23, 0.9);
+      stroke-width: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    .node {
+      cursor: grab;
+      transition: opacity 120ms ease;
+    }
+
+    .node:active {
+      cursor: grabbing;
+    }
+
+    .node.dimmed {
+      opacity: 0.055;
+    }
+
+    .node.filtered {
+      opacity: 0.14;
+    }
+
+    .node.connected {
+      opacity: 0.34;
+    }
+
+    .node.focused,
+    .node.search-match {
+      opacity: 1;
+    }
+
+    .node-core {
+      fill: rgba(2, 8, 23, 0.96);
+      stroke-width: 3;
+      filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.45));
+    }
+
+    .node-halo {
+      fill: rgba(2, 8, 23, 0.5);
+      stroke-width: 1;
+      opacity: 0;
+    }
+
+    .node.search-match .node-halo,
+    .node.focused .node-halo {
+      opacity: 1;
+      stroke: rgba(248, 250, 252, 0.9);
+      fill: rgba(248, 250, 252, 0.06);
+    }
+
+    .app-node.standalone .node-core {
+      stroke-dasharray: 4 4;
+    }
+
+    .node-label {
+      fill: #e2e8f0;
+      paint-order: stroke;
+      stroke: rgba(2, 8, 23, 0.88);
+      stroke-width: 4px;
+      font-size: 10.5px;
+      font-weight: 600;
+      text-anchor: middle;
+      pointer-events: none;
+    }
+
+    .node-count {
+      fill: #f8fafc;
+      paint-order: stroke;
+      stroke: rgba(2, 8, 23, 0.9);
+      stroke-width: 3px;
+      font-size: 8.5px;
+      font-weight: 700;
+      text-anchor: middle;
+      pointer-events: none;
+    }
+
+    .hosting-dot {
+      stroke: rgba(2, 8, 23, 0.95);
+      stroke-width: 1.4;
+      pointer-events: none;
+    }
+
+    .cluster-node {
+      cursor: pointer;
+    }
+
+    .cluster-pulse {
+      fill: rgba(15, 23, 42, 0.18);
+      stroke: rgba(226, 232, 240, 0.08);
+      stroke-width: 1.2;
+      stroke-dasharray: 3 10;
+      opacity: 0.62;
+      animation: pulseGlow 3.4s ease-in-out infinite;
+    }
+
+    .cluster-ring {
+      fill: rgba(2, 8, 23, 0.28);
+      stroke-width: 2;
+      stroke-dasharray: 12 8;
+      filter: drop-shadow(0 0 24px rgba(56, 189, 248, 0.1));
+    }
+
+    .cluster-node.collapsed .cluster-ring {
+      fill: rgba(15, 23, 42, 0.72);
+      filter: drop-shadow(0 0 26px rgba(56, 189, 248, 0.26));
+    }
+
+    .cluster-title,
+    .cluster-count {
+      fill: #f8fafc;
+      paint-order: stroke;
+      stroke: rgba(2, 8, 23, 0.94);
+      stroke-width: 4px;
+      text-anchor: middle;
+      pointer-events: none;
+    }
+
+    .cluster-title {
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .cluster-count {
+      fill: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .cluster-resize-handle {
+      fill: rgba(248, 250, 252, 0.92);
+      stroke: rgba(2, 8, 23, 0.96);
+      stroke-width: 2;
+      cursor: nwse-resize;
+      filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.42));
+    }
+
+    @keyframes pulseGlow {
+      0%,
+      100% {
+        opacity: 0.36;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.82;
+        transform: scale(1.06);
+      }
+    }
+
+    .glass {
+      position: absolute;
+      z-index: 10;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .legend {
+      left: 16px;
+      bottom: 16px;
+      width: min(360px, calc(100vw - 32px));
+      max-height: 34vh;
+      overflow: auto;
+      padding: 12px;
+    }
+
+    .info {
+      top: 84px;
+      right: 16px;
+      width: min(390px, calc(100vw - 32px));
+      max-height: 44vh;
+      overflow: auto;
+      padding: 14px;
+    }
+
+    .filters {
+      right: 16px;
+      bottom: 16px;
+      width: min(430px, calc(100vw - 32px));
+      max-height: 45vh;
+      overflow: visible;
+      padding: 12px;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      color: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .panel-title button {
+      padding: 6px 8px;
+      font-size: 10px;
+    }
+
+    .legend-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .legend-section {
+      min-width: 0;
+    }
+
+    .legend-section h3,
+    .filter-section h3 {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .legend-items,
+    .pill-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      min-width: 0;
+      gap: 6px;
+      padding: 4px 6px;
+      border: 1px solid rgba(148, 163, 184, 0.13);
+      border-radius: 7px;
+      background: rgba(15, 23, 42, 0.46);
+      color: #cbd5e1;
+      font-size: 10px;
+    }
+
+    .swatch {
+      width: 10px;
+      height: 10px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px rgba(2, 8, 23, 0.7);
+    }
+
+    .info h2 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    .info p {
+      margin: 0 0 12px;
+      color: #cbd5e1;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .tag-row,
+    .metric-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .tag,
+    .metric,
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 24px;
+      padding: 4px 7px;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 7px;
+      background: rgba(15, 23, 42, 0.62);
+      color: #dbeafe;
+      font-size: 10px;
+    }
+
+    .badge {
+      border-color: rgba(52, 211, 153, 0.32);
+      color: #bbf7d0;
+    }
+
+    .dep-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .dep-list h3 {
+      margin: 0;
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .dep-list ul {
+      display: grid;
+      gap: 5px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .dep-list li {
+      overflow: hidden;
+      padding: 6px 7px;
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      border-radius: 7px;
+      background: rgba(15, 23, 42, 0.42);
+      color: #dbeafe;
+      font-size: 10px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      outline: none;
+      background: rgba(15, 23, 42, 0.92);
+      color: var(--text);
+      font-size: 12px;
+    }
+
+    .search-box input:focus {
+      border-color: rgba(56, 189, 248, 0.74);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+    }
+
+    .results {
+      position: absolute;
+      z-index: 30;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      display: none;
+      max-height: 180px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(2, 8, 23, 0.97);
+      box-shadow: var(--shadow);
+    }
+
+    .results.open {
+      display: block;
+    }
+
+    .result-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+      padding: 8px 9px;
+      border: 0;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 0;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+    }
+
+    .result-item:last-child {
+      border-bottom: 0;
+    }
+
+    .result-item span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 11px;
+    }
+
+    .result-item small {
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .filter-section {
+      margin-top: 12px;
+    }
+
+    .filter-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+
+    .clear-link {
+      padding: 4px 6px;
+      border-color: rgba(148, 163, 184, 0.12);
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      max-width: 100%;
+      min-height: 26px;
+      padding: 5px 8px;
+      border: 1px solid color-mix(in srgb, var(--pill-color) 64%, var(--border));
+      border-radius: 7px;
+      background: rgba(15, 23, 42, 0.72);
+      color: #dbeafe;
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .pill.active {
+      background: color-mix(in srgb, var(--pill-color) 26%, rgba(15, 23, 42, 0.88));
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pill-color) 30%, transparent);
+    }
+
+    .zoom-tools {
+      position: absolute;
+      z-index: 11;
+      top: 50%;
+      right: 16px;
+      display: grid;
+      gap: 7px;
+      transform: translateY(-50%);
+    }
+
+    .zoom-tools button,
+    .zoom-percent {
+      display: grid;
+      width: 42px;
+      min-height: 38px;
+      place-items: center;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .zoom-percent {
+      min-height: 28px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .tooltip {
+      position: fixed;
+      z-index: 40;
+      display: none;
+      max-width: 320px;
+      padding: 9px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(2, 8, 23, 0.96);
+      color: #dbeafe;
+      box-shadow: var(--shadow);
+      pointer-events: none;
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .editor-backdrop {
+      position: absolute;
+      z-index: 50;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(2, 8, 23, 0.62);
+      backdrop-filter: blur(8px);
+    }
+
+    .editor-backdrop.hidden {
+      display: none;
+    }
+
+    .editor-modal {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      width: min(1180px, calc(100vw - 36px));
+      height: min(760px, calc(100vh - 36px));
+      overflow: hidden;
+    }
+
+    .editor-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .editor-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .editor-content {
+      overflow: auto;
+      padding: 12px;
+    }
+
+    .editor-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .editor-card {
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.46);
+      padding: 10px;
+    }
+
+    .editor-card h3,
+    .editor-table-title {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .editor-form {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .editor-form.connection {
+      grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+    }
+
+    .editor-field {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .editor-field label {
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .editor-field input,
+    .editor-field select,
+    .editor-table input,
+    .editor-table select {
+      width: 100%;
+      min-height: 30px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      outline: none;
+      background: rgba(2, 8, 23, 0.78);
+      color: var(--text);
+      padding: 6px 8px;
+      font-size: 11px;
+    }
+
+    .editor-table-wrap {
+      overflow: auto;
+      max-height: 250px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.35);
+    }
+
+    .editor-table {
+      width: 100%;
+      min-width: 860px;
+      border-collapse: collapse;
+      font-size: 10px;
+    }
+
+    .editor-table th,
+    .editor-table td {
+      padding: 7px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .editor-table th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: rgba(2, 8, 23, 0.96);
+      color: var(--muted);
+      font-size: 9px;
+      text-transform: uppercase;
+    }
+
+    .danger-button {
+      border-color: rgba(251, 113, 133, 0.38);
+      color: #fecdd3;
+    }
+
+    .tooltip strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #f8fafc;
+      font-size: 11px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 1100px) {
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .toolbar {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .status {
+        display: none;
+      }
+
+      .info {
+        top: 96px;
+        max-height: 36vh;
+      }
+
+      .legend {
+        display: none;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        left: 10px;
+        right: 10px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .brand,
+      .toolbar {
+        width: 100%;
+      }
+
+      .toolbar {
+        justify-content: flex-start;
+        overflow-x: auto;
+      }
+
+      .info {
+        top: auto;
+        right: 10px;
+        bottom: 250px;
+        width: calc(100vw - 20px);
+        max-height: 28vh;
+      }
+
+      .filters {
+        right: 10px;
+        bottom: 10px;
+        width: calc(100vw - 20px);
+        max-height: 230px;
+      }
+
+      .editor-grid,
+      .editor-form,
+      .editor-form.connection {
+        grid-template-columns: 1fr;
+      }
+
+      .zoom-tools {
+        top: 45%;
+        right: 10px;
+      }
+
+      .zone-label {
+        top: 145px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <section class="brand" aria-label="Environment title">
+        <div class="brand-mark">ED</div>
+        <h1>Environment Dependency Visualiser</h1>
+      </section>
+      <section class="toolbar" aria-label="Data actions">
+        <label class="upload-label" for="excelInput">Upload Excel</label>
+        <input id="excelInput" class="hidden" type="file" accept=".xlsx,.xls">
+        <button id="templateButton" type="button">Download Template</button>
+        <button id="exportPdfButton" type="button">Export PDF</button>
+        <button id="dataEditorButton" type="button">Edit Data</button>
+        <button id="saveChangesButton" type="button">Save Changes</button>
+        <button id="sampleButton" type="button">Reload Sample</button>
+        <button id="clearFocusButton" type="button">Clear Focus</button>
+        <div id="status" class="status">Saved changes: 0 environments, 0 links</div>
+      </section>
+    </div>
+
+    <div id="canvasWrap" class="canvas-wrap">
+      <svg id="canvas" role="img" aria-label="Environment dependency map">
+        <defs>
+          <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+            <path d="M2,2 L10,6 L2,10 Z" fill="#94a3b8"></path>
+          </marker>
+        </defs>
+        <g id="world" transform="translate(0,0) scale(1)">
+          <rect id="connectedZone" class="zone-fill" x="0" y="0" width="1912" height="948"></rect>
+          <rect id="standaloneZone" class="zone-fill standalone" x="1912" y="0" width="0" height="948"></rect>
+          <line id="zoneDivider" class="zone-divider" x1="1912" x2="1912" y1="0" y2="948"></line>
+          <g id="clusterLayer"></g>
+          <g id="edgeLayer"></g>
+          <g id="nodeLayer"></g>
+        </g>
+      </svg>
+    </div>
+
+    <div class="zone-label left">Business Units</div>
+    <div class="zone-label right"></div>
+
+    <aside id="legend" class="glass legend" aria-label="Legend">
+        <div class="panel-title"><span>Legend</span><span>0 environments</span></div>
+        <div class="legend-grid">
+          <section class="legend-section">
+            <h3>Business Unit</h3>
+            <div class="legend-items"></div>
+          </section>
+          <section class="legend-section">
+            <h3>Environment Type</h3>
+            <div class="legend-items"></div>
+          </section>
+        </div>
+      </aside>
+    <aside id="infoPanel" class="glass info" aria-label="Environment information">
+          <div class="panel-title"><span>Overview</span><span>Saved changes</span></div>
+          <div class="metric-row">
+            <span class="metric">0 environments</span>
+            <span class="metric">0 links</span>
+            <span class="metric">0 with links</span>
+            <span class="metric">0 without links</span>
+          </div>
+          <p>Click an environment bubble to inspect source and target links. Click BU clusters to collapse or expand them.</p>
+        </aside>
+
+    <aside class="glass filters" aria-label="Filters">
+      <div class="panel-title">
+        <span>Filters</span>
+        <button id="clearAllFilters" type="button">↩ Clear</button>
+      </div>
+      <section class="search-box">
+        <input id="searchInput" type="search" autocomplete="off" placeholder="Search environments, BU, type">
+        <div id="searchResults" class="results"></div>
+      </section>
+      <section class="filter-section">
+        <div class="filter-heading">
+          <h3>BU</h3>
+          <button id="clearCategories" class="clear-link" type="button">↩ Clear</button>
+        </div>
+        <div id="categoryPills" class="pill-wrap"></div>
+      </section>
+      <section class="filter-section">
+        <div class="filter-heading">
+          <h3>Environment Type</h3>
+          <button id="clearHosting" class="clear-link" type="button">↩ Clear</button>
+        </div>
+        <div id="hostingPills" class="pill-wrap"></div>
+      </section>
+    </aside>
+
+    <nav class="zoom-tools" aria-label="Zoom controls">
+      <button id="zoomIn" type="button" aria-label="Zoom in">+</button>
+      <button id="zoomOut" type="button" aria-label="Zoom out">-</button>
+      <button id="zoomReset" type="button" aria-label="Reset zoom">1:1</button>
+      <div id="zoomPercent" class="zoom-percent">100%</div>
+    </nav>
+
+    <div id="tooltip" class="tooltip" style="display: none; left: 884px; top: 715px;">
+        <strong>dbw-dnaanalytics-prd-euw</strong>
+        Corporate<br>
+        Prod
+      </div>
+
+    <section id="dataEditor" class="editor-backdrop hidden" aria-label="Data editor">
+      <div class="editor-modal glass">
+        <header class="editor-header">
+          <div>
+            <div class="panel-title" style="margin:0">Data Editor</div>
+            <div id="editorSummary" class="status">0 environments, 0 connections. Apply changes to redraw the diagram.</div>
+          </div>
+          <div class="editor-actions">
+            <button id="applyDataButton" type="button">Apply Changes</button>
+            <button id="saveDataButton" type="button">Save Changes</button>
+            <button id="closeDataEditor" type="button">Close</button>
+          </div>
+        </header>
+        <div id="editorContent" class="editor-content"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const sampleEnvironmentLinks = [
+      { "Source Environment BU": "Digital Commerce", "Source Environment": "Storefront Production", "Source Environment Type": "Production", "Target": "Customer and order APIs", "Target Environment": "API Management", "Target Environment Type": "Shared service", "Target Environment BU": "Platform", "Direction": "downstream" },
+      { "Source Environment BU": "Digital Commerce", "Source Environment": "Storefront Pre-production", "Source Environment Type": "Pre-production", "Target": "Customer and order APIs", "Target Environment": "API Management", "Target Environment Type": "Shared service", "Target Environment BU": "Platform", "Direction": "downstream" },
+      { "Source Environment BU": "Platform", "Source Environment": "API Management", "Source Environment Type": "Shared service", "Target": "Order capture", "Target Environment": "Order Management", "Target Environment Type": "Production", "Target Environment BU": "Retail Operations", "Direction": "downstream" },
+      { "Source Environment BU": "Platform", "Source Environment": "API Management", "Source Environment Type": "Shared service", "Target": "Identity and access", "Target Environment": "Customer Identity", "Target Environment Type": "SaaS", "Target Environment BU": "Platform", "Direction": "downstream" },
+      { "Source Environment BU": "Retail Operations", "Source Environment": "Order Management", "Source Environment Type": "Production", "Target": "Fulfilment requests", "Target Environment": "Warehouse Platform", "Target Environment Type": "Production", "Target Environment BU": "Supply Chain", "Direction": "downstream" },
+      { "Source Environment BU": "Retail Operations", "Source Environment": "Order Management", "Source Environment Type": "Production", "Target": "Financial posting", "Target Environment": "SAP S/4HANA", "Target Environment Type": "Production", "Target Environment BU": "Finance", "Direction": "downstream" },
+      { "Source Environment BU": "Finance", "Source Environment": "SAP S/4HANA", "Source Environment Type": "Production", "Target": "Enterprise reporting", "Target Environment": "Enterprise Data Lake", "Target Environment Type": "Analytics", "Target Environment BU": "Data & Insight", "Direction": "downstream" },
+      { "Source Environment BU": "Supply Chain", "Source Environment": "Warehouse Platform", "Source Environment Type": "Production", "Target": "Operational events", "Target Environment": "Enterprise Data Lake", "Target Environment Type": "Analytics", "Target Environment BU": "Data & Insight", "Direction": "downstream" },
+      { "Source Environment BU": "Digital Commerce", "Source Environment": "Storefront Production", "Source Environment Type": "Production", "Target": "Web analytics events", "Target Environment": "Enterprise Data Lake", "Target Environment Type": "Analytics", "Target Environment BU": "Data & Insight", "Direction": "downstream" },
+      { "Source Environment BU": "Data & Insight", "Source Environment": "Enterprise Data Lake", "Source Environment Type": "Analytics", "Target": "Executive dashboards", "Target Environment": "Power BI Service", "Target Environment Type": "SaaS", "Target Environment BU": "Data & Insight", "Direction": "downstream" },
+      { "Source Environment BU": "Platform", "Source Environment": "Customer Identity", "Source Environment Type": "SaaS", "Target": "Authentication", "Target Environment": "Storefront Production", "Target Environment Type": "Production", "Target Environment BU": "Digital Commerce", "Direction": "downstream" },
+      { "Source Environment BU": "Retail Operations", "Source Environment": "CRM Production", "Source Environment Type": "SaaS", "Target": "Customer profile", "Target Environment": "API Management", "Target Environment Type": "Shared service", "Target Environment BU": "Platform", "Direction": "both" }
+    ];
+
+    const STORAGE_KEY = "environment-dependency-visualiser-saved-rows-v1";
+    const LAUNCH_STORAGE_PREFIX = "migration-compass-dependency-explorer:";
+
+    const palette = [
+      "#38bdf8", "#a78bfa", "#34d399", "#f472b6", "#fbbf24", "#fb7185",
+      "#22d3ee", "#c084fc", "#84cc16", "#f97316", "#60a5fa", "#e879f9",
+      "#14b8a6", "#f43f5e", "#a3e635", "#f59e0b", "#818cf8", "#2dd4bf"
+    ];
+
+    const refs = {
+      svg: document.getElementById("canvas"),
+      canvasWrap: document.getElementById("canvasWrap"),
+      world: document.getElementById("world"),
+      connectedZone: document.getElementById("connectedZone"),
+      standaloneZone: document.getElementById("standaloneZone"),
+      zoneDivider: document.getElementById("zoneDivider"),
+      edgeLayer: document.getElementById("edgeLayer"),
+      clusterLayer: document.getElementById("clusterLayer"),
+      nodeLayer: document.getElementById("nodeLayer"),
+      legend: document.getElementById("legend"),
+      infoPanel: document.getElementById("infoPanel"),
+      status: document.getElementById("status"),
+      excelInput: document.getElementById("excelInput"),
+      templateButton: document.getElementById("templateButton"),
+      exportPdfButton: document.getElementById("exportPdfButton"),
+      dataEditorButton: document.getElementById("dataEditorButton"),
+      saveChangesButton: document.getElementById("saveChangesButton"),
+      sampleButton: document.getElementById("sampleButton"),
+      clearFocusButton: document.getElementById("clearFocusButton"),
+      clearAllFilters: document.getElementById("clearAllFilters"),
+      searchInput: document.getElementById("searchInput"),
+      searchResults: document.getElementById("searchResults"),
+      categoryPills: document.getElementById("categoryPills"),
+      hostingPills: document.getElementById("hostingPills"),
+      clearCategories: document.getElementById("clearCategories"),
+      clearHosting: document.getElementById("clearHosting"),
+      zoomIn: document.getElementById("zoomIn"),
+      zoomOut: document.getElementById("zoomOut"),
+      zoomReset: document.getElementById("zoomReset"),
+      zoomPercent: document.getElementById("zoomPercent"),
+      tooltip: document.getElementById("tooltip"),
+      dataEditor: document.getElementById("dataEditor"),
+      editorContent: document.getElementById("editorContent"),
+      editorSummary: document.getElementById("editorSummary"),
+      applyDataButton: document.getElementById("applyDataButton"),
+      saveDataButton: document.getElementById("saveDataButton"),
+      closeDataEditor: document.getElementById("closeDataEditor")
+    };
+
+    const state = {
+      width: 1200,
+      height: 760,
+      boundary: 840,
+      apps: new Map(),
+      dependencies: [],
+      clusters: new Map(),
+      sourceRows: [],
+      categories: [],
+      hosting: [],
+      categoryColors: new Map(),
+      hostingColors: new Map(),
+      visualNodes: [],
+      visualEdges: [],
+      visualNodeMap: new Map(),
+      markerIds: new Map(),
+      collapsedCategories: new Set(),
+      selectedAppId: null,
+      focusActive: false,
+      filters: {
+        query: "",
+        categories: new Set(),
+        hosting: new Set()
+      },
+      transform: {
+        x: 0,
+        y: 0,
+        scale: 1
+      },
+      drag: null,
+      resize: null,
+      pan: null,
+      spaceDown: false,
+      elements: {
+        nodes: new Map(),
+        clusters: new Map(),
+        edges: new Map()
+      },
+      lastPointerDown: null,
+      datasetName: "Sample data"
+    };
+    let savedRowsSnapshot = "";
+    const UNSAVED_NAVIGATION_MESSAGE = "You have unsaved dependency changes.";
+
+    function normaliseId(value) {
+      return String(value ?? "").trim();
+    }
+
+    function normaliseKey(value) {
+      return String(value ?? "").trim().toLowerCase();
+    }
+
+    function compactKey(value) {
+      return normaliseKey(value).replace(/[^a-z0-9]+/g, "");
+    }
+
+    function splitHosting(value) {
+      return String(value ?? "")
+        .split(",")
+        .map(item => item.trim())
+        .filter(Boolean);
+    }
+
+    function cloneRows(rows) {
+      return rows.map(row => ({ ...row }));
+    }
+
+    function getRowsSnapshot() {
+      return JSON.stringify(state.sourceRows);
+    }
+
+    function markRowsClean() {
+      savedRowsSnapshot = getRowsSnapshot();
+    }
+
+    function hasUnsavedRows() {
+      return getRowsSnapshot() !== savedRowsSnapshot;
+    }
+
+    function directionValue(value) {
+      const direction = normaliseKey(value);
+      if (direction === "upstream" || direction === "downstream" || direction === "both") return direction;
+      return "downstream";
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function truncate(value, maxLength) {
+      const text = String(value ?? "");
+      if (text.length <= maxLength) return text;
+      return `${text.slice(0, Math.max(0, maxLength - 1))}...`;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function setStatus(message) {
+      refs.status.textContent = message;
+    }
+
+    function colourForIndex(index, offset = 0) {
+      if (index < palette.length) return palette[(index + offset) % palette.length];
+      const hue = (index * 137.508 + offset * 19) % 360;
+      return `hsl(${hue} 78% 62%)`;
+    }
+
+    function buildColourMap(values, offset = 0) {
+      const map = new Map();
+      values.forEach((value, index) => map.set(value, colourForIndex(index, offset)));
+      return map;
+    }
+
+    function getSheetRows(workbook, sheetName) {
+      const actual = workbook.SheetNames.find(name => normaliseKey(name) === normaliseKey(sheetName));
+      if (!actual) return null;
+      return XLSX.utils.sheet_to_json(workbook.Sheets[actual], { defval: "" });
+    }
+
+    function valueFromRow(row, expectedKey) {
+      const key = Object.keys(row).find(item => normaliseKey(item) === expectedKey);
+      return key ? row[key] : "";
+    }
+
+    function valueFromAny(row, expectedKeys) {
+      const wanted = expectedKeys.map(normaliseKey);
+      const key = Object.keys(row).find(item => wanted.includes(normaliseKey(item)));
+      return key ? row[key] : "";
+    }
+
+    function ensureEnvironment(map, environmentName) {
+      const id = normaliseId(environmentName);
+      if (!id) return null;
+      const key = normaliseKey(id);
+      if (!map.has(key)) {
+        map.set(key, {
+          id,
+          typeCandidates: new Set(),
+          sourceBUs: new Set(),
+          targetBUs: new Set(),
+          incomingSourceBUs: new Set(),
+          targetAliases: new Set(),
+          sourceRows: 0,
+          targetRows: 0
+        });
+      }
+      return map.get(key);
+    }
+
+    function chooseBusinessUnit(info) {
+      if (info.sourceBUs.size === 1) return Array.from(info.sourceBUs)[0];
+      if (info.sourceBUs.size > 1) return "Shared / Multiple BU";
+      if (info.targetBUs.size === 1) return Array.from(info.targetBUs)[0];
+      if (info.targetBUs.size > 1) return "Shared / Multiple BU";
+      if (info.incomingSourceBUs.size === 1) return Array.from(info.incomingSourceBUs)[0];
+      if (info.incomingSourceBUs.size > 1) return "Shared / Multiple BU";
+      return "Shared / Unknown BU";
+    }
+
+    function chooseEnvironmentType(info) {
+      const values = Array.from(info.typeCandidates).filter(Boolean);
+      if (!values.length) return "Unknown";
+      if (values.length === 1) return values[0];
+      return "Mixed";
+    }
+
+    function parseEnvironmentLinks(rows) {
+      const environmentInfo = new Map();
+      const dependencies = [];
+      let ignored = 0;
+
+      rows.forEach(row => {
+        const sourceBU = normaliseId(valueFromAny(row, ["source environment bu", "source bu", "bu", "business unit"])) || "Unassigned BU";
+        const sourceEnvironment = normaliseId(valueFromAny(row, ["source environment", "source env", "source"]));
+        const sourceType = normaliseId(valueFromAny(row, ["source environment type", "source env type", "source type"])) || "Unknown";
+        const targetAlias = normaliseId(valueFromAny(row, ["target", "target name", "target object"]));
+        const targetEnvironment = normaliseId(valueFromAny(row, ["target environment", "target enviornment", "target env"]));
+        const targetType = normaliseId(valueFromAny(row, ["target environment type", "target env type", "target type"])) || "Unknown";
+        const targetBU = normaliseId(valueFromAny(row, ["target environment bu", "target bu"]));
+        const direction = directionValue(valueFromAny(row, ["direction", "flow", "dependency direction"]));
+
+        const source = ensureEnvironment(environmentInfo, sourceEnvironment);
+        if (source) {
+          source.sourceRows += 1;
+          source.sourceBUs.add(sourceBU);
+          source.typeCandidates.add(sourceType);
+        }
+
+        const target = ensureEnvironment(environmentInfo, targetEnvironment);
+        if (target) {
+          target.targetRows += 1;
+          target.typeCandidates.add(targetType);
+          if (targetBU) target.targetBUs.add(targetBU);
+          if (sourceBU) target.incomingSourceBUs.add(sourceBU);
+          if (targetAlias) target.targetAliases.add(targetAlias);
+        }
+
+        if (sourceEnvironment && targetEnvironment && normaliseKey(sourceEnvironment) !== normaliseKey(targetEnvironment)) {
+          dependencies.push({
+            source: sourceEnvironment,
+            target: targetEnvironment,
+            direction,
+            targetName: targetAlias,
+            sourceBU,
+            targetBU
+          });
+        } else if (targetEnvironment || (!sourceEnvironment && Object.values(row).some(Boolean))) {
+          ignored += 1;
+        }
+      });
+
+      const knownBusinessUnits = Array.from(new Set(
+        Array.from(environmentInfo.values()).flatMap(info => Array.from(info.sourceBUs))
+      )).filter(Boolean);
+
+      environmentInfo.forEach(info => {
+        if (info.targetBUs.size) return;
+        const aliases = Array.from(info.targetAliases).map(compactKey).filter(Boolean);
+        knownBusinessUnits.forEach(bu => {
+          const compactBU = compactKey(bu);
+          if (compactBU && aliases.some(alias => alias.includes(compactBU))) {
+            info.targetBUs.add(bu);
+          }
+        });
+      });
+
+      const applications = Array.from(environmentInfo.values())
+        .map(info => {
+          const environmentType = chooseEnvironmentType(info);
+          const category = chooseBusinessUnit(info);
+          return {
+            id: info.id,
+            label: info.id,
+            category,
+            environmentType,
+            hosting: [environmentType],
+            description: `Environment type ${environmentType}. Grouped under ${category}. Appears as source in ${info.sourceRows} row(s) and target in ${info.targetRows} row(s).`,
+            sourceRows: info.sourceRows,
+            targetRows: info.targetRows,
+            targetAliases: Array.from(info.targetAliases).sort((a, b) => a.localeCompare(b))
+          };
+        })
+        .sort((a, b) => a.category.localeCompare(b.category) || a.label.localeCompare(b.label));
+
+      return { applications, dependencies, ignored };
+    }
+
+    function loadData(environmentRows, datasetName = "Loaded workbook") {
+      state.sourceRows = cloneRows(environmentRows);
+      const parsed = parseEnvironmentLinks(state.sourceRows);
+      const applications = parsed.applications;
+      const dependencies = parsed.dependencies;
+      const connectedIds = new Set();
+      dependencies.forEach(dep => {
+        connectedIds.add(normaliseKey(dep.source));
+        connectedIds.add(normaliseKey(dep.target));
+      });
+
+      state.apps.clear();
+      state.dependencies = dependencies;
+      state.clusters.clear();
+      refs.svg.querySelectorAll("marker[data-generated-marker='true']").forEach(marker => marker.remove());
+      state.markerIds.clear();
+      state.collapsedCategories.clear();
+      state.selectedAppId = null;
+      state.focusActive = false;
+      state.datasetName = datasetName;
+      state.filters.query = "";
+      state.filters.categories.clear();
+      state.filters.hosting.clear();
+      refs.searchInput.value = "";
+
+      applications.forEach((app, index) => {
+        const key = normaliseKey(app.id);
+        const isConnected = connectedIds.has(key);
+        const zone = "connected";
+        const position = initialPosition(zone, index);
+        state.apps.set(key, {
+          ...app,
+          key,
+          zone,
+          connected: true,
+          hasDependencies: isConnected,
+          x: position.x,
+          y: position.y,
+          vx: 0,
+          vy: 0,
+          radius: 23,
+          upstream: [],
+          downstream: []
+        });
+      });
+
+      buildRelationships();
+      sizeEnvironmentBubbles();
+      buildDynamicValues();
+      buildClusters();
+      renderLegend();
+      renderFilters();
+      rebuildVisualGraph();
+      updateInfoPanel();
+      updateSearchResults();
+      setStatus(`${datasetName}: ${applications.length} environments, ${dependencies.length} links${parsed.ignored ? `, ${parsed.ignored} ignored` : ""}`);
+      if (!refs.dataEditor.classList.contains("hidden")) renderDataEditor();
+    }
+
+    function initialPosition(zone, index) {
+      resizeCanvas();
+      if (zone === "standalone") {
+        const cols = Math.max(1, Math.floor((state.width * 0.28) / 118));
+        const col = index % cols;
+        const row = Math.floor(index / cols);
+        return {
+          x: state.boundary + 72 + col * 118 + Math.random() * 14,
+          y: 150 + row * 104 + Math.random() * 22
+        };
+      }
+      return {
+        x: 90 + Math.random() * Math.max(160, state.boundary - 180),
+        y: 130 + Math.random() * Math.max(160, state.height - 260)
+      };
+    }
+
+    function buildRelationships() {
+      state.apps.forEach(app => {
+        app.upstream = [];
+        app.downstream = [];
+        app.connectionCount = 0;
+      });
+
+      state.dependencies.forEach(dep => {
+        const source = state.apps.get(normaliseKey(dep.source));
+        const target = state.apps.get(normaliseKey(dep.target));
+        if (!source || !target) return;
+
+        if (dep.direction === "downstream") {
+          source.downstream.push(target.key);
+          target.upstream.push(source.key);
+        } else if (dep.direction === "upstream") {
+          source.upstream.push(target.key);
+          target.downstream.push(source.key);
+        } else {
+          source.downstream.push(target.key);
+          source.upstream.push(target.key);
+          target.downstream.push(source.key);
+          target.upstream.push(source.key);
+        }
+      });
+    }
+
+    function sizeEnvironmentBubbles() {
+      state.apps.forEach(app => {
+        const neighbours = new Set([...app.upstream, ...app.downstream]);
+        app.connectionCount = neighbours.size;
+        app.inCount = uniqueKeys(app.upstream).length;
+        app.outCount = uniqueKeys(app.downstream).length;
+        app.radius = clamp(22 + Math.sqrt(Math.max(0, app.connectionCount)) * 4.2, 22, 40);
+      });
+    }
+
+    function buildDynamicValues() {
+      const categories = new Set();
+      const hosting = new Set();
+      state.apps.forEach(app => {
+        categories.add(app.category);
+        app.hosting.forEach(item => hosting.add(item));
+      });
+      state.categories = Array.from(categories).sort((a, b) => a.localeCompare(b));
+      state.hosting = Array.from(hosting).sort((a, b) => a.localeCompare(b));
+      state.categoryColors = buildColourMap(state.categories, 0);
+      state.hostingColors = buildColourMap(state.hosting, 5);
+    }
+
+    function buildClusters() {
+      const clusterData = state.categories
+        .map(category => {
+          const apps = Array.from(state.apps.values()).filter(app => app.category === category);
+          return {
+            category,
+            apps,
+            connectionCount: apps.reduce((sum, app) => sum + (app.connectionCount || 0), 0)
+          };
+        })
+        .filter(item => item.apps.length)
+        .sort((a, b) => b.connectionCount - a.connectionCount || b.apps.length - a.apps.length || a.category.localeCompare(b.category));
+
+      clusterData.forEach((item, index) => {
+        const center = categoryAnchor(index, clusterData.length);
+        state.clusters.set(item.category, {
+          id: `cluster:${item.category}`,
+          key: `cluster:${normaliseKey(item.category)}`,
+          kind: "cluster",
+          zone: "connected",
+          category: item.category,
+          apps: item.apps.map(app => app.key),
+          label: item.category,
+          connectionCount: item.connectionCount,
+          radius: clamp(40 + Math.sqrt(item.apps.length) * 5, 46, 66),
+          bubbleRadius: clusterBubbleRadius(item.apps.length),
+          anchorX: center.x,
+          anchorY: center.y,
+          x: center.x,
+          y: center.y,
+          vx: 0,
+          vy: 0,
+          collapsed: false
+        });
+      });
+      relayoutEnvironmentsByBU();
+    }
+
+    function categoryGrid(count) {
+      const aspect = clamp(state.boundary / Math.max(1, state.height), 0.9, 1.8);
+      const cols = Math.max(1, Math.ceil(Math.sqrt(count * aspect)));
+      const rows = Math.max(1, Math.ceil(count / cols));
+      const left = 86;
+      const top = 150;
+      const right = state.width > 1100 ? 460 : 90;
+      const bottom = 88;
+      const usableWidth = Math.max(260, state.boundary - left - right);
+      const usableHeight = Math.max(240, state.height - top - bottom);
+      return {
+        cols,
+        rows,
+        left,
+        top,
+        cellWidth: usableWidth / cols,
+        cellHeight: usableHeight / rows
+      };
+    }
+
+    function categoryAnchor(index, count) {
+      const grid = categoryGrid(count);
+      const slots = [];
+      for (let row = 0; row < grid.rows; row += 1) {
+        for (let col = 0; col < grid.cols; col += 1) {
+          slots.push({
+            col,
+            row,
+            distance: Math.hypot(col - (grid.cols - 1) / 2, row - (grid.rows - 1) / 2)
+          });
+        }
+      }
+      slots.sort((a, b) => a.distance - b.distance || a.row - b.row || a.col - b.col);
+      const slot = slots[index] || slots[slots.length - 1] || { col: 0, row: 0 };
+      return {
+        x: grid.left + (slot.col + 0.5) * grid.cellWidth,
+        y: grid.top + (slot.row + 0.5) * grid.cellHeight,
+        cellWidth: grid.cellWidth,
+        cellHeight: grid.cellHeight
+      };
+    }
+
+    function clusterBubbleRadius(appCount) {
+      const count = Math.max(1, state.clusters.size || state.categories.length || 1);
+      const grid = categoryGrid(count);
+      const cellLimit = Math.min(grid.cellWidth, grid.cellHeight) * 0.47;
+      const densityNeed = 58 + Math.sqrt(Math.max(1, appCount)) * 18;
+      return clamp(Math.min(Math.max(cellLimit * 0.68, densityNeed), cellLimit), 92, 240);
+    }
+
+    function minimumClusterBubbleRadius(cluster) {
+      const apps = cluster.apps.map(key => state.apps.get(key)).filter(Boolean);
+      const largestNode = apps.reduce((max, app) => Math.max(max, app.radius || 20), 20);
+      return clamp(Math.max(86, largestNode + 42, Math.sqrt(Math.max(1, apps.length)) * 34), 86, 210);
+    }
+
+    function maximumClusterBubbleRadius() {
+      return clamp(Math.min(state.boundary, state.height) * 0.46, 180, 380);
+    }
+
+    function updateClusterAnchors() {
+      const clusters = Array.from(state.clusters.values())
+        .sort((a, b) => (b.connectionCount || 0) - (a.connectionCount || 0) || b.apps.length - a.apps.length || a.category.localeCompare(b.category));
+      clusters.forEach((cluster, index) => {
+        const anchor = categoryAnchor(index, state.clusters.size);
+        if (!cluster.manualAnchor) {
+          cluster.anchorX = anchor.x;
+          cluster.anchorY = anchor.y;
+        }
+        cluster.bubbleRadius = cluster.customBubbleRadius || clusterBubbleRadius(cluster.apps.length);
+      });
+    }
+
+    function clusterSlotPosition(cluster, index, count) {
+      if (index === 0) {
+        return { x: cluster.x, y: cluster.y };
+      }
+      const angle = (index - 1) * 2.399963229728653;
+      const radius = cluster.bubbleRadius * Math.sqrt(index / Math.max(1, count - 1)) * 0.62;
+      return {
+        x: cluster.x + Math.cos(angle) * radius,
+        y: cluster.y + Math.sin(angle) * radius
+      };
+    }
+
+    function orderedClusterApps(cluster) {
+      return cluster.apps
+        .map(key => state.apps.get(key))
+        .filter(Boolean)
+        .sort((a, b) => (b.connectionCount || 0) - (a.connectionCount || 0) || a.label.localeCompare(b.label));
+    }
+
+    function relayoutEnvironmentsByBU() {
+      updateClusterAnchors();
+      state.clusters.forEach(cluster => {
+        const apps = orderedClusterApps(cluster);
+        apps.forEach((app, index) => {
+          const slot = clusterSlotPosition(cluster, index, apps.length);
+          app.x = slot.x + (Math.random() - 0.5) * 18;
+          app.y = slot.y + (Math.random() - 0.5) * 18;
+          app.vx = 0;
+          app.vy = 0;
+        });
+      });
+    }
+
+    function resizeCanvas() {
+      const rect = refs.svg.getBoundingClientRect();
+      state.width = Math.max(720, rect.width || window.innerWidth);
+      state.height = Math.max(520, rect.height || window.innerHeight);
+      state.boundary = state.width;
+      refs.connectedZone.setAttribute("x", 0);
+      refs.connectedZone.setAttribute("y", 0);
+      refs.connectedZone.setAttribute("width", state.boundary);
+      refs.connectedZone.setAttribute("height", state.height);
+      refs.standaloneZone.setAttribute("x", state.boundary);
+      refs.standaloneZone.setAttribute("y", 0);
+      refs.standaloneZone.setAttribute("width", 0);
+      refs.standaloneZone.setAttribute("height", state.height);
+      refs.zoneDivider.setAttribute("x1", state.boundary);
+      refs.zoneDivider.setAttribute("x2", state.boundary);
+      refs.zoneDivider.setAttribute("y1", 0);
+      refs.zoneDivider.setAttribute("y2", state.height);
+    }
+
+    function renderLegend() {
+      const categoryItems = state.categories.map(value => legendItem(value, state.categoryColors.get(value))).join("");
+      const hostingItems = state.hosting.map(value => legendItem(value, state.hostingColors.get(value))).join("");
+      refs.legend.innerHTML = `
+        <div class="panel-title"><span>Legend</span><span>${state.apps.size} environments</span></div>
+        <div class="legend-grid">
+          <section class="legend-section">
+            <h3>Business Unit</h3>
+            <div class="legend-items">${categoryItems}</div>
+          </section>
+          <section class="legend-section">
+            <h3>Environment Type</h3>
+            <div class="legend-items">${hostingItems}</div>
+          </section>
+        </div>
+      `;
+    }
+
+    function legendItem(label, color) {
+      return `
+        <span class="legend-item" title="${escapeHtml(label)}">
+          <span class="swatch" style="background:${color}"></span>
+          <span>${escapeHtml(truncate(label, 22))}</span>
+        </span>
+      `;
+    }
+
+    function renderFilters() {
+      refs.categoryPills.innerHTML = "";
+      state.categories.forEach(category => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "pill";
+        button.textContent = category;
+        button.style.setProperty("--pill-color", state.categoryColors.get(category));
+        button.addEventListener("click", () => {
+          toggleSetValue(state.filters.categories, category);
+          updateFilterButtons();
+          updateSearchResults();
+        });
+        refs.categoryPills.appendChild(button);
+      });
+
+      refs.hostingPills.innerHTML = "";
+      state.hosting.forEach(hosting => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "pill";
+        button.textContent = hosting;
+        button.style.setProperty("--pill-color", state.hostingColors.get(hosting));
+        button.addEventListener("click", () => {
+          toggleSetValue(state.filters.hosting, hosting);
+          updateFilterButtons();
+          updateSearchResults();
+        });
+        refs.hostingPills.appendChild(button);
+      });
+
+      updateFilterButtons();
+    }
+
+    function toggleSetValue(set, value) {
+      if (set.has(value)) {
+        set.delete(value);
+      } else {
+        set.add(value);
+      }
+    }
+
+    function updateFilterButtons() {
+      Array.from(refs.categoryPills.children).forEach(button => {
+        button.classList.toggle("active", state.filters.categories.has(button.textContent));
+      });
+      Array.from(refs.hostingPills.children).forEach(button => {
+        button.classList.toggle("active", state.filters.hosting.has(button.textContent));
+      });
+    }
+
+    function appMatchesSearch(app) {
+      const query = state.filters.query;
+      if (!query) return true;
+      const haystack = [
+        app.id,
+        app.label,
+        app.category,
+        app.description,
+        ...app.hosting
+      ].join(" ").toLowerCase();
+      return haystack.includes(query);
+    }
+
+    function appPassesFilters(app) {
+      const categoryOk = !state.filters.categories.size || state.filters.categories.has(app.category);
+      const hostingOk = !state.filters.hosting.size || app.hosting.some(item => state.filters.hosting.has(item));
+      return categoryOk && hostingOk && appMatchesSearch(app);
+    }
+
+    function appMatchesTextOnly(app) {
+      const query = state.filters.query;
+      if (!query) return false;
+      const haystack = [
+        app.id,
+        app.label,
+        app.category,
+        app.description,
+        ...app.hosting
+      ].join(" ").toLowerCase();
+      return haystack.includes(query);
+    }
+
+    function clusterPassesFilters(cluster) {
+      return cluster.apps.some(key => {
+        const app = state.apps.get(key);
+        return app && appPassesFilters(app);
+      });
+    }
+
+    function updateSearchResults() {
+      const query = state.filters.query;
+      refs.searchResults.innerHTML = "";
+      if (!query) {
+        refs.searchResults.classList.remove("open");
+        return;
+      }
+      const matches = Array.from(state.apps.values())
+        .filter(app => appPassesFilters(app))
+        .slice(0, 12);
+
+      if (!matches.length) {
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = "result-item";
+        item.innerHTML = "<span>No matches</span><small></small>";
+        refs.searchResults.appendChild(item);
+      } else {
+        matches.forEach(app => {
+          const item = document.createElement("button");
+          item.type = "button";
+          item.className = "result-item";
+          item.innerHTML = `<span>${escapeHtml(app.label)}</span><small>${escapeHtml(app.category)}</small>`;
+          item.addEventListener("click", () => {
+            focusApp(app.key);
+            refs.searchResults.classList.remove("open");
+          });
+          refs.searchResults.appendChild(item);
+        });
+      }
+      refs.searchResults.classList.add("open");
+    }
+
+    function rebuildVisualGraph() {
+      const nodes = [];
+      const nodeMap = new Map();
+
+      state.clusters.forEach(cluster => {
+        cluster.collapsed = state.collapsedCategories.has(cluster.category);
+        nodes.push(cluster);
+        nodeMap.set(cluster.key, cluster);
+      });
+
+      state.apps.forEach(app => {
+        if (app.connected && state.collapsedCategories.has(app.category)) return;
+        nodes.push(app);
+        nodeMap.set(app.key, app);
+      });
+
+      state.visualNodes = nodes;
+      state.visualNodeMap = nodeMap;
+      state.visualEdges = buildVisualEdges();
+      createEdgeElements();
+      createClusterElements();
+      createNodeElements();
+      updateInfoPanel();
+    }
+
+    function endpointFor(appKey) {
+      const app = state.apps.get(appKey);
+      if (!app || !app.connected) return appKey;
+      if (state.collapsedCategories.has(app.category)) {
+        const cluster = state.clusters.get(app.category);
+        return cluster ? cluster.key : appKey;
+      }
+      return appKey;
+    }
+
+    function addDirectedEdge(bucket, fromKey, toKey, dep) {
+      if (fromKey === toKey) return;
+      const a = fromKey < toKey ? fromKey : toKey;
+      const b = fromKey < toKey ? toKey : fromKey;
+      const key = `${a}::${b}`;
+      if (!bucket.has(key)) {
+        bucket.set(key, { key, a, b, ab: false, ba: false, count: 0, deps: [] });
+      }
+      const edge = bucket.get(key);
+      if (fromKey === a && toKey === b) {
+        edge.ab = true;
+      } else {
+        edge.ba = true;
+      }
+      if (!edge.deps.includes(dep)) {
+        edge.deps.push(dep);
+        edge.count = edge.deps.length;
+      }
+    }
+
+    function buildVisualEdges() {
+      const bucket = new Map();
+      state.dependencies.forEach(dep => {
+        const sourceKey = endpointFor(normaliseKey(dep.source));
+        const targetKey = endpointFor(normaliseKey(dep.target));
+        if (!state.visualNodeMap.has(sourceKey) || !state.visualNodeMap.has(targetKey)) return;
+
+        if (dep.direction === "downstream") {
+          addDirectedEdge(bucket, sourceKey, targetKey, dep);
+        } else if (dep.direction === "upstream") {
+          addDirectedEdge(bucket, targetKey, sourceKey, dep);
+        } else {
+          addDirectedEdge(bucket, sourceKey, targetKey, dep);
+          addDirectedEdge(bucket, targetKey, sourceKey, dep);
+        }
+      });
+
+      return Array.from(bucket.values()).map(edge => ({
+        ...edge,
+        from: edge.ab ? edge.a : edge.b,
+        to: edge.ab ? edge.b : edge.a,
+        both: edge.ab && edge.ba
+      }));
+    }
+
+    function categoryForVisualNodeKey(key) {
+      const node = state.visualNodeMap.get(key);
+      if (!node) return "";
+      return node.category || "";
+    }
+
+    function colourForVisualNodeKey(key) {
+      return state.categoryColors.get(categoryForVisualNodeKey(key)) || "#94a3b8";
+    }
+
+    function ensureArrowMarker(color) {
+      if (state.markerIds.has(color)) return state.markerIds.get(color);
+      const id = `arrow-${state.markerIds.size}`;
+      const defs = refs.svg.querySelector("defs");
+      const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      marker.setAttribute("id", id);
+      marker.setAttribute("markerWidth", "12");
+      marker.setAttribute("markerHeight", "12");
+      marker.setAttribute("refX", "10");
+      marker.setAttribute("refY", "6");
+      marker.setAttribute("orient", "auto");
+      marker.setAttribute("markerUnits", "strokeWidth");
+      marker.setAttribute("data-generated-marker", "true");
+      path.setAttribute("d", "M2,2 L10,6 L2,10 Z");
+      path.setAttribute("fill", color);
+      marker.appendChild(path);
+      defs.appendChild(marker);
+      state.markerIds.set(color, id);
+      return id;
+    }
+
+    function createEdgeElements() {
+      refs.edgeLayer.innerHTML = "";
+      state.elements.edges.clear();
+      state.visualEdges.forEach(edge => {
+        const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        const main = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const back = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        const mainColor = colourForVisualNodeKey(edge.from);
+        const backColor = colourForVisualNodeKey(edge.to);
+        main.setAttribute("class", "edge main");
+        back.setAttribute("class", "edge return");
+        main.style.stroke = mainColor;
+        back.style.stroke = backColor;
+        main.setAttribute("marker-end", `url(#${ensureArrowMarker(mainColor)})`);
+        back.setAttribute("marker-end", `url(#${ensureArrowMarker(backColor)})`);
+        label.setAttribute("class", "edge-count");
+        label.textContent = edge.count > 1 ? edge.count : "";
+        group.append(main, back, label);
+        refs.edgeLayer.appendChild(group);
+        state.elements.edges.set(edge.key, { group, main, back, label });
+      });
+    }
+
+    function createClusterElements() {
+      refs.clusterLayer.innerHTML = "";
+      state.elements.clusters.clear();
+      state.clusters.forEach(cluster => {
+        const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        group.setAttribute("class", "node cluster-node");
+        group.dataset.key = cluster.key;
+
+        const pulse = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        pulse.setAttribute("class", "cluster-pulse");
+        const ring = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        ring.setAttribute("class", "cluster-ring");
+        ring.setAttribute("stroke", state.categoryColors.get(cluster.category) || "#38bdf8");
+        const title = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        title.setAttribute("class", "cluster-title");
+        title.textContent = truncate(cluster.category, 15);
+        const count = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        count.setAttribute("class", "cluster-count");
+        count.textContent = `${cluster.apps.length} envs`;
+        const handle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        handle.setAttribute("class", "cluster-resize-handle");
+        handle.setAttribute("r", 7);
+
+        group.append(pulse, ring, title, count, handle);
+        group.addEventListener("pointerdown", event => beginNodeDrag(event, cluster));
+        handle.addEventListener("pointerdown", event => beginClusterResize(event, cluster));
+        group.addEventListener("pointerenter", event => showClusterTooltip(event, cluster));
+        group.addEventListener("pointermove", moveTooltip);
+        group.addEventListener("pointerleave", hideTooltip);
+        refs.clusterLayer.appendChild(group);
+        state.elements.clusters.set(cluster.key, { group, pulse, ring, title, count, handle });
+      });
+    }
+
+    function createNodeElements() {
+      refs.nodeLayer.innerHTML = "";
+      state.elements.nodes.clear();
+      state.apps.forEach(app => {
+        if (app.connected && state.collapsedCategories.has(app.category)) return;
+        const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        group.setAttribute("class", `node app-node ${app.zone}`);
+        group.dataset.key = app.key;
+
+        const halo = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        halo.setAttribute("class", "node-halo");
+        halo.setAttribute("r", app.radius + 8);
+        const core = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        core.setAttribute("class", "node-core");
+        core.setAttribute("r", app.radius);
+        core.setAttribute("stroke", state.hostingColors.get(app.environmentType) || "#38bdf8");
+
+        const inCount = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        inCount.setAttribute("class", "node-count");
+        inCount.setAttribute("y", -3);
+        inCount.textContent = `IN ${app.inCount || 0}`;
+        const outCount = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        outCount.setAttribute("class", "node-count");
+        outCount.setAttribute("y", 10);
+        outCount.textContent = `OUT ${app.outCount || 0}`;
+
+        const badges = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        app.hosting.forEach((hosting, index) => {
+          const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          dot.setAttribute("class", "hosting-dot");
+          dot.setAttribute("r", 4.2);
+          dot.setAttribute("fill", state.hostingColors.get(hosting) || "#94a3b8");
+          const angle = app.hosting.length === 1
+            ? -Math.PI / 2
+            : (-Math.PI * 0.84) + (index * (Math.PI * 0.68 / Math.max(1, app.hosting.length - 1)));
+          dot.setAttribute("cx", Math.cos(angle) * (app.radius + 7));
+          dot.setAttribute("cy", Math.sin(angle) * (app.radius + 7));
+          badges.appendChild(dot);
+        });
+
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("class", "node-label");
+        label.setAttribute("y", app.radius + 17);
+        label.textContent = truncate(app.label, 17);
+
+        group.append(halo, core, badges, inCount, outCount, label);
+        group.addEventListener("pointerdown", event => beginNodeDrag(event, app));
+        group.addEventListener("pointerenter", event => showAppTooltip(event, app));
+        group.addEventListener("pointermove", moveTooltip);
+        group.addEventListener("pointerleave", hideTooltip);
+        refs.nodeLayer.appendChild(group);
+        state.elements.nodes.set(app.key, { group, halo, core, inCount, outCount, label });
+      });
+    }
+
+    function showClusterTooltip(event, cluster) {
+      const apps = cluster.apps
+        .map(key => state.apps.get(key))
+        .filter(Boolean)
+        .map(app => app.label)
+        .sort((a, b) => a.localeCompare(b));
+      refs.tooltip.innerHTML = `<strong>${escapeHtml(cluster.category)}</strong>${apps.map(escapeHtml).join("<br>")}`;
+      refs.tooltip.style.display = "block";
+      moveTooltip(event);
+    }
+
+    function showAppTooltip(event, app) {
+      refs.tooltip.innerHTML = `
+        <strong>${escapeHtml(app.label)}</strong>
+        ${escapeHtml(app.category)}<br>
+        ${escapeHtml(app.environmentType || "Unknown")}
+      `;
+      refs.tooltip.style.display = "block";
+      moveTooltip(event);
+    }
+
+    function moveTooltip(event) {
+      refs.tooltip.style.left = `${event.clientX + 14}px`;
+      refs.tooltip.style.top = `${event.clientY + 14}px`;
+    }
+
+    function hideTooltip() {
+      refs.tooltip.style.display = "none";
+    }
+
+    function beginNodeDrag(event, node) {
+      event.preventDefault();
+      event.stopPropagation();
+      refs.svg.setPointerCapture(event.pointerId);
+      const world = screenToWorld(event.clientX, event.clientY);
+      state.drag = {
+        node,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        offsetX: node.x - world.x,
+        offsetY: node.y - world.y,
+        moved: false
+      };
+      state.lastPointerDown = null;
+    }
+
+    function beginClusterResize(event, cluster) {
+      event.preventDefault();
+      event.stopPropagation();
+      refs.svg.setPointerCapture(event.pointerId);
+      const world = screenToWorld(event.clientX, event.clientY);
+      state.resize = {
+        cluster,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        startRadius: cluster.bubbleRadius || cluster.radius,
+        offset: Math.hypot(world.x - cluster.x, world.y - cluster.y) - (cluster.bubbleRadius || cluster.radius),
+        moved: false
+      };
+      state.lastPointerDown = null;
+    }
+
+    function screenToWorld(clientX, clientY) {
+      const rect = refs.svg.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      return {
+        x: (x - state.transform.x) / state.transform.scale,
+        y: (y - state.transform.y) / state.transform.scale
+      };
+    }
+
+    function worldToScreen(x, y) {
+      return {
+        x: x * state.transform.scale + state.transform.x,
+        y: y * state.transform.scale + state.transform.y
+      };
+    }
+
+    function applyTransform() {
+      refs.world.setAttribute("transform", `translate(${state.transform.x},${state.transform.y}) scale(${state.transform.scale})`);
+      refs.zoomPercent.textContent = `${Math.round(state.transform.scale * 100)}%`;
+    }
+
+    function zoomAt(clientX, clientY, factor) {
+      const rect = refs.svg.getBoundingClientRect();
+      const sx = clientX - rect.left;
+      const sy = clientY - rect.top;
+      const oldScale = state.transform.scale;
+      const newScale = clamp(oldScale * factor, 0.35, 2.8);
+      const wx = (sx - state.transform.x) / oldScale;
+      const wy = (sy - state.transform.y) / oldScale;
+      state.transform.scale = newScale;
+      state.transform.x = sx - wx * newScale;
+      state.transform.y = sy - wy * newScale;
+      applyTransform();
+    }
+
+    function resetZoom() {
+      state.transform.x = 0;
+      state.transform.y = 0;
+      state.transform.scale = 1;
+      applyTransform();
+    }
+
+    function beginPan(event) {
+      if (event.button !== 0 || state.drag || state.resize) return;
+      event.preventDefault();
+      refs.svg.setPointerCapture(event.pointerId);
+      state.pan = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        originX: state.transform.x,
+        originY: state.transform.y,
+        moved: false
+      };
+      refs.canvasWrap.classList.add("panning");
+    }
+
+    function handlePointerMove(event) {
+      if (state.resize && event.pointerId === state.resize.pointerId) {
+        const world = screenToWorld(event.clientX, event.clientY);
+        const distance = Math.hypot(world.x - state.resize.cluster.x, world.y - state.resize.cluster.y);
+        const minRadius = minimumClusterBubbleRadius(state.resize.cluster);
+        const maxRadius = maximumClusterBubbleRadius();
+        state.resize.cluster.customBubbleRadius = clamp(distance - state.resize.offset, minRadius, maxRadius);
+        state.resize.cluster.bubbleRadius = state.resize.cluster.customBubbleRadius;
+        state.resize.cluster.apps.forEach(key => {
+          const app = state.apps.get(key);
+          if (app) clampEnvironmentToBusinessUnit(app);
+        });
+        const moved = Math.hypot(event.clientX - state.resize.startX, event.clientY - state.resize.startY);
+        state.resize.moved = state.resize.moved || moved > 4;
+        return;
+      }
+
+      if (state.drag && event.pointerId === state.drag.pointerId) {
+        const world = screenToWorld(event.clientX, event.clientY);
+        const previousX = state.drag.node.x;
+        const previousY = state.drag.node.y;
+        state.drag.node.x = world.x + state.drag.offsetX;
+        state.drag.node.y = world.y + state.drag.offsetY;
+        if (state.drag.node.kind === "cluster") {
+          moveClusterMembers(state.drag.node, state.drag.node.x - previousX, state.drag.node.y - previousY);
+        } else {
+          clampEnvironmentToBusinessUnit(state.drag.node);
+        }
+        state.drag.node.vx = 0;
+        state.drag.node.vy = 0;
+        const moved = Math.hypot(event.clientX - state.drag.startX, event.clientY - state.drag.startY);
+        state.drag.moved = state.drag.moved || moved > 4;
+        return;
+      }
+
+      if (state.pan && event.pointerId === state.pan.pointerId) {
+        const dx = event.clientX - state.pan.startX;
+        const dy = event.clientY - state.pan.startY;
+        state.transform.x = state.pan.originX + dx;
+        state.transform.y = state.pan.originY + dy;
+        state.pan.moved = state.pan.moved || Math.hypot(dx, dy) > 4;
+        applyTransform();
+      }
+    }
+
+    function handlePointerUp(event) {
+      if (state.resize && event.pointerId === state.resize.pointerId) {
+        const resize = state.resize;
+        state.resize = null;
+        refs.svg.releasePointerCapture(event.pointerId);
+        resize.cluster.customBubbleRadius = resize.cluster.bubbleRadius;
+        resize.cluster.apps.forEach(key => {
+          const app = state.apps.get(key);
+          if (app) clampEnvironmentToBusinessUnit(app);
+        });
+        return;
+      }
+
+      if (state.drag && event.pointerId === state.drag.pointerId) {
+        const drag = state.drag;
+        state.drag = null;
+        refs.svg.releasePointerCapture(event.pointerId);
+        const snappedBack = enforceReleaseZone(drag.node);
+        if (!snappedBack && drag.node.kind !== "cluster") {
+          clampEnvironmentToBusinessUnit(drag.node);
+        }
+        if (!drag.moved) {
+          if (drag.node.kind === "cluster") {
+            toggleCluster(drag.node);
+          } else {
+            focusApp(drag.node.key);
+          }
+        } else if (!snappedBack) {
+          pinNode(drag.node);
+        }
+        return;
+      }
+
+      if (state.pan && event.pointerId === state.pan.pointerId) {
+        const pan = state.pan;
+        state.pan = null;
+        refs.canvasWrap.classList.remove("panning");
+        refs.svg.releasePointerCapture(event.pointerId);
+        if (!pan.moved) clearFocus();
+        return;
+      }
+
+      if (state.lastPointerDown) {
+        const moved = Math.hypot(event.clientX - state.lastPointerDown.x, event.clientY - state.lastPointerDown.y);
+        if (moved < 4) clearFocus();
+        state.lastPointerDown = null;
+      }
+    }
+
+    function enforceReleaseZone(node) {
+      const margin = node.radius + 18;
+      if (node.zone === "standalone" && node.x < state.boundary + margin) {
+        node.pinned = false;
+        node.manualAnchor = false;
+        node.vx += (state.boundary + 120 - node.x) * 0.16;
+        node.vy += (state.height * 0.5 - node.y) * 0.018;
+        node.snapBackUntil = performance.now() + 900;
+        return true;
+      }
+      if (node.zone === "connected" && node.x > state.boundary - margin) {
+        node.pinned = false;
+        node.manualAnchor = false;
+        node.vx += (state.boundary - 150 - node.x) * 0.16;
+        node.vy += (state.height * 0.5 - node.y) * 0.018;
+        node.snapBackUntil = performance.now() + 900;
+        return true;
+      }
+      return false;
+    }
+
+    function pinNode(node) {
+      node.pinned = true;
+      node.pinX = node.x;
+      node.pinY = node.y;
+      node.vx = 0;
+      node.vy = 0;
+      if (node.kind === "cluster") {
+        node.manualAnchor = true;
+        node.anchorX = node.x;
+        node.anchorY = node.y;
+      }
+    }
+
+    function moveClusterMembers(cluster, dx, dy) {
+      if (!cluster || !dx && !dy) return;
+      cluster.apps.forEach(key => {
+        const app = state.apps.get(key);
+        if (!app) return;
+        app.x += dx;
+        app.y += dy;
+        app.vx = 0;
+        app.vy = 0;
+        clampEnvironmentToBusinessUnit(app);
+        if (app.pinned) {
+          app.pinX = app.x;
+          app.pinY = app.y;
+        }
+      });
+    }
+
+    function clampEnvironmentToBusinessUnit(node) {
+      if (!node || node.kind === "cluster" || !node.connected) return false;
+      const cluster = state.clusters.get(node.category);
+      if (!cluster || state.collapsedCategories.has(cluster.category)) return false;
+      const limit = Math.max(14, (cluster.bubbleRadius || cluster.radius) - node.radius - 20);
+      const dx = node.x - cluster.x;
+      const dy = node.y - cluster.y;
+      const dist = Math.max(0.001, Math.hypot(dx, dy));
+      if (dist <= limit) return false;
+      node.x = cluster.x + (dx / dist) * limit;
+      node.y = cluster.y + (dy / dist) * limit;
+      node.vx = 0;
+      node.vy = 0;
+      if (node.pinned) {
+        node.pinX = node.x;
+        node.pinY = node.y;
+      }
+      return true;
+    }
+
+    function toggleCluster(cluster) {
+      if (state.collapsedCategories.has(cluster.category)) {
+        state.collapsedCategories.delete(cluster.category);
+      } else {
+        state.collapsedCategories.add(cluster.category);
+        const apps = cluster.apps.map(key => state.apps.get(key)).filter(Boolean);
+        if (apps.length) {
+          cluster.x = apps.reduce((sum, app) => sum + app.x, 0) / apps.length;
+          cluster.y = apps.reduce((sum, app) => sum + app.y, 0) / apps.length;
+        }
+      }
+      rebuildVisualGraph();
+    }
+
+    function focusApp(appKey) {
+      const app = state.apps.get(appKey);
+      if (!app) return;
+      state.selectedAppId = app.key;
+      state.focusActive = true;
+      updateInfoPanel();
+    }
+
+    function clearFocus() {
+      state.selectedAppId = null;
+      state.focusActive = false;
+      updateInfoPanel();
+    }
+
+    function updateInfoPanel() {
+      if (!state.selectedAppId) {
+        const linked = Array.from(state.apps.values()).filter(app => app.hasDependencies).length;
+        const withoutLinks = state.apps.size - linked;
+        refs.infoPanel.innerHTML = `
+          <div class="panel-title"><span>Overview</span><span>${escapeHtml(state.datasetName)}</span></div>
+          <div class="metric-row">
+            <span class="metric">${state.apps.size} environments</span>
+            <span class="metric">${state.dependencies.length} links</span>
+            <span class="metric">${linked} with links</span>
+            <span class="metric">${withoutLinks} without links</span>
+          </div>
+          <p>Click an environment bubble to inspect source and target links. Click BU clusters to collapse or expand them.</p>
+        `;
+        return;
+      }
+
+      const app = state.apps.get(state.selectedAppId);
+      if (!app) return;
+      const upstream = uniqueKeys(app.upstream).map(key => state.apps.get(key)).filter(Boolean);
+      const downstream = uniqueKeys(app.downstream).map(key => state.apps.get(key)).filter(Boolean);
+      const categoryColor = state.categoryColors.get(app.category) || "#38bdf8";
+      const typeColor = state.hostingColors.get(app.environmentType) || "#38bdf8";
+      const hostingTags = app.hosting.map(item => {
+        const color = state.hostingColors.get(item) || "#94a3b8";
+        return `<span class="tag"><span class="swatch" style="background:${color}"></span>${escapeHtml(item)}</span>`;
+      }).join("");
+      const noDeps = !upstream.length && !downstream.length ? `<span class="badge">No dependencies</span>` : "";
+
+      refs.infoPanel.innerHTML = `
+        <div class="panel-title">
+          <span>Selected Environment</span>
+          <button id="panelClearFocus" type="button">&#8617; Clear</button>
+        </div>
+        <h2 style="color:${typeColor}">${escapeHtml(app.label)}</h2>
+        <p>${escapeHtml(app.description)}</p>
+        <div class="tag-row">
+          <span class="tag"><span class="swatch" style="background:${categoryColor}"></span>BU: ${escapeHtml(app.category)}</span>
+          ${hostingTags || `<span class="tag">No environment type</span>`}
+          ${noDeps}
+        </div>
+        <div class="metric-row">
+          <span class="metric">${upstream.length} upstream</span>
+          <span class="metric">${downstream.length} downstream</span>
+          <span class="metric">${app.connectionCount || 0} connected envs</span>
+          <span class="metric">${app.sourceRows || 0} source rows</span>
+          <span class="metric">${app.targetRows || 0} target rows</span>
+          <span class="metric">${app.hasDependencies ? "Has links" : "No links"}</span>
+        </div>
+        <div class="dep-list">
+          <h3>Upstream</h3>
+          <ul>${dependencyList(upstream)}</ul>
+          <h3>Downstream</h3>
+          <ul>${dependencyList(downstream)}</ul>
+        </div>
+      `;
+      const clear = document.getElementById("panelClearFocus");
+      if (clear) clear.addEventListener("click", clearFocus);
+    }
+
+    function uniqueKeys(items) {
+      return Array.from(new Set(items));
+    }
+
+    function dependencyList(items) {
+      if (!items.length) return `<li>None</li>`;
+      return items
+        .sort((a, b) => a.label.localeCompare(b.label))
+        .map(app => `<li title="${escapeHtml(app.label)}">${escapeHtml(app.label)} <span style="color:${state.categoryColors.get(app.category)}">${escapeHtml(app.category)}</span></li>`)
+        .join("");
+    }
+
+    function updateVisualStyles() {
+      const focusKey = state.selectedAppId;
+      const focusedNeighbours = new Set();
+      if (focusKey) {
+        const app = state.apps.get(focusKey);
+        if (app) {
+          uniqueKeys([...app.upstream, ...app.downstream]).forEach(key => focusedNeighbours.add(key));
+        }
+      }
+
+      state.elements.nodes.forEach((elements, key) => {
+        const app = state.apps.get(key);
+        if (!app) return;
+        const passes = appPassesFilters(app);
+        const textMatch = appMatchesTextOnly(app);
+        const isFocused = key === focusKey;
+        const isNeighbour = focusedNeighbours.has(key);
+        elements.group.classList.toggle("filtered", !passes && !state.focusActive);
+        elements.group.classList.toggle("search-match", textMatch && passes);
+        elements.group.classList.toggle("focused", isFocused);
+        elements.group.classList.toggle("connected", state.focusActive && isNeighbour);
+        elements.group.classList.toggle("dimmed", state.focusActive && !isFocused && !isNeighbour);
+      });
+
+      state.elements.clusters.forEach((elements, key) => {
+        const cluster = state.visualNodeMap.get(key) || Array.from(state.clusters.values()).find(item => item.key === key);
+        if (!cluster) return;
+        const passes = clusterPassesFilters(cluster);
+        const textMatch = cluster.apps.some(appKey => {
+          const app = state.apps.get(appKey);
+          return app && appMatchesTextOnly(app);
+        }) || (state.filters.query && cluster.category.toLowerCase().includes(state.filters.query));
+        elements.group.classList.toggle("collapsed", state.collapsedCategories.has(cluster.category));
+        elements.group.classList.toggle("filtered", !passes && !state.focusActive);
+        elements.group.classList.toggle("search-match", Boolean(textMatch && passes));
+        elements.group.classList.toggle("dimmed", state.focusActive);
+      });
+
+      state.visualEdges.forEach(edge => {
+        const elements = state.elements.edges.get(edge.key);
+        if (!elements) return;
+        const nodes = [state.visualNodeMap.get(edge.a), state.visualNodeMap.get(edge.b)];
+        const appsInEdge = edge.deps.flatMap(dep => [normaliseKey(dep.source), normaliseKey(dep.target)]);
+        const touchesFocus = focusKey && appsInEdge.includes(focusKey);
+        const passesFilter = nodes.every(nodePassesVisualFilters);
+        const hidden = (state.focusActive && !touchesFocus) || !passesFilter;
+        [elements.main, elements.back].forEach(path => {
+          path.classList.toggle("hidden-edge", hidden);
+          path.classList.toggle("focus-edge", Boolean(touchesFocus));
+        });
+        elements.label.classList.toggle("hidden", hidden || edge.count <= 1);
+      });
+    }
+
+    function nodePassesVisualFilters(node) {
+      if (!node) return false;
+      if (node.kind === "cluster") return clusterPassesFilters(node);
+      return appPassesFilters(node);
+    }
+
+    function nodeBU(node) {
+      return node && node.category ? node.category : "";
+    }
+
+    function isExpandedClusterMember(a, b) {
+      const cluster = a.kind === "cluster" ? a : b.kind === "cluster" ? b : null;
+      const app = a.kind === "cluster" ? b : b.kind === "cluster" ? a : null;
+      return Boolean(cluster && app && app.kind !== "cluster" && !state.collapsedCategories.has(cluster.category) && cluster.apps.includes(app.key));
+    }
+
+    function pairTargetDistance(a, b) {
+      const bothClusters = a.kind === "cluster" && b.kind === "cluster";
+      const eitherCluster = a.kind === "cluster" || b.kind === "cluster";
+      if (bothClusters) return (a.bubbleRadius || a.radius) + (b.bubbleRadius || b.radius) + 34;
+      if (eitherCluster) {
+        const cluster = a.kind === "cluster" ? a : b;
+        const other = a.kind === "cluster" ? b : a;
+        return (cluster.bubbleRadius || cluster.radius) + other.radius + 30;
+      }
+      return a.radius + b.radius + (nodeBU(a) === nodeBU(b) ? 48 : 82);
+    }
+
+    function connectionTargetDistance(a, b) {
+      if (!a || !b) return 170;
+      if (a.kind === "cluster" || b.kind === "cluster") return 210;
+      return nodeBU(a) === nodeBU(b) ? 150 : 260;
+    }
+
+    function connectionForceStrength(a, b) {
+      if (!a || !b) return 0.0026;
+      if (a.kind === "cluster" || b.kind === "cluster") return 0.0024;
+      return nodeBU(a) === nodeBU(b) ? 0.0034 : 0.0018;
+    }
+
+    function tickPhysics() {
+      resizeCanvas();
+      updateClusterAnchors();
+      const nodes = state.visualNodes;
+      const activeNodes = nodes;
+      const standaloneNodes = activeNodes.filter(node => node.zone === "standalone");
+
+      for (let i = 0; i < activeNodes.length; i += 1) {
+        const a = activeNodes[i];
+        for (let j = i + 1; j < activeNodes.length; j += 1) {
+          const b = activeNodes[j];
+          if (isExpandedClusterMember(a, b)) continue;
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const distSq = Math.max(160, dx * dx + dy * dy);
+          const dist = Math.sqrt(distSq);
+          const minDist = pairTargetDistance(a, b);
+          const strength = (minDist * minDist) / distSq * (a.kind === "cluster" && b.kind === "cluster" ? 0.034 : 0.022);
+          const fx = (dx / dist) * strength;
+          const fy = (dy / dist) * strength;
+          if (!a.pinned) {
+            a.vx -= fx;
+            a.vy -= fy;
+          }
+          if (!b.pinned) {
+            b.vx += fx;
+            b.vy += fy;
+          }
+        }
+      }
+
+      state.visualEdges.forEach(edge => {
+        const a = state.visualNodeMap.get(edge.a);
+        const b = state.visualNodeMap.get(edge.b);
+        if (!a || !b) return;
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const dist = Math.max(1, Math.hypot(dx, dy));
+        const target = connectionTargetDistance(a, b);
+        const force = (dist - target) * connectionForceStrength(a, b);
+        const fx = (dx / dist) * force;
+        const fy = (dy / dist) * force;
+        if (!a.pinned) {
+          a.vx += fx;
+          a.vy += fy;
+        }
+        if (!b.pinned) {
+          b.vx -= fx;
+          b.vy -= fy;
+        }
+      });
+
+      state.clusters.forEach((cluster, category) => {
+        if (!cluster.pinned) {
+          cluster.vx += (cluster.anchorX - cluster.x) * 0.012;
+          cluster.vy += (cluster.anchorY - cluster.y) * 0.012;
+        }
+        if (state.collapsedCategories.has(category)) return;
+        const apps = orderedClusterApps(cluster).filter(app => state.visualNodeMap.has(app.key));
+        if (!apps.length) return;
+        apps.forEach((app, index) => {
+          if (app.pinned) return;
+          const slot = clusterSlotPosition(cluster, index, apps.length);
+          app.vx += (slot.x - app.x) * 0.014;
+          app.vy += (slot.y - app.y) * 0.014;
+          const dx = app.x - cluster.x;
+          const dy = app.y - cluster.y;
+          const dist = Math.max(1, Math.hypot(dx, dy));
+          const limit = Math.max(44, cluster.bubbleRadius - app.radius - 20);
+          if (dist > limit) {
+            const pull = (dist - limit) * 0.032;
+            app.vx -= (dx / dist) * pull;
+            app.vy -= (dy / dist) * pull;
+          }
+        });
+      });
+
+      standaloneNodes.forEach((node, index) => {
+        if (node.pinned) return;
+        const cols = Math.max(1, Math.floor((state.width - state.boundary - 72) / 118));
+        const col = index % cols;
+        const row = Math.floor(index / cols);
+        const gx = state.boundary + 72 + col * 118;
+        const gy = 150 + row * 104;
+        node.vx += (gx - node.x) * 0.008;
+        node.vy += (gy - node.y) * 0.008;
+      });
+
+      activeNodes.forEach(node => {
+        if (state.drag && state.drag.node === node) return;
+        if (node.pinned) {
+          node.vx = 0;
+          node.vy = 0;
+          if (node.kind !== "cluster") clampEnvironmentToBusinessUnit(node);
+          const beforeX = node.x;
+          const beforeY = node.y;
+          enforceBounds(node);
+          if (node.kind === "cluster") {
+            moveClusterMembers(node, node.x - beforeX, node.y - beforeY);
+          } else {
+            clampEnvironmentToBusinessUnit(node);
+          }
+          node.pinX = node.x;
+          node.pinY = node.y;
+          if (node.kind === "cluster") {
+            node.anchorX = node.x;
+            node.anchorY = node.y;
+          }
+          return;
+        }
+        if (node.connected && node.kind !== "cluster" && !state.clusters.has(node.category)) {
+          node.vx += (state.boundary * 0.46 - node.x) * 0.0005;
+          node.vy += (state.height * 0.52 - node.y) * 0.0005;
+        }
+        node.vx *= 0.86;
+        node.vy *= 0.86;
+        const moveStartX = node.x;
+        const moveStartY = node.y;
+        node.x += node.vx;
+        node.y += node.vy;
+        if (node.kind === "cluster") {
+          moveClusterMembers(node, node.x - moveStartX, node.y - moveStartY);
+        }
+        if (node.kind !== "cluster") clampEnvironmentToBusinessUnit(node);
+        const beforeX = node.x;
+        const beforeY = node.y;
+        enforceBounds(node);
+        if (node.kind === "cluster") {
+          moveClusterMembers(node, node.x - beforeX, node.y - beforeY);
+        } else {
+          clampEnvironmentToBusinessUnit(node);
+        }
+      });
+    }
+
+    function enforceBounds(node) {
+      const expandedCluster = node.kind === "cluster" && !state.collapsedCategories.has(node.category);
+      const margin = (expandedCluster ? Math.min(node.bubbleRadius || node.radius, 150) : node.radius) + 16;
+      const minY = 90 + margin;
+      const maxY = state.height - margin;
+      let minX = margin;
+      let maxX = state.boundary - margin;
+      if (node.zone === "standalone") {
+        minX = state.boundary + margin;
+        maxX = state.width - margin;
+      }
+      const allowCrossBoundarySnap = node.snapBackUntil && performance.now() < node.snapBackUntil;
+      const leftWrongZone = node.zone === "standalone" && node.x < minX;
+      const rightWrongZone = node.zone === "connected" && node.x > maxX;
+      if (node.x < minX && !(allowCrossBoundarySnap && leftWrongZone)) {
+        node.x = minX;
+        node.vx = Math.abs(node.vx) * 0.32;
+      }
+      if (node.x > maxX && !(allowCrossBoundarySnap && rightWrongZone)) {
+        node.x = maxX;
+        node.vx = -Math.abs(node.vx) * 0.32;
+      }
+      if (node.y < minY) {
+        node.y = minY;
+        node.vy = Math.abs(node.vy) * 0.32;
+      }
+      if (node.y > maxY) {
+        node.y = maxY;
+        node.vy = -Math.abs(node.vy) * 0.32;
+      }
+    }
+
+    function updateSvgPositions() {
+      state.elements.nodes.forEach((elements, key) => {
+        const node = state.apps.get(key);
+        if (!node) return;
+        elements.group.setAttribute("transform", `translate(${node.x},${node.y})`);
+      });
+
+      state.elements.clusters.forEach((elements, key) => {
+        const node = Array.from(state.clusters.values()).find(cluster => cluster.key === key);
+        if (!node) return;
+        const collapsed = state.collapsedCategories.has(node.category);
+        const displayRadius = collapsed ? Math.max(node.radius + 18, (node.bubbleRadius || node.radius) * 0.42) : (node.bubbleRadius || node.radius);
+        elements.group.setAttribute("transform", `translate(${node.x},${node.y})`);
+        elements.pulse.setAttribute("r", displayRadius + 8);
+        elements.ring.setAttribute("r", displayRadius);
+        elements.title.setAttribute("y", collapsed ? -4 : -displayRadius + 26);
+        elements.count.setAttribute("y", collapsed ? 13 : -displayRadius + 43);
+        elements.handle.setAttribute("cx", Math.cos(Math.PI / 4) * displayRadius);
+        elements.handle.setAttribute("cy", Math.sin(Math.PI / 4) * displayRadius);
+        elements.handle.classList.toggle("hidden", collapsed);
+      });
+
+      state.visualEdges.forEach(edge => {
+        const elements = state.elements.edges.get(edge.key);
+        const a = state.visualNodeMap.get(edge.a);
+        const b = state.visualNodeMap.get(edge.b);
+        if (!elements || !a || !b) return;
+        const fromNode = state.visualNodeMap.get(edge.from);
+        const toNode = state.visualNodeMap.get(edge.to);
+        const start = edge.both ? fromNode : fromNode;
+        const end = edge.both ? toNode : toNode;
+        elements.main.setAttribute("d", pathBetween(start, end, 1));
+        if (edge.both) {
+          elements.back.setAttribute("d", pathBetween(end, start, -1));
+          elements.back.classList.remove("hidden");
+        } else {
+          elements.back.setAttribute("d", "");
+          elements.back.classList.add("hidden");
+        }
+        const mid = edgeMidpoint(start, end, 1);
+        elements.label.setAttribute("x", mid.x);
+        elements.label.setAttribute("y", mid.y - 5);
+      });
+    }
+
+    function pathBetween(source, target, bendSign) {
+      if (!source || !target) return "";
+      const dx = target.x - source.x;
+      const dy = target.y - source.y;
+      const dist = Math.max(1, Math.hypot(dx, dy));
+      const sx = source.x + (dx / dist) * (source.radius + 3);
+      const sy = source.y + (dy / dist) * (source.radius + 3);
+      const tx = target.x - (dx / dist) * (target.radius + 8);
+      const ty = target.y - (dy / dist) * (target.radius + 8);
+      const bend = Math.min(110, dist * 0.18) * bendSign;
+      const mx = (sx + tx) / 2;
+      const my = (sy + ty) / 2;
+      const nx = -dy / dist;
+      const ny = dx / dist;
+      return `M ${sx.toFixed(2)} ${sy.toFixed(2)} Q ${(mx + nx * bend).toFixed(2)} ${(my + ny * bend).toFixed(2)} ${tx.toFixed(2)} ${ty.toFixed(2)}`;
+    }
+
+    function edgeMidpoint(source, target, bendSign) {
+      const dx = target.x - source.x;
+      const dy = target.y - source.y;
+      const dist = Math.max(1, Math.hypot(dx, dy));
+      const bend = Math.min(110, dist * 0.18) * bendSign;
+      const mx = (source.x + target.x) / 2;
+      const my = (source.y + target.y) / 2;
+      return {
+        x: mx + (-dy / dist) * bend * 0.5,
+        y: my + (dx / dist) * bend * 0.5
+      };
+    }
+
+    function frame() {
+      tickPhysics();
+      updateSvgPositions();
+      updateVisualStyles();
+      requestAnimationFrame(frame);
+    }
+
+    function rowSourceEnvironment(row) {
+      return normaliseId(valueFromAny(row, ["source environment", "source env", "source"]));
+    }
+
+    function rowTargetEnvironment(row) {
+      return normaliseId(valueFromAny(row, ["target environment", "target enviornment", "target env"]));
+    }
+
+    function rowDirection(row) {
+      return directionValue(valueFromAny(row, ["direction", "flow", "dependency direction"]));
+    }
+
+    function appOptions(apps, selectedId = "") {
+      return apps.map(app => {
+        const selected = normaliseKey(app.id) === normaliseKey(selectedId) ? " selected" : "";
+        return `<option value="${escapeHtml(app.id)}"${selected}>${escapeHtml(app.label)}</option>`;
+      }).join("");
+    }
+
+    function directionOptions(selectedDirection) {
+      return ["downstream", "upstream", "both"].map(direction => {
+        const selected = direction === directionValue(selectedDirection) ? " selected" : "";
+        return `<option value="${direction}"${selected}>${direction}</option>`;
+      }).join("");
+    }
+
+    function renderDataEditor() {
+      const parsed = parseEnvironmentLinks(state.sourceRows);
+      const counts = new Map();
+      parsed.applications.forEach(app => counts.set(normaliseKey(app.id), { in: new Set(), out: new Set() }));
+      parsed.dependencies.forEach(dep => {
+        const sourceKey = normaliseKey(dep.source);
+        const targetKey = normaliseKey(dep.target);
+        if (!counts.has(sourceKey) || !counts.has(targetKey)) return;
+        if (dep.direction === "upstream") {
+          counts.get(sourceKey).in.add(targetKey);
+          counts.get(targetKey).out.add(sourceKey);
+        } else if (dep.direction === "both") {
+          counts.get(sourceKey).in.add(targetKey);
+          counts.get(sourceKey).out.add(targetKey);
+          counts.get(targetKey).in.add(sourceKey);
+          counts.get(targetKey).out.add(sourceKey);
+        } else {
+          counts.get(sourceKey).out.add(targetKey);
+          counts.get(targetKey).in.add(sourceKey);
+        }
+      });
+      parsed.applications.forEach(app => {
+        const count = counts.get(normaliseKey(app.id)) || { in: new Set(), out: new Set() };
+        app.inCount = count.in.size;
+        app.outCount = count.out.size;
+      });
+      const apps = parsed.applications.sort((a, b) => a.category.localeCompare(b.category) || a.label.localeCompare(b.label));
+      const connections = state.sourceRows
+        .map((row, index) => ({ row, index, source: rowSourceEnvironment(row), target: rowTargetEnvironment(row) }))
+        .filter(item => item.source && item.target);
+      const buValues = Array.from(new Set(apps.map(app => app.category))).sort((a, b) => a.localeCompare(b));
+      const typeValues = Array.from(new Set(apps.map(app => app.environmentType))).sort((a, b) => a.localeCompare(b));
+      const appSelectOptions = appOptions(apps);
+
+      refs.editorSummary.textContent = `${apps.length} environments, ${connections.length} connections. Apply changes to redraw the diagram.`;
+      refs.editorContent.innerHTML = `
+        <div class="editor-grid">
+          <section class="editor-card">
+            <h3>Add Environment</h3>
+            <div class="editor-form">
+              <div class="editor-field">
+                <label for="newEnvName">Environment</label>
+                <input id="newEnvName" type="text" placeholder="dbw-example-dev-euw">
+              </div>
+              <div class="editor-field">
+                <label for="newEnvBU">BU</label>
+                <input id="newEnvBU" type="text" list="editorBUList" placeholder="Business unit">
+              </div>
+              <div class="editor-field">
+                <label for="newEnvType">Type</label>
+                <input id="newEnvType" type="text" list="editorTypeList" placeholder="Dev, Test, Prod">
+              </div>
+              <button type="button" data-action="add-env">Add</button>
+            </div>
+          </section>
+          <section class="editor-card">
+            <h3>Add Connection</h3>
+            <div class="editor-form connection">
+              <div class="editor-field">
+                <label for="newConnSource">Source</label>
+                <select id="newConnSource">${appSelectOptions}</select>
+              </div>
+              <div class="editor-field">
+                <label for="newConnTarget">Target</label>
+                <select id="newConnTarget">${appSelectOptions}</select>
+              </div>
+              <div class="editor-field">
+                <label for="newConnDirection">Direction</label>
+                <select id="newConnDirection">${directionOptions("downstream")}</select>
+              </div>
+              <div class="editor-field">
+                <label for="newConnTargetName">Target Name</label>
+                <input id="newConnTargetName" type="text" placeholder="Optional external location">
+              </div>
+              <button type="button" data-action="add-conn">Add</button>
+            </div>
+          </section>
+        </div>
+
+        <datalist id="editorBUList">${buValues.map(value => `<option value="${escapeHtml(value)}"></option>`).join("")}</datalist>
+        <datalist id="editorTypeList">${typeValues.map(value => `<option value="${escapeHtml(value)}"></option>`).join("")}</datalist>
+
+        <div class="editor-table-title">Environments</div>
+        <div class="editor-table-wrap">
+          <table class="editor-table">
+            <thead>
+              <tr>
+                <th>Environment</th>
+                <th>BU</th>
+                <th>Type</th>
+                <th>In</th>
+                <th>Out</th>
+                <th>Rows</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${apps.map(app => `
+                <tr>
+                  <td title="${escapeHtml(app.label)}">${escapeHtml(truncate(app.label, 42))}</td>
+                  <td><input data-action="env-bu" data-env="${escapeHtml(app.id)}" value="${escapeHtml(app.category)}" list="editorBUList"></td>
+                  <td><input data-action="env-type" data-env="${escapeHtml(app.id)}" value="${escapeHtml(app.environmentType)}" list="editorTypeList"></td>
+                  <td>${app.inCount || 0}</td>
+                  <td>${app.outCount || 0}</td>
+                  <td>${(app.sourceRows || 0) + (app.targetRows || 0)}</td>
+                  <td><button type="button" class="danger-button" data-action="delete-env" data-env="${escapeHtml(app.id)}">Remove</button></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="editor-table-title">Connections</div>
+        <div class="editor-table-wrap">
+          <table class="editor-table">
+            <thead>
+              <tr>
+                <th>Source</th>
+                <th>Target</th>
+                <th>Direction</th>
+                <th>Target Name</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${connections.map(item => `
+                <tr>
+                  <td><select data-action="conn-source" data-index="${item.index}">${appOptions(apps, item.source)}</select></td>
+                  <td><select data-action="conn-target" data-index="${item.index}">${appOptions(apps, item.target)}</select></td>
+                  <td><select data-action="conn-direction" data-index="${item.index}">${directionOptions(rowDirection(item.row))}</select></td>
+                  <td><input data-action="conn-target-name" data-index="${item.index}" value="${escapeHtml(valueFromAny(item.row, ["target", "target name", "target object"]))}"></td>
+                  <td><button type="button" class="danger-button" data-action="delete-conn" data-index="${item.index}">Remove</button></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function appByIdFromRows(id) {
+      const parsed = parseEnvironmentLinks(state.sourceRows);
+      return parsed.applications.find(app => normaliseKey(app.id) === normaliseKey(id));
+    }
+
+    function updateEnvironmentMetadata(environmentId, field, value) {
+      state.sourceRows.forEach(row => {
+        if (normaliseKey(rowSourceEnvironment(row)) === normaliseKey(environmentId)) {
+          if (field === "bu") row["Source Environment BU"] = value;
+          if (field === "type") row["Source Environment Type"] = value;
+        }
+        if (normaliseKey(rowTargetEnvironment(row)) === normaliseKey(environmentId)) {
+          if (field === "bu") row["Target Environment BU"] = value;
+          if (field === "type") row["Target Environment Type"] = value;
+        }
+      });
+    }
+
+    function updateConnectionEndpoint(row, field, environmentId) {
+      const app = appByIdFromRows(environmentId);
+      if (field === "source") {
+        row["Source Environment"] = environmentId;
+        row["Source Environment BU"] = app ? app.category : row["Source Environment BU"] || "";
+        row["Source Environment Type"] = app ? app.environmentType : row["Source Environment Type"] || "";
+      } else {
+        row["Target Environment"] = environmentId;
+        row["Target Environment BU"] = app ? app.category : row["Target Environment BU"] || "";
+        row["Target Environment Type"] = app ? app.environmentType : row["Target Environment Type"] || "";
+      }
+    }
+
+    function addEnvironmentFromEditor() {
+      const name = normaliseId(document.getElementById("newEnvName").value);
+      const bu = normaliseId(document.getElementById("newEnvBU").value) || "Unassigned BU";
+      const type = normaliseId(document.getElementById("newEnvType").value) || "Unknown";
+      if (!name) return;
+      const exists = parseEnvironmentLinks(state.sourceRows).applications.some(app => normaliseKey(app.id) === normaliseKey(name));
+      if (exists) {
+        updateEnvironmentMetadata(name, "bu", bu);
+        updateEnvironmentMetadata(name, "type", type);
+      } else {
+        state.sourceRows.push({
+          "Source Environment BU": bu,
+          "Source Environment": name,
+          "Source Environment Type": type,
+          "Target": "",
+          "Target Environment": "",
+          "Target Environment Type": "",
+          "Target Environment BU": "",
+          "Direction": ""
+        });
+      }
+      renderDataEditor();
+    }
+
+    function addConnectionFromEditor() {
+      const source = normaliseId(document.getElementById("newConnSource").value);
+      const target = normaliseId(document.getElementById("newConnTarget").value);
+      const direction = directionValue(document.getElementById("newConnDirection").value);
+      const targetName = normaliseId(document.getElementById("newConnTargetName").value);
+      if (!source || !target || normaliseKey(source) === normaliseKey(target)) return;
+      const sourceApp = appByIdFromRows(source);
+      const targetApp = appByIdFromRows(target);
+      state.sourceRows.push({
+        "Source Environment BU": sourceApp ? sourceApp.category : "Unassigned BU",
+        "Source Environment": source,
+        "Source Environment Type": sourceApp ? sourceApp.environmentType : "Unknown",
+        "Target": targetName,
+        "Target Environment": target,
+        "Target Environment Type": targetApp ? targetApp.environmentType : "Unknown",
+        "Target Environment BU": targetApp ? targetApp.category : "",
+        "Direction": direction
+      });
+      renderDataEditor();
+    }
+
+    function handleEditorChange(event) {
+      const action = event.target.dataset.action;
+      if (!action) return;
+      const value = normaliseId(event.target.value);
+      if (action === "env-bu") updateEnvironmentMetadata(event.target.dataset.env, "bu", value || "Unassigned BU");
+      if (action === "env-type") updateEnvironmentMetadata(event.target.dataset.env, "type", value || "Unknown");
+      if (action === "conn-source") updateConnectionEndpoint(state.sourceRows[Number(event.target.dataset.index)], "source", value);
+      if (action === "conn-target") updateConnectionEndpoint(state.sourceRows[Number(event.target.dataset.index)], "target", value);
+      if (action === "conn-direction") state.sourceRows[Number(event.target.dataset.index)]["Direction"] = directionValue(value);
+      if (action === "conn-target-name") state.sourceRows[Number(event.target.dataset.index)]["Target"] = value;
+      refs.editorSummary.textContent = "Data edits pending. Apply changes to redraw the diagram.";
+    }
+
+    function handleEditorClick(event) {
+      const action = event.target.dataset.action;
+      if (!action) return;
+      if (action === "add-env") addEnvironmentFromEditor();
+      if (action === "add-conn") addConnectionFromEditor();
+      if (action === "delete-env") {
+        const envId = event.target.dataset.env;
+        state.sourceRows = state.sourceRows.filter(row =>
+          normaliseKey(rowSourceEnvironment(row)) !== normaliseKey(envId) &&
+          normaliseKey(rowTargetEnvironment(row)) !== normaliseKey(envId)
+        );
+        renderDataEditor();
+      }
+      if (action === "delete-conn") {
+        state.sourceRows.splice(Number(event.target.dataset.index), 1);
+        renderDataEditor();
+      }
+    }
+
+    function openDataEditor() {
+      refs.dataEditor.classList.remove("hidden");
+      renderDataEditor();
+    }
+
+    function closeDataEditor() {
+      refs.dataEditor.classList.add("hidden");
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 500);
+    }
+
+    function stringToBytes(binary) {
+      const bytes = new Uint8Array(binary.length);
+      for (let index = 0; index < binary.length; index += 1) {
+        bytes[index] = binary.charCodeAt(index) & 255;
+      }
+      return bytes;
+    }
+
+    function pdfFromJpeg(jpegDataUrl, imageWidth, imageHeight) {
+      const binary = atob(jpegDataUrl.split(",")[1]);
+      const landscape = imageWidth >= imageHeight;
+      const pageWidth = landscape ? 842 : 595;
+      const pageHeight = landscape ? 595 : 842;
+      const margin = 24;
+      const scale = Math.min((pageWidth - margin * 2) / imageWidth, (pageHeight - margin * 2) / imageHeight);
+      const drawWidth = imageWidth * scale;
+      const drawHeight = imageHeight * scale;
+      const x = (pageWidth - drawWidth) / 2;
+      const y = (pageHeight - drawHeight) / 2;
+      const content = `q\n${drawWidth.toFixed(2)} 0 0 ${drawHeight.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)} cm\n/Im0 Do\nQ\n`;
+      const objects = [
+        "<< /Type /Catalog /Pages 2 0 R >>",
+        "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`,
+        `<< /Type /XObject /Subtype /Image /Width ${imageWidth} /Height ${imageHeight} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${binary.length} >>\nstream\n${binary}\nendstream`,
+        `<< /Length ${content.length} >>\nstream\n${content}endstream`
+      ];
+      let pdf = "%PDF-1.4\n";
+      const offsets = [0];
+      objects.forEach((object, index) => {
+        offsets.push(pdf.length);
+        pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+      });
+      const xref = pdf.length;
+      pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+      offsets.slice(1).forEach(offset => {
+        pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
+      });
+      pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+      return new Blob([stringToBytes(pdf)], { type: "application/pdf" });
+    }
+
+    function exportDiagramPdf() {
+      const width = Math.round(refs.svg.clientWidth || state.width);
+      const height = Math.round(refs.svg.clientHeight || state.height);
+      const clone = refs.svg.cloneNode(true);
+      clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+      clone.setAttribute("width", width);
+      clone.setAttribute("height", height);
+      clone.setAttribute("viewBox", `0 0 ${width} ${height}`);
+      const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+      style.textContent = document.querySelector("style").textContent;
+      clone.insertBefore(style, clone.firstChild);
+      const background = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      background.setAttribute("x", "0");
+      background.setAttribute("y", "0");
+      background.setAttribute("width", width);
+      background.setAttribute("height", height);
+      background.setAttribute("fill", "#020817");
+      clone.insertBefore(background, clone.querySelector("g"));
+      const svgText = new XMLSerializer().serializeToString(clone);
+      const blob = new Blob([svgText], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const image = new Image();
+      image.onload = () => {
+        const scale = Math.min(2, 2400 / Math.max(width, height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(width * scale));
+        canvas.height = Math.max(1, Math.round(height * scale));
+        const context = canvas.getContext("2d");
+        context.fillStyle = "#020817";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        const pdf = pdfFromJpeg(canvas.toDataURL("image/jpeg", 0.92), canvas.width, canvas.height);
+        downloadBlob(pdf, "environment-dependency-diagram.pdf");
+        setStatus("PDF diagram exported.");
+      };
+      image.onerror = () => {
+        URL.revokeObjectURL(url);
+        setStatus("Could not export PDF diagram from the current browser view.");
+      };
+      image.src = url;
+    }
+
+
+    function loadStoredRows() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        const rows = JSON.parse(raw);
+        return Array.isArray(rows) ? rows : null;
+      } catch (error) {
+        console.warn("Could not load saved rows", error);
+        return null;
+      }
+    }
+
+    function normaliseSourceConsumerRole(value) {
+      const text = String(value || "Source").toLowerCase();
+      if (text.includes("consumer") && text.includes("source")) return "Source / Consumer";
+      if (text.includes("consumer")) return "Consumer";
+      return "Source";
+    }
+
+    function environmentLabelForTrackerRow(row, workspace) {
+      const environment = (workspace.environments || []).find(item => item.environment_id === row.environment_id);
+      const workspaceRow = (workspace.workspaces || []).find(item => item.workspace_id === row.workspace_id);
+      return environment?.name || workspaceRow?.environment_type || workspaceRow?.workspace_name || row.environment_id || row.workspace_id || "BU-wide / unassigned";
+    }
+
+    function environmentTypeForTrackerRow(row, workspace) {
+      const environment = (workspace.environments || []).find(item => item.environment_id === row.environment_id);
+      const workspaceRow = (workspace.workspaces || []).find(item => item.workspace_id === row.workspace_id);
+      return environment?.environment_type || workspaceRow?.environment_type || workspaceRow?.workspace_name || "BU environment";
+    }
+
+    function trackerRowsToEnvironmentLinks(rows, workspace, businessUnit) {
+      return rows.flatMap(row => {
+        const rowBusinessUnit = businessUnit || (workspace.business_units || []).find(item => item.business_unit_id === row.business_unit_id);
+        const buName = rowBusinessUnit?.bu_name || rowBusinessUnit?.name || row.business_unit_id || "Business unit";
+        const systemName = normaliseId(row.system_name);
+        if (!systemName) return [];
+        const environmentName = normaliseId(environmentLabelForTrackerRow(row, workspace));
+        const environmentType = environmentTypeForTrackerRow(row, workspace);
+        const systemType = row.hosting || "External system";
+        const targetName = row.data_dataset || row.comment || row.notes || row.direction || row.role || "";
+        const sourceLink = {
+          "Source Environment BU": row.hosting || "External sources",
+          "Source Environment": systemName,
+          "Source Environment Type": systemType,
+          "Target": targetName,
+          "Target Environment": environmentName,
+          "Target Environment Type": environmentType,
+          "Target Environment BU": buName,
+          "Direction": "downstream"
+        };
+        const consumerLink = {
+          "Source Environment BU": buName,
+          "Source Environment": environmentName,
+          "Source Environment Type": environmentType,
+          "Target": targetName,
+          "Target Environment": systemName,
+          "Target Environment Type": systemType,
+          "Target Environment BU": row.hosting || "External consumers",
+          "Direction": "downstream"
+        };
+        const role = normaliseSourceConsumerRole(row.role);
+        if (role === "Source / Consumer") return [{ ...sourceLink, Direction: "both" }];
+        return role === "Consumer" ? [consumerLink] : [sourceLink];
+      });
+    }
+
+    function normaliseExternalConnectionDirection(value) {
+      const text = String(value || "").toLowerCase();
+      if (text.includes("inbound") && text.includes("outbound")) return "both";
+      if (text.includes("outbound")) return "outbound";
+      if (text.includes("inbound")) return "inbound";
+      return "both";
+    }
+
+    function externalRowsToEnvironmentLinks(rows, workspace) {
+      const environmentMatchIndex = buildExternalEnvironmentMatchIndex(workspace);
+      return rows.flatMap(row => {
+        const connectionName = normaliseId(row.connection_name || "External connection");
+        const environmentName = normaliseId(environmentLabelForTrackerRow(row, workspace));
+        if (!connectionName || !environmentName) return [];
+        const businessUnit = (workspace.business_units || []).find(item => item.business_unit_id === row.business_unit_id);
+        const buName = businessUnit?.bu_name || businessUnit?.name || row.business_unit_id || "Business unit";
+        const environmentType = environmentTypeForTrackerRow(row, workspace);
+        const connectionType = row.connection_type || "External connection";
+        const targetName = row.evidence_text || row.source_document_type || row.validation_status || row.direction || "";
+        const matchedEnvironment = externalEnvironmentMatchForRow(row, environmentMatchIndex);
+        const linkedName = matchedEnvironment?.environmentName || connectionName;
+        const linkedType = matchedEnvironment?.environmentType || connectionType;
+        const linkedBuName = matchedEnvironment?.businessUnitName || connectionType;
+        const inboundLink = {
+          "Source Environment BU": linkedBuName,
+          "Source Environment": linkedName,
+          "Source Environment Type": linkedType,
+          "Target": targetName,
+          "Target Environment": environmentName,
+          "Target Environment Type": environmentType,
+          "Target Environment BU": buName,
+          "Direction": "downstream"
+        };
+        const outboundLink = {
+          "Source Environment BU": buName,
+          "Source Environment": environmentName,
+          "Source Environment Type": environmentType,
+          "Target": targetName,
+          "Target Environment": linkedName,
+          "Target Environment Type": linkedType,
+          "Target Environment BU": linkedBuName,
+          "Direction": "downstream"
+        };
+        const direction = normaliseExternalConnectionDirection(row.direction);
+        if (direction === "both") return [{ ...inboundLink, Direction: "both" }];
+        return direction === "outbound" ? [outboundLink] : [inboundLink];
+      });
+    }
+
+    function buildExternalEnvironmentMatchIndex(workspace) {
+      const index = new Map();
+      const matchesByBusinessUnit = new Map();
+      const businessUnits = workspace.business_units || [];
+      const add = (value, match) => {
+        const key = normaliseKey(value);
+        if (!key || index.has(key)) return;
+        index.set(key, match);
+      };
+      const rememberBusinessUnitMatch = match => {
+        if (!match.businessUnitId) return;
+        if (!matchesByBusinessUnit.has(match.businessUnitId)) matchesByBusinessUnit.set(match.businessUnitId, []);
+        matchesByBusinessUnit.get(match.businessUnitId).push(match);
+      };
+      (workspace.environments || []).forEach(environment => {
+        const businessUnit = businessUnits.find(item => item.business_unit_id === environment.business_unit_id);
+        const match = {
+          businessUnitId: environment.business_unit_id || "",
+          businessUnitName: businessUnit?.bu_name || businessUnit?.name || environment.business_unit_id || "Business unit",
+          environmentName: environment.name || environment.environment_id || "Environment",
+          environmentType: environment.environment_type || "BU environment"
+        };
+        add(environment.name, match);
+        add(environment.environment_id, match);
+        rememberBusinessUnitMatch(match);
+      });
+      (workspace.workspaces || []).forEach(workspaceRow => {
+        const environment = (workspace.environments || []).find(item => item.environment_id === workspaceRow.environment_id);
+        const businessUnit = businessUnits.find(item => item.business_unit_id === (workspaceRow.business_unit_id || environment?.business_unit_id));
+        const match = {
+          businessUnitId: workspaceRow.business_unit_id || environment?.business_unit_id || "",
+          businessUnitName: businessUnit?.bu_name || businessUnit?.name || workspaceRow.business_unit_id || environment?.business_unit_id || "Business unit",
+          environmentName: environment?.name || workspaceRow.environment_type || workspaceRow.workspace_name || workspaceRow.workspace_id || "Environment",
+          environmentType: environment?.environment_type || workspaceRow.environment_type || workspaceRow.workspace_name || "BU environment"
+        };
+        add(workspaceRow.workspace_name, match);
+        add(workspaceRow.workspace_id, match);
+        add(workspaceRow.environment_type, match);
+        add(environment?.name, match);
+        rememberBusinessUnitMatch(match);
+      });
+      matchesByBusinessUnit.forEach((matches, businessUnitId) => {
+        const businessUnit = businessUnits.find(item => item.business_unit_id === businessUnitId);
+        const preferred = matches.find(match => /prod|production/i.test(`${match.environmentName} ${match.environmentType}`)) || matches[0];
+        add(businessUnit?.bu_name || businessUnit?.name, preferred);
+        add(businessUnitId, preferred);
+      });
+      return index;
+    }
+
+    function externalEnvironmentMatchForRow(row, environmentMatchIndex) {
+      const match = environmentMatchIndex.get(normaliseKey(row.connection_name));
+      if (!match || !match.businessUnitId || match.businessUnitId === row.business_unit_id) return null;
+      return match;
+    }
+
+    function applyLaunchTitle(payload) {
+      const title = payload?.businessUnitName ? `${payload.businessUnitName} Dependency Explorer` : "Environment Dependency Visualiser";
+      document.title = title;
+      const heading = document.querySelector(".brand h1");
+      if (heading) heading.textContent = title;
+    }
+
+    function loadLaunchPayload() {
+      const params = new URLSearchParams(window.location.search);
+      const key = params.get("key");
+      if (!key) return null;
+      try {
+        const raw = localStorage.getItem(`${LAUNCH_STORAGE_PREFIX}${key}`);
+        if (!raw) return null;
+        const payload = JSON.parse(raw);
+        if (!Array.isArray(payload?.rows)) return null;
+        return payload;
+      } catch (error) {
+        console.warn("Could not load launched dependency data", error);
+        return null;
+      }
+    }
+
+    async function loadTrackerRowsFromApi() {
+      const params = new URLSearchParams(window.location.search);
+      const businessUnitId = params.get("bu");
+      const source = params.get("source");
+      if (source === "external-location-mapping") return loadExternalLocationRowsFromApi(businessUnitId);
+      if (!["http:", "https:"].includes(window.location.protocol)) return null;
+      try {
+        const response = await fetch("/api/workspace");
+        if (!response.ok) return null;
+        const workspace = await response.json();
+        const businessUnit = businessUnitId ? (workspace.business_units || []).find(row => row.business_unit_id === businessUnitId) : null;
+        const rows = (workspace.source_consumer_systems || []).filter(row => !businessUnitId || row.business_unit_id === businessUnitId);
+        const contextLabel = businessUnit?.bu_name || businessUnit?.name || businessUnitId || "Cross-BU";
+        return {
+          businessUnitId,
+          businessUnitName: contextLabel,
+          datasetName: `${contextLabel} source/consumer tracker`,
+          rows: trackerRowsToEnvironmentLinks(rows, workspace, businessUnit)
+        };
+      } catch (error) {
+        console.warn("Could not load source/consumer tracker data", error);
+        return null;
+      }
+    }
+
+    async function loadExternalLocationRowsFromApi(businessUnitId = "") {
+      if (!["http:", "https:"].includes(window.location.protocol)) return null;
+      try {
+        const response = await fetch("/api/workspace");
+        if (!response.ok) return null;
+        const workspace = await response.json();
+        const businessUnit = businessUnitId ? (workspace.business_units || []).find(row => row.business_unit_id === businessUnitId) : null;
+        const rows = (workspace.external_connection_insights || []).filter(row => !businessUnitId || row.business_unit_id === businessUnitId);
+        const contextLabel = businessUnit?.bu_name || businessUnit?.name || businessUnitId || "Cross-BU";
+        return {
+          businessUnitId,
+          businessUnitName: contextLabel,
+          datasetName: `${contextLabel} external location mapping`,
+          rows: externalRowsToEnvironmentLinks(rows, workspace)
+        };
+      } catch (error) {
+        console.warn("Could not load external location mapping data", error);
+        return null;
+      }
+    }
+
+    async function initialiseData() {
+      const launched = loadLaunchPayload();
+      if (launched) {
+        applyLaunchTitle(launched);
+        loadData(launched.rows, launched.datasetName || "Source/consumer tracker");
+        markRowsClean();
+        return;
+      }
+      const trackerPayload = await loadTrackerRowsFromApi();
+      if (trackerPayload) {
+        applyLaunchTitle(trackerPayload);
+        loadData(trackerPayload.rows, trackerPayload.datasetName || "Source/consumer tracker");
+        markRowsClean();
+        return;
+      }
+      const storedRows = loadStoredRows();
+      loadData(storedRows || sampleEnvironmentLinks, storedRows ? "Saved changes" : "Sample data");
+      markRowsClean();
+    }
+
+    function persistRowsToBrowser() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.sourceRows));
+        return true;
+      } catch (error) {
+        console.warn("Could not save rows", error);
+        setStatus("Could not save changes in browser storage.");
+        return false;
+      }
+    }
+
+    function buildUpdatedHtmlText() {
+      const clone = document.documentElement.cloneNode(true);
+      clone.querySelectorAll("marker[data-generated-marker='true']").forEach(marker => marker.remove());
+      const editor = clone.querySelector("#dataEditor");
+      if (editor) editor.classList.add("hidden");
+      const editorContent = clone.querySelector("#editorContent");
+      if (editorContent) editorContent.innerHTML = "";
+      const safeJson = JSON.stringify(state.sourceRows, null, 6).replace(/</g, "\\u003C");
+      let html = "<!doctype html>\n" + clone.outerHTML;
+      html = html.replace(
+        /const sampleEnvironmentLinks = \[[\s\S]*?\];/,
+        `const sampleEnvironmentLinks = ${safeJson};`
+      );
+      html = html.replace(
+        /const storedRows = loadStoredRows\(\);\s*loadData\(storedRows \|\| sampleEnvironmentLinks, storedRows \? "Saved changes" : "Sample data"\);/,
+        'const storedRows = loadStoredRows();\n    loadData(storedRows || sampleEnvironmentLinks, storedRows ? "Saved changes" : "Sample data");'
+      );
+      return html;
+    }
+
+    async function saveUpdatedHtmlFile() {
+      const blob = new Blob([buildUpdatedHtmlText()], { type: "text/html;charset=utf-8" });
+      if (window.showSaveFilePicker) {
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: "Dependency Mapping.html",
+            types: [{ description: "HTML file", accept: { "text/html": [".html"] } }]
+          });
+          const writable = await handle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+          setStatus("Changes saved and updated HTML file written.");
+          return;
+        } catch (error) {
+          if (error && error.name === "AbortError") {
+            setStatus("Changes saved in this browser. HTML file save was cancelled.");
+            return;
+          }
+          console.warn("Could not write HTML file directly", error);
+        }
+      }
+      downloadBlob(blob, "Dependency Mapping - saved.html");
+      setStatus("Changes saved in this browser. Updated HTML downloaded.");
+    }
+
+    async function saveChanges() {
+      if (document.activeElement && refs.editorContent.contains(document.activeElement)) {
+        document.activeElement.blur();
+      }
+      loadData(state.sourceRows, "Saved changes");
+      persistRowsToBrowser();
+      await saveUpdatedHtmlFile();
+      markRowsClean();
+      if (!refs.dataEditor.classList.contains("hidden")) renderDataEditor();
+    }
+
+    function downloadTemplate() {
+      if (!window.XLSX) {
+        setStatus("xlsx.js is not loaded. Check the CDN connection in Chrome.");
+        return;
+      }
+      const workbook = XLSX.utils.book_new();
+      const links = XLSX.utils.json_to_sheet(state.sourceRows.length ? state.sourceRows : sampleEnvironmentLinks);
+      const notes = XLSX.utils.aoa_to_sheet([
+        ["Column", "Purpose"],
+        ["Source Environment BU", "Business unit for the source environment"],
+        ["Source Environment", "Bubble name for the source environment"],
+        ["Source Environment Type", "Dev, Test, Prod, or any other environment type"],
+        ["Target", "Optional target object/name shown as link metadata"],
+        ["Target Environment", "Bubble name for the target environment"],
+        ["Target Environment Type", "Dev, Test, Prod, or any other environment type"],
+        ["Target Environment BU", "Optional BU for the target; inferred when blank"],
+        ["Direction", "Optional: downstream, upstream, or both. Blank defaults to downstream."]
+      ]);
+      XLSX.utils.book_append_sheet(workbook, links, "Environment Links");
+      XLSX.utils.book_append_sheet(workbook, notes, "README");
+      XLSX.writeFile(workbook, "environment-dependency-template.xlsx");
+    }
+
+    function findEnvironmentSheetRows(workbook) {
+      const named = getSheetRows(workbook, "Environment Links") || getSheetRows(workbook, "Environments");
+      if (named) return named;
+      for (const sheetName of workbook.SheetNames) {
+        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: "" });
+        const headers = rows[0] ? Object.keys(rows[0]).map(normaliseKey) : [];
+        if (headers.includes("source environment") && (headers.includes("target environment") || headers.includes("target enviornment"))) {
+          return rows;
+        }
+      }
+      return null;
+    }
+
+    function handleExcelUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      if (!window.XLSX) {
+        setStatus("xlsx.js is not loaded. Check the CDN connection in Chrome.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const workbook = XLSX.read(reader.result, { type: "array" });
+          const environmentRows = findEnvironmentSheetRows(workbook);
+          if (!environmentRows) {
+            setStatus("Workbook needs an Environment Links sheet with Source Environment and Target Environment columns.");
+            return;
+          }
+          loadData(environmentRows, file.name);
+        } catch (error) {
+          setStatus(`Could not load workbook: ${error.message}`);
+        } finally {
+          refs.excelInput.value = "";
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function attachEvents() {
+      refs.templateButton.addEventListener("click", downloadTemplate);
+      refs.exportPdfButton.addEventListener("click", exportDiagramPdf);
+      refs.dataEditorButton.addEventListener("click", openDataEditor);
+      refs.saveChangesButton.addEventListener("click", saveChanges);
+      refs.sampleButton.addEventListener("click", () => loadData(sampleEnvironmentLinks, "Sample data"));
+      refs.clearFocusButton.addEventListener("click", clearFocus);
+      refs.excelInput.addEventListener("change", handleExcelUpload);
+      refs.applyDataButton.addEventListener("click", () => loadData(state.sourceRows, "Edited data"));
+      refs.saveDataButton.addEventListener("click", saveChanges);
+      refs.closeDataEditor.addEventListener("click", closeDataEditor);
+      refs.editorContent.addEventListener("change", handleEditorChange);
+      refs.editorContent.addEventListener("click", handleEditorClick);
+      window.addEventListener("beforeunload", event => {
+        if (!hasUnsavedRows()) return;
+        event.preventDefault();
+        event.returnValue = UNSAVED_NAVIGATION_MESSAGE;
+      });
+      refs.dataEditor.addEventListener("pointerdown", event => {
+        if (event.target === refs.dataEditor) closeDataEditor();
+      });
+
+      refs.searchInput.addEventListener("input", event => {
+        state.filters.query = event.target.value.trim().toLowerCase();
+        updateSearchResults();
+      });
+      refs.searchInput.addEventListener("focus", updateSearchResults);
+
+      refs.clearCategories.addEventListener("click", () => {
+        state.filters.categories.clear();
+        updateFilterButtons();
+        updateSearchResults();
+      });
+      refs.clearHosting.addEventListener("click", () => {
+        state.filters.hosting.clear();
+        updateFilterButtons();
+        updateSearchResults();
+      });
+      refs.clearAllFilters.addEventListener("click", () => {
+        state.filters.query = "";
+        state.filters.categories.clear();
+        state.filters.hosting.clear();
+        refs.searchInput.value = "";
+        refs.searchResults.classList.remove("open");
+        updateFilterButtons();
+      });
+
+      refs.svg.addEventListener("pointerdown", event => {
+        if (event.target.closest(".node")) return;
+        beginPan(event);
+        if (!state.spaceDown) {
+          state.lastPointerDown = { x: event.clientX, y: event.clientY };
+        }
+      });
+      refs.svg.addEventListener("pointermove", handlePointerMove);
+      refs.svg.addEventListener("pointerup", handlePointerUp);
+      refs.svg.addEventListener("pointercancel", handlePointerUp);
+      refs.svg.addEventListener("wheel", event => {
+        event.preventDefault();
+        zoomAt(event.clientX, event.clientY, event.deltaY < 0 ? 1.12 : 0.88);
+      }, { passive: false });
+
+      refs.zoomIn.addEventListener("click", () => {
+        const rect = refs.svg.getBoundingClientRect();
+        zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, 1.18);
+      });
+      refs.zoomOut.addEventListener("click", () => {
+        const rect = refs.svg.getBoundingClientRect();
+        zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, 0.84);
+      });
+      refs.zoomReset.addEventListener("click", resetZoom);
+
+      window.addEventListener("keydown", event => {
+        if (event.code === "Space") {
+          state.spaceDown = true;
+          event.preventDefault();
+        }
+      });
+      window.addEventListener("keyup", event => {
+        if (event.code === "Space") {
+          state.spaceDown = false;
+          refs.canvasWrap.classList.remove("panning");
+        }
+      });
+      window.addEventListener("resize", resizeCanvas);
+      document.addEventListener("click", event => {
+        if (!refs.searchResults.contains(event.target) && event.target !== refs.searchInput) {
+          refs.searchResults.classList.remove("open");
+        }
+      });
+    }
+
+    attachEvents();
+    resizeCanvas();
+    applyTransform();
+    initialiseData();
+    requestAnimationFrame(frame);
+  </script>
+
+
+</body></html>

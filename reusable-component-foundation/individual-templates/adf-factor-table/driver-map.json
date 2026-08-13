@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "adf-factor-table",
+  "purpose": "Edit complexity multipliers by ADF activity type.",
+  "drivers": [
+    {
+      "name": "renderAdfActivityFactorsEditTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfActivityFactorsEditTable(",
+      "startLine": 7969,
+      "endLine": 7979,
+      "codeFile": "app--renderAdfActivityFactorsEditTable.reference.js"
+    },
+    {
+      "name": "renderAdfActivityFactorEditCells",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfActivityFactorEditCells(",
+      "startLine": 7981,
+      "endLine": 7992,
+      "codeFile": "app--renderAdfActivityFactorEditCells.reference.js"
+    }
+  ]
+}

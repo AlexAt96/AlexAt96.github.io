@@ -1,0 +1,55 @@
+/* Fast horizontal navigation using snapshots of the real outgoing and incoming
+   pages. The shorter fallback is used where same-document transitions are not
+   available. */
+#aa-showroom-pan-stage{min-height:100vh}
+
+html[data-aa-showroom-pan-state]{overflow:hidden}
+html[data-aa-showroom-pan-state] body{overflow:hidden}
+
+html[data-aa-showroom-pan-state^="exit-"] #aa-showroom-pan-stage,
+html[data-aa-showroom-pan-state^="enter-"] #aa-showroom-pan-stage{
+  will-change:transform;
+  animation-fill-mode:both;
+  animation-timing-function:cubic-bezier(.65,0,.2,1);
+}
+html[data-aa-showroom-pan-state="exit-forward"] #aa-showroom-pan-stage{animation:aa-pan-fallback-exit-forward .12s both}
+html[data-aa-showroom-pan-state="exit-backward"] #aa-showroom-pan-stage{animation:aa-pan-fallback-exit-backward .12s both}
+html[data-aa-showroom-pan-state="enter-forward"] #aa-showroom-pan-stage{animation:aa-pan-fallback-enter-forward .28s both}
+html[data-aa-showroom-pan-state="enter-backward"] #aa-showroom-pan-stage{animation:aa-pan-fallback-enter-backward .28s both}
+
+html[data-aa-showroom-pan-state="running"]::view-transition-group(root){
+  overflow:clip;
+  animation-duration:.46s;
+  animation-timing-function:cubic-bezier(.65,0,.2,1);
+}
+html[data-aa-showroom-pan-state="running"]::view-transition-image-pair(root){isolation:isolate}
+html[data-aa-showroom-pan-state="running"]::view-transition-old(root),
+html[data-aa-showroom-pan-state="running"]::view-transition-new(root){
+  animation-duration:.46s;
+  animation-fill-mode:both;
+  animation-timing-function:cubic-bezier(.65,0,.2,1);
+  backface-visibility:hidden;
+}
+html[data-aa-showroom-pan-state="running"][data-aa-showroom-pan-direction="forward"]::view-transition-old(root){animation-name:aa-pan-old-forward}
+html[data-aa-showroom-pan-state="running"][data-aa-showroom-pan-direction="forward"]::view-transition-new(root){animation-name:aa-pan-new-forward}
+html[data-aa-showroom-pan-state="running"][data-aa-showroom-pan-direction="backward"]::view-transition-old(root){animation-name:aa-pan-old-backward}
+html[data-aa-showroom-pan-state="running"][data-aa-showroom-pan-direction="backward"]::view-transition-new(root){animation-name:aa-pan-new-backward}
+
+.aa-showroom-pan-announcement{width:1px;height:1px;padding:0;position:fixed;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+
+@keyframes aa-pan-old-forward{to{transform:translateX(-100vw)}}
+@keyframes aa-pan-new-forward{from{transform:translateX(100vw)}}
+@keyframes aa-pan-old-backward{to{transform:translateX(100vw)}}
+@keyframes aa-pan-new-backward{from{transform:translateX(-100vw)}}
+@keyframes aa-pan-fallback-exit-forward{to{opacity:.99;transform:translateX(-8vw)}}
+@keyframes aa-pan-fallback-enter-forward{from{opacity:.99;transform:translateX(8vw)}}
+@keyframes aa-pan-fallback-exit-backward{to{opacity:.99;transform:translateX(8vw)}}
+@keyframes aa-pan-fallback-enter-backward{from{opacity:.99;transform:translateX(-8vw)}}
+
+@media(prefers-reduced-motion:reduce){
+  html[data-aa-showroom-pan-state^="exit-"] #aa-showroom-pan-stage,
+  html[data-aa-showroom-pan-state^="enter-"] #aa-showroom-pan-stage,
+  html[data-aa-showroom-pan-state="running"]::view-transition-group(root),
+  html[data-aa-showroom-pan-state="running"]::view-transition-old(root),
+  html[data-aa-showroom-pan-state="running"]::view-transition-new(root){animation:none!important}
+}

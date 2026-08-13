@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0",
+  "id": "bu-complexity-page",
+  "capabilityId": "bu-complexity-analysis",
+  "title": "BU sizing and complexity page",
+  "layer": "screen",
+  "purpose": "Compose sizing inputs, factor controls, calculated scores, topology context and reference bands.",
+  "drivers": [
+    {
+      "name": "renderBuSizingComplexity",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderBuSizingComplexity(",
+      "startLine": 10840,
+      "endLine": 10939,
+      "codeFile": "app--renderBuSizingComplexity.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU",
+    "Sizing assessment",
+    "Complexity definitions",
+    "ADF summary"
+  ],
+  "outputs": [
+    "Sizing-assessment save payload"
+  ],
+  "behaviour": [
+    "Compose sizing inputs, factor controls, calculated scores, topology context and reference bands.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "complexity-factor-control",
+    "complexity-score-control",
+    "complexity-band-table"
+  ],
+  "apiEndpoints": [
+    "PUT /api/business-units/:businessUnitId/sizing-assessment"
+  ],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Business-unit sizing and complexity analysis",
+  "templateDataPath": "template-data/template-data.json#buComplexity",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "not assessed",
+    "draft",
+    "calculated",
+    "low",
+    "medium",
+    "high",
+    "very high",
+    "saved",
+    "locked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Sizing-assessment save payload. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

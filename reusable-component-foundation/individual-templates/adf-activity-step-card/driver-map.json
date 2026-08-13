@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "adf-activity-step-card",
+  "purpose": "Show one activity, its action, endpoints, Databricks details and evidence state.",
+  "drivers": [
+    {
+      "name": "createAdfPipelineStep",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function createAdfPipelineStep(",
+      "startLine": 11909,
+      "endLine": 11944,
+      "codeFile": "app--createAdfPipelineStep.reference.js"
+    },
+    {
+      "name": "renderAdfPipelineStep",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfPipelineStep(",
+      "startLine": 12183,
+      "endLine": 12227,
+      "codeFile": "app--renderAdfPipelineStep.reference.js"
+    },
+    {
+      "name": "renderAdfStepSummaryTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfStepSummaryTable(",
+      "startLine": 12310,
+      "endLine": 12330,
+      "codeFile": "app--renderAdfStepSummaryTable.reference.js"
+    },
+    {
+      "name": "renderAdfStepEndpointBlock",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfStepEndpointBlock(",
+      "startLine": 12354,
+      "endLine": 12363,
+      "codeFile": "app--renderAdfStepEndpointBlock.reference.js"
+    }
+  ]
+}

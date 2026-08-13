@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "inventory-resource-table",
+  "purpose": "Group Databricks inventory resources by type and reveal captured attributes.",
+  "drivers": [
+    {
+      "name": "renderDatabricksInventoryResourceTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDatabricksInventoryResourceTable(",
+      "startLine": 14329,
+      "endLine": 14362,
+      "codeFile": "app--renderDatabricksInventoryResourceTable.reference.js"
+    },
+    {
+      "name": "renderDatabricksInventoryResourceTypePanel",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDatabricksInventoryResourceTypePanel(",
+      "startLine": 14375,
+      "endLine": 14394,
+      "codeFile": "app--renderDatabricksInventoryResourceTypePanel.reference.js"
+    },
+    {
+      "name": "renderMetadataAttributeDetails",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMetadataAttributeDetails(",
+      "startLine": 13989,
+      "endLine": 14005,
+      "codeFile": "app--renderMetadataAttributeDetails.reference.js"
+    }
+  ]
+}

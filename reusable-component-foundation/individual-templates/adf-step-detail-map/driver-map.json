@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "adf-step-detail-map",
+  "purpose": "Expand one pipeline step into source, activity, Databricks and target detail nodes.",
+  "drivers": [
+    {
+      "name": "renderAdfStepDetailBranchMap",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfStepDetailBranchMap(",
+      "startLine": 12365,
+      "endLine": 12384,
+      "codeFile": "app--renderAdfStepDetailBranchMap.reference.js"
+    },
+    {
+      "name": "renderAdfStepDetailNode",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfStepDetailNode(",
+      "startLine": 12386,
+      "endLine": 12395,
+      "codeFile": "app--renderAdfStepDetailNode.reference.js"
+    },
+    {
+      "name": "renderAdfStepDatabricksBlock",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfStepDatabricksBlock(",
+      "startLine": 12397,
+      "endLine": 12407,
+      "codeFile": "app--renderAdfStepDatabricksBlock.reference.js"
+    },
+    {
+      "name": "renderAdfPipelineDetailLaneSvg",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfPipelineDetailLaneSvg(",
+      "startLine": 12280,
+      "endLine": 12308,
+      "codeFile": "app--renderAdfPipelineDetailLaneSvg.reference.js"
+    }
+  ]
+}

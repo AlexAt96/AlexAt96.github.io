@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "metadata-bar-chart",
+  "purpose": "Show the leading metadata categories as proportional horizontal bars.",
+  "drivers": [
+    {
+      "name": "renderMetadataBarChart",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderMetadataBarChart(",
+      "startLine": 14231,
+      "endLine": 14255,
+      "codeFile": "app--renderMetadataBarChart.reference.js"
+    }
+  ]
+}

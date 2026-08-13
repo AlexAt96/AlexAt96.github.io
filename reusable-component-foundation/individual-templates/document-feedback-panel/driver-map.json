@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "document-feedback-panel",
+  "purpose": "Show feedback controls and current comments within a document screen.",
+  "drivers": [
+    {
+      "name": "renderDocumentFeedbackSection",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDocumentFeedbackSection(",
+      "startLine": 4245,
+      "endLine": 4254,
+      "codeFile": "app--renderDocumentFeedbackSection.reference.js"
+    },
+    {
+      "name": "renderPhaseFeedbackSection",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderPhaseFeedbackSection(",
+      "startLine": 4256,
+      "endLine": 4260,
+      "codeFile": "app--renderPhaseFeedbackSection.reference.js"
+    }
+  ]
+}

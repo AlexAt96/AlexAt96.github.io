@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0",
+  "id": "dashboard-line-chart",
+  "capabilityId": "dashboard-shell-and-planning",
+  "title": "Dashboard line chart",
+  "layer": "primitive",
+  "purpose": "Render a compact SVG trend line with labelled points and an empty state.",
+  "drivers": [
+    {
+      "name": "renderDiscoveryLineChart",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDiscoveryLineChart(",
+      "startLine": 1929,
+      "endLine": 1980,
+      "codeFile": "app--renderDiscoveryLineChart.reference.js"
+    }
+  ],
+  "inputs": [
+    "Ordered label/value rows"
+  ],
+  "outputs": [
+    "Accessible SVG chart"
+  ],
+  "behaviour": [
+    "Render a compact SVG trend line with labelled points and an empty state.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "chart-empty-state"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Dashboard shell, KPI cards and planning",
+  "templateDataPath": "template-data/template-data.json#dashboard",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/03-dashboard-planning.css",
+    "app/styles/01-foundation.css"
+  ],
+  "inheritedStates": [
+    "loading",
+    "empty",
+    "healthy",
+    "at-risk",
+    "blocked",
+    "draft plan",
+    "saved plan",
+    "undo available"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Accessible SVG chart. Show the state change immediately."
+    },
+    {
+      "id": "alternate-state",
+      "title": "Alternate state",
+      "instruction": "Show one meaningful alternate, empty, warning or disabled state."
+    }
+  ]
+}

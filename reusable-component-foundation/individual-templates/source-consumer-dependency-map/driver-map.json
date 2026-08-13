@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "source-consumer-dependency-map",
+  "purpose": "Turn source/consumer tracker rows into an interactive dependency diagram.",
+  "drivers": [
+    {
+      "name": "renderSourceConsumerDependencyDiagram",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderSourceConsumerDependencyDiagram(",
+      "startLine": 15235,
+      "endLine": 15255,
+      "codeFile": "app--renderSourceConsumerDependencyDiagram.reference.js"
+    },
+    {
+      "name": "renderSourceConsumerDependencyDiagramContent",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderSourceConsumerDependencyDiagramContent(",
+      "startLine": 15302,
+      "endLine": 15313,
+      "codeFile": "app--renderSourceConsumerDependencyDiagramContent.reference.js"
+    }
+  ]
+}

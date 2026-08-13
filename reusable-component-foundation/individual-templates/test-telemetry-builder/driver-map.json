@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "test-telemetry-builder",
+  "purpose": "Scan scripts, CI and test files into suite status, coverage-area and gap records.",
+  "drivers": [
+    {
+      "name": "buildRepoQualityMetrics",
+      "file": "server/lib/repo-quality-metrics.js",
+      "role": "Test and quality telemetry builder",
+      "signature": "function buildRepoQualityMetrics(",
+      "startLine": 181,
+      "endLine": 215,
+      "codeFile": "repo-quality-metrics--buildRepoQualityMetrics.reference.js"
+    },
+    {
+      "name": "buildTestCoverageAreas",
+      "file": "server/lib/repo-quality-metrics.js",
+      "role": "Test and quality telemetry builder",
+      "signature": "function buildTestCoverageAreas(",
+      "startLine": 998,
+      "endLine": 1013,
+      "codeFile": "repo-quality-metrics--buildTestCoverageAreas.reference.js"
+    },
+    {
+      "name": "testSuite",
+      "file": "server/lib/repo-quality-metrics.js",
+      "role": "Test and quality telemetry builder",
+      "signature": "function testSuite(",
+      "startLine": 941,
+      "endLine": 952,
+      "codeFile": "repo-quality-metrics--testSuite.reference.js"
+    },
+    {
+      "name": "coverageArea",
+      "file": "server/lib/repo-quality-metrics.js",
+      "role": "Test and quality telemetry builder",
+      "signature": "function coverageArea(",
+      "startLine": 1015,
+      "endLine": 1017,
+      "codeFile": "repo-quality-metrics--coverageArea.reference.js"
+    }
+  ]
+}

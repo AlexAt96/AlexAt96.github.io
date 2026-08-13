@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "id": "environment-evidence-matrix",
+  "title": "Environment evidence matrix",
+  "requestedCoverage": "Environment evidence matrix",
+  "summary": "Per-environment evidence coverage, required/optional inputs, status icons, progress calculations and links to missing collection tasks.",
+  "routes": [
+    "app/phase.html?phase=bu-data-collection&bu=:businessUnitId",
+    "app/document.html?phase=bu-data-collection&section=environment-task-list&bu=:businessUnitId"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "renderCollectionDashboard",
+        "renderCollectionEvidenceMatrix",
+        "getCollectionProductEvidenceProgress",
+        "getCollectionProductsEvidenceProgress",
+        "renderCollectionEvidenceProgressBar",
+        "getCollectionEvidenceGroups",
+        "getEvidenceGroupStatus",
+        "renderEvidenceStatusIcon",
+        "renderEnvironmentTaskList"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/05-collection-workflows.css"
+  ],
+  "states": [
+    "missing",
+    "required",
+    "optional",
+    "partial",
+    "submitted",
+    "reviewed",
+    "not applicable"
+  ],
+  "dataContracts": [
+    "environment",
+    "evidence group",
+    "evidence item",
+    "requirement rule",
+    "status",
+    "source link",
+    "progress"
+  ],
+  "templateKey": "environmentEvidenceMatrix",
+  "boundaries": [
+    "EvidenceMatrix",
+    "EnvironmentColumn",
+    "EvidenceGroup",
+    "EvidenceCell",
+    "StatusIcon",
+    "ProgressBar",
+    "MissingEvidenceLink"
+  ]
+}

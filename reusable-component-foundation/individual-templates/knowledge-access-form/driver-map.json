@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "knowledge-access-form",
+  "purpose": "Capture repository links, confirmations, notes and an optional supporting file.",
+  "drivers": [
+    {
+      "name": "renderKnowledgeAccessTask",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderKnowledgeAccessTask(",
+      "startLine": 9035,
+      "endLine": 9075,
+      "codeFile": "app--renderKnowledgeAccessTask.reference.js"
+    },
+    {
+      "name": "getKnowledgeAccessPayload",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "async function getKnowledgeAccessPayload(",
+      "startLine": 40204,
+      "endLine": 40215,
+      "codeFile": "app--getKnowledgeAccessPayload.reference.js"
+    }
+  ]
+}

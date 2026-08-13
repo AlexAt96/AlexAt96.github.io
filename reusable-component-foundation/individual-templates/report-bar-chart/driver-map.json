@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "report-bar-chart",
+  "purpose": "Render ranked horizontal bars with values and an explicit empty state.",
+  "drivers": [
+    {
+      "name": "renderReportBarVisual",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderReportBarVisual(",
+      "startLine": 7170,
+      "endLine": 7205,
+      "codeFile": "app--renderReportBarVisual.reference.js"
+    }
+  ]
+}

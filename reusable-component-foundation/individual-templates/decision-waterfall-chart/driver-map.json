@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "decision-waterfall-chart",
+  "purpose": "Break the scenario into baseline, savings, migration costs and final net position.",
+  "drivers": [
+    {
+      "name": "renderDecisionWaterfallChart",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionWaterfallChart(",
+      "startLine": 27450,
+      "endLine": 27521,
+      "codeFile": "app--renderDecisionWaterfallChart.reference.js"
+    },
+    {
+      "name": "getDecisionWaterfallSteps",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getDecisionWaterfallSteps(",
+      "startLine": 27436,
+      "endLine": 27448,
+      "codeFile": "app--getDecisionWaterfallSteps.reference.js"
+    },
+    {
+      "name": "renderDecisionWaterfallBuContributions",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionWaterfallBuContributions(",
+      "startLine": 27577,
+      "endLine": 27594,
+      "codeFile": "app--renderDecisionWaterfallBuContributions.reference.js"
+    }
+  ]
+}

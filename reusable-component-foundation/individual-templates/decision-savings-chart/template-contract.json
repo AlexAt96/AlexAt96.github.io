@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "1.0",
+  "id": "decision-savings-chart",
+  "capabilityId": "decision-screen",
+  "title": "Decision savings progression chart",
+  "layer": "composite",
+  "purpose": "Plot programme or BU cumulative savings over time with a legend and break-even context.",
+  "drivers": [
+    {
+      "name": "renderDecisionPrimaryChart",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionPrimaryChart(",
+      "startLine": 27293,
+      "endLine": 27303,
+      "codeFile": "app--renderDecisionPrimaryChart.reference.js"
+    },
+    {
+      "name": "renderDecisionSavingsChartSvg",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionSavingsChartSvg(",
+      "startLine": 27327,
+      "endLine": 27400,
+      "codeFile": "app--renderDecisionSavingsChartSvg.reference.js"
+    },
+    {
+      "name": "renderDecisionPrimaryChartLegend",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionPrimaryChartLegend(",
+      "startLine": 27305,
+      "endLine": 27312,
+      "codeFile": "app--renderDecisionPrimaryChartLegend.reference.js"
+    }
+  ],
+  "inputs": [
+    "Scenario summary",
+    "Chart type",
+    "Programme/BU mode",
+    "Selected BU"
+  ],
+  "outputs": [
+    "SVG chart",
+    "Legend",
+    "Mode changes"
+  ],
+  "behaviour": [
+    "Plot programme or BU cumulative savings over time with a legend and break-even context.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Decision screen and scenario layout",
+  "templateDataPath": "template-data/template-data.json#decision",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/07-outputs-decision.css"
+  ],
+  "inheritedStates": [
+    "baseline",
+    "scenario changed",
+    "unsaved scenario",
+    "recommended",
+    "conditional",
+    "not recommended",
+    "decision ready",
+    "blocked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: SVG chart. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

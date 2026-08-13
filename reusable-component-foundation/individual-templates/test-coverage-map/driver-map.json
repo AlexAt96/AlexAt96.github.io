@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "test-coverage-map",
+  "purpose": "Connect run triggers to suites and suites to the areas they protect.",
+  "drivers": [
+    {
+      "name": "renderTestCoverageDiagram",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function renderTestCoverageDiagram(",
+      "startLine": 7790,
+      "endLine": 7827,
+      "codeFile": "interactive-system-map--renderTestCoverageDiagram.reference.html"
+    }
+  ]
+}

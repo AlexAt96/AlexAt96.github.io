@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "advanced-discovery-pie-chart",
+  "purpose": "Render an advanced-discovery distribution as an SVG pie with a centre label.",
+  "drivers": [
+    {
+      "name": "renderAdvancedDiscoveryPieChart",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdvancedDiscoveryPieChart(",
+      "startLine": 13235,
+      "endLine": 13275,
+      "codeFile": "app--renderAdvancedDiscoveryPieChart.reference.js"
+    }
+  ]
+}

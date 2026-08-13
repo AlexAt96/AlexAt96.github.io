@@ -1,0 +1,560 @@
+{
+  "version": 1,
+  "generator": "scripts/sync-developer-handoffs.mjs",
+  "root": "public/developer-handoffs/live-source",
+  "files": [
+    {
+      "path": "app/AgentMethods.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:bf3f2a3909d7d909bffb9fdcdf6e03fa6e26c1f38e2a3e38997cef69ec2063df",
+      "bytes": 180012
+    },
+    {
+      "path": "app/AgentUseCases.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:d963a0a43ec55ff26315d4c7a70bebd2d29b0e14a2edb7ee956e0e0a11a17808",
+      "bytes": 116966
+    },
+    {
+      "path": "app/ClassicBlueprintHero.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:d24679b6871a89c4012246271f2590a24a103f704fa5559157008419bb776237",
+      "bytes": 4943
+    },
+    {
+      "path": "app/CompassPatternSections.module.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:a6587bec887e909ac5d933feca6dd274a26f8c57e89fa891bf8517abd3ac2da0",
+      "bytes": 6197
+    },
+    {
+      "path": "app/CompassPatternSections.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:ba6e76358f9a90a469d6792d50ccde97a785a3c64625d51acb0f759f86bdaf7c",
+      "bytes": 6661
+    },
+    {
+      "path": "app/CompassPatternWorkbench.module.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:55d54b2d764fb1b245e408dd7f28eb3c01111cd4bf0e419ec18d2218af4b96fd",
+      "bytes": 17924
+    },
+    {
+      "path": "app/CompassPatternWorkbench.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:f2d4913d244cebd2f1c8f36d212bcb49b66fc8b9132985ed9fb5858254e19e3a",
+      "bytes": 18809
+    },
+    {
+      "path": "app/FullShowroomRoute.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:c4085284bf1d0c3bb908801ee527f1c741a9fbb176ef96cc19a926381f9c24e2",
+      "bytes": 470
+    },
+    {
+      "path": "app/HomeShowcase.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:1c324c125b567eb51bc2c59aba216245a8bfca520141f803d5ece87d64f534c0",
+      "bytes": 637
+    },
+    {
+      "path": "app/InstallApp.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:7ffcf0841941700855a66320e3a354fd2843bc25d85a881fbd00bd8f64fb127a",
+      "bytes": 5204
+    },
+    {
+      "path": "app/MethodOverviewDiagrams.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:a6a4aff1d601eedb9c948534dd864c1417e7899328fc19549a06dbeacf7bd0ba",
+      "bytes": 88065
+    },
+    {
+      "path": "app/PatternBoundarySpecimen.tsx",
+      "language": "tsx",
+      "detail": "Reusable semantic preview renderer used to illustrate component and pattern boundaries.",
+      "hash": "sha256:27192ea86f3afab940ddecde381435367149f2a1fd8e732f5413a17657eeb60d",
+      "bytes": 24289
+    },
+    {
+      "path": "app/PortfolioBrand.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:a2ef877324ddbe4b4fb6f8edb5fc0b09b2c2adcb079f0d92ce91b37ed9790e25",
+      "bytes": 2279
+    },
+    {
+      "path": "app/PortfolioChrome.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:9c3eda6fde54fb02e806b346656231c7cce7d72070b2dae85ec56bdef4f0daff",
+      "bytes": 4067
+    },
+    {
+      "path": "app/PortfolioHome.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:e5bc1331d57a9b2e9954c39ca1c046f9ebdd2a36239c8991742d4addd85045e0",
+      "bytes": 10766
+    },
+    {
+      "path": "app/Showcase.tsx",
+      "language": "tsx",
+      "detail": "Complete legacy showroom implementation and Tech details registry, including the live inline DependencyExplorerFrame.",
+      "hash": "sha256:8c3a3960441d11ce0176a2e8ce564988259198f2da21fca7c083000cbd4d32fd",
+      "bytes": 210315
+    },
+    {
+      "path": "app/ShowcaseDeveloperWorkbench.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:b05b4269ba67f558b01846ee3bd793fbac5b0d6fedf5897f70ce4e0ed4e9f4a0",
+      "bytes": 17885
+    },
+    {
+      "path": "app/ShowroomPanController.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:d42bfc9bc82f2171f6bf91727c823ed686564605a3ea73cd11670cde7e8851f9",
+      "bytes": 6296
+    },
+    {
+      "path": "app/chatgpt-auth.ts",
+      "language": "typescript",
+      "detail": "Live TypeScript types, state, data, or integration logic required by the application source tree.",
+      "hash": "sha256:17a965f8948b21510cdf8ecbd70c5fdf58100e10970463f6a8fd2cc4795f8044",
+      "bytes": 2404
+    },
+    {
+      "path": "app/compass/page.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:6c52cd8f1213cef837a3477c2b41309439ec4c8ff3cce59d3d0f13f692aeee02",
+      "bytes": 510
+    },
+    {
+      "path": "app/components/page.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:4f33bcbafe35d72ace149f033c66fb04f735d9ac2a69b8b6dea1136795dc707e",
+      "bytes": 838
+    },
+    {
+      "path": "app/foundation/FoundationGallery.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:4e4cb8dc2e3d0e48fa119719835536d348b3f71f9a48cfb6d2a75960b4a31e57",
+      "bytes": 15624
+    },
+    {
+      "path": "app/foundation/FoundationShowcase.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:1f872805879835840b19476a94b313d3da1a4606340ce7e82bd7813d04094515",
+      "bytes": 395
+    },
+    {
+      "path": "app/foundation/foundation.module.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:2422748eba8f16e7840ecbe05b891ffb7624aecc60f27b865b298ec108ceeeca",
+      "bytes": 21245
+    },
+    {
+      "path": "app/foundation/page.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:d8f0c9d4bc5639ac82c6285965df218dcad3aafecc80022464daae8a92e49bd5",
+      "bytes": 948
+    },
+    {
+      "path": "app/foundation/patternCatalogue.ts",
+      "language": "typescript",
+      "detail": "Live TypeScript types, state, data, or integration logic required by the application source tree.",
+      "hash": "sha256:aaac6ec9b23d8e15dfbac1d387da15a601d59619d5d13e40aa2fe4a30eef9a78",
+      "bytes": 11768
+    },
+    {
+      "path": "app/foundation/patternTechnicalDetails.ts",
+      "language": "typescript",
+      "detail": "Live TypeScript types, state, data, or integration logic required by the application source tree.",
+      "hash": "sha256:b9a1579bca9df9c681c63c033e952fb2a30f64e354d23e8ff8d06a88ff0af3ce",
+      "bytes": 22581
+    },
+    {
+      "path": "app/foundation/templates/AnalysisTemplates.module.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:2fde6b28c085dc629834fce9aff708711c8fe52511dfecc669ee42517d019743",
+      "bytes": 63483
+    },
+    {
+      "path": "app/foundation/templates/AnalysisTemplates.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript pattern implementation used by the Compass template renderer.",
+      "hash": "sha256:4d19a0679281ed0e0ff03170cee992faea6c8023f4eec1fd204d602537f8d154",
+      "bytes": 170394
+    },
+    {
+      "path": "app/foundation/templates/CollectionTemplates.module.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:628d20f7bcd6e7c50b108e38ed6a5b8a92f8b0e7960be62a93ba44a0ebb56c97",
+      "bytes": 30388
+    },
+    {
+      "path": "app/foundation/templates/CollectionTemplates.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript pattern implementation used by the Compass template renderer.",
+      "hash": "sha256:db45b609449164b90978a80a5b9f0b066a3f2fbc0fdd84df5a38da0972825913",
+      "bytes": 67753
+    },
+    {
+      "path": "app/foundation/templates/ImportExportCsvTemplate.module.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:90e6b6ca1ebe38be4e95c377786e182c497c976728383ab4957a49f201338561",
+      "bytes": 14549
+    },
+    {
+      "path": "app/foundation/templates/ImportExportCsvTemplate.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript pattern implementation used by the Compass template renderer.",
+      "hash": "sha256:15429fe493fc05f9342870d5e6ad6e1042f1e05332ac0efe21258f04b8143ea1",
+      "bytes": 32930
+    },
+    {
+      "path": "app/foundation/templates/OutcomeTemplates.module.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:f3a66e7f106d6750c78f7d99afd9c92597ca5bddcd20060a1a49c7590113a94a",
+      "bytes": 41901
+    },
+    {
+      "path": "app/foundation/templates/OutcomeTemplates.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript pattern implementation used by the Compass template renderer.",
+      "hash": "sha256:a84fa4154e670b3e76878447cf1e4c61d56eeb9d0662463b7d83facea60e6d70",
+      "bytes": 68456
+    },
+    {
+      "path": "app/foundation/templates/PlanningTemplates.module.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:343f7caaaeb1835cdb2d42343dd6cbc2bdcbd5cbb94464d8aa34a3146d0386e7",
+      "bytes": 32702
+    },
+    {
+      "path": "app/foundation/templates/PlanningTemplates.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript pattern implementation used by the Compass template renderer.",
+      "hash": "sha256:74db1c48f10d1af7ee4669409bca7c8ca029dc3d8b10de4759bdb44db83d4a18",
+      "bytes": 77339
+    },
+    {
+      "path": "app/foundation/templates/TemplatePreview.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript pattern implementation used by the Compass template renderer.",
+      "hash": "sha256:684fd78154057a5e6768b9e94217a541114425f78115eeb4dbd952257c21ea03",
+      "bytes": 2268
+    },
+    {
+      "path": "app/foundation/templates/shared.module.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:1b12a7469a217df06b183d753114c97d6635c1ea52c194a4ab88857dfc52ea1c",
+      "bytes": 8800
+    },
+    {
+      "path": "app/foundation/templates/shared.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript pattern implementation used by the Compass template renderer.",
+      "hash": "sha256:722c2c392dfae808270f932fae9aa8271875e59a7334255c04d56d7c67222e69",
+      "bytes": 7110
+    },
+    {
+      "path": "app/foundation/templates/types.ts",
+      "language": "typescript",
+      "detail": "Live TypeScript types, state, data, or integration logic required by the application source tree.",
+      "hash": "sha256:9d434d4fe4cada3c85b92a45d50f38315d724504aa2090e369e7603eeb2960aa",
+      "bytes": 870
+    },
+    {
+      "path": "app/generic/page.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:c219ddadd27bde90ec7bf3fb8ff2d8e80f721ef6e142e03c53e33022fb395df3",
+      "bytes": 140
+    },
+    {
+      "path": "app/globals.css",
+      "language": "css",
+      "detail": "Global design tokens, responsive rules, theme states, and live showroom component styling.",
+      "hash": "sha256:438b5512c3d2d3d08115c1642fbef2722f219138a3028335663101e416b50159",
+      "bytes": 853240
+    },
+    {
+      "path": "app/install-app.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:0ed1ea756653a547546bdddc5a2f244b060a63516e6d1654cd934caa151d91aa",
+      "bytes": 3640
+    },
+    {
+      "path": "app/layout.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:6a794335b8955f98b03f9b0a19f51b310f1428210da2447490cfdef9e4994204",
+      "bytes": 3443
+    },
+    {
+      "path": "app/library/LibraryCatalogue.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:ac9e49bd61731b9a15ba016e305edc581a904b228b9a267bda1319292fba320e",
+      "bytes": 18065
+    },
+    {
+      "path": "app/library/library.module.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:2bc5b693752c31d646d093f071dfa22673c7e2c5ae88154753f8bb047767ca5d",
+      "bytes": 11406
+    },
+    {
+      "path": "app/library/page.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:f7acf26ae32f3f954c5f065be1b31ef275c1cc6ae6d408dde3318ac6dc010b52",
+      "bytes": 849
+    },
+    {
+      "path": "app/methods/page.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:92832b39da87ee9b313629e92356a206d4185644f7a5675443a01c8beb976b81",
+      "bytes": 823
+    },
+    {
+      "path": "app/minimal-brand.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:f45d34f338e1807bd7d6d56e63da432a3864c16e77676ed71eddf3c856be6150",
+      "bytes": 23313
+    },
+    {
+      "path": "app/page.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:4585f59d07d264944a15a9a1319f3c0eb2c3e767efe4e56e82122a191c6c50ac",
+      "bytes": 484
+    },
+    {
+      "path": "app/patternBoundarySpecimen.module.css",
+      "language": "css",
+      "detail": "Scoped presentation and state styling for PatternBoundarySpecimen.",
+      "hash": "sha256:80b8738d0faf2800cf01521575f1d32005594a5e8e6190087fa332d5044dc759",
+      "bytes": 21223
+    },
+    {
+      "path": "app/poc-tracker/PoCTrackerGallery.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:7565517a47cef0aa164496409ef597151329db140a37d15647819dc0cd3be199",
+      "bytes": 14585
+    },
+    {
+      "path": "app/poc-tracker/PoCTrackerShowcase.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:b7f92c684578b46c5f6ae656e2ccdf2e0b0bbfcd17579122e603b8198e29d31d",
+      "bytes": 395
+    },
+    {
+      "path": "app/poc-tracker/gallery.module.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:e351fc08d9ad681997995e213f3903b3e39b1b89824ea7e714cb6b20bdc1f0be",
+      "bytes": 15599
+    },
+    {
+      "path": "app/poc-tracker/page.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:40bf90aa78db75216c4d11d9d4886c83c7f58a4b457eda4f38b753dcceb206b1",
+      "bytes": 1735
+    },
+    {
+      "path": "app/portfolio-system.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:a43f0e6881204fbede70a4eb507127e51decd60bb2e1a42af71c11564bf545df",
+      "bytes": 110925
+    },
+    {
+      "path": "app/portfolio/page.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:285f391587da8204c03368c39b8cb3fb57b5d5a3d8b1234aa76d0518e09723dd",
+      "bytes": 447
+    },
+    {
+      "path": "app/portfolioRoutes.ts",
+      "language": "typescript",
+      "detail": "Live TypeScript types, state, data, or integration logic required by the application source tree.",
+      "hash": "sha256:c5fb23e16adf5125f001ba6bac98248bbfddf33d3c541ba16040dd5b857fff66",
+      "bytes": 508
+    },
+    {
+      "path": "app/scenarios.ts",
+      "language": "typescript",
+      "detail": "Scenario contracts and representative Compass, Tracker, and dependency-explorer data.",
+      "hash": "sha256:101a66a17b23cdf5fb1cb398eff8480f9b894dfc8dc24fe38d9d40eb10850a4a",
+      "bytes": 10275
+    },
+    {
+      "path": "app/showroom-classic-chrome.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:6573b5ebd563c328425dee9e3c3f1c52396134b5d17cace96a464545be145824",
+      "bytes": 11765
+    },
+    {
+      "path": "app/showroom-pan.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:da6dc0937560ae5ca1140715ccfe36ec224a655c520e560919ec90a756cc53f0",
+      "bytes": 3384
+    },
+    {
+      "path": "app/showroom-toolbar-polish.css",
+      "language": "css",
+      "detail": "Live component-scoped or route-scoped styles required by the application source tree.",
+      "hash": "sha256:ddcac396b190d312171fa72c85c884cb6d2c8fb2c46ec21ee4add30e7bccfb3f",
+      "bytes": 7677
+    },
+    {
+      "path": "app/site-paths.ts",
+      "language": "typescript",
+      "detail": "Base-path adapter used by deployable links, fetches, downloads, and embedded previews.",
+      "hash": "sha256:9bd494edc51798263b4e1e6734de4b9eeaaea7f646a4a7a7374539964fa66f7a",
+      "bytes": 183
+    },
+    {
+      "path": "app/tracker/page.tsx",
+      "language": "tsx",
+      "detail": "Complete live React and TypeScript component or route implementation from the application source tree.",
+      "hash": "sha256:8027e20e4b5693e0a5022cc76ca1a5c416e1a2d1430f67021d44058dc9304ae6",
+      "bytes": 501
+    },
+    {
+      "path": "app/trackerScenarioFixtures.ts",
+      "language": "typescript",
+      "detail": "Typed Tracker task, flow, route, and DCC scenario fixtures used by the live patterns.",
+      "hash": "sha256:8aa200559876c8669cb6e5cca23c066299acfc83c95601326a0d83a1b6f9ab7a",
+      "bytes": 12824
+    },
+    {
+      "path": "app/usePersistentSidebar.ts",
+      "language": "typescript",
+      "detail": "Live TypeScript types, state, data, or integration logic required by the application source tree.",
+      "hash": "sha256:7d05ee4996ad2511882be032a6c196f9402291f9778f65316d6e93d4b98425b3",
+      "bytes": 4628
+    },
+    {
+      "path": "app/usePersistentTheme.ts",
+      "language": "typescript",
+      "detail": "Live TypeScript types, state, data, or integration logic required by the application source tree.",
+      "hash": "sha256:088a0e90642afc31afe7148055fbc3837e6021ffb37a587af1ed956b3303a5b0",
+      "bytes": 1206
+    },
+    {
+      "path": "app/useScenario.ts",
+      "language": "typescript",
+      "detail": "Live TypeScript types, state, data, or integration logic required by the application source tree.",
+      "hash": "sha256:12828d001d71e7eee19426ff64e863ca5dec0760f5eb2232f88f7fc4a70a0158",
+      "bytes": 4968
+    },
+    {
+      "path": "package.json",
+      "language": "json",
+      "detail": "Runtime dependencies, development dependencies, Node version, and project scripts needed to install and run the source.",
+      "hash": "sha256:4efe2efc12c3f5cac38e91c170863df2bafd796d496960560b8b919ca5d26b6b",
+      "bytes": 1520
+    },
+    {
+      "path": "public/dependency-explorer.html",
+      "language": "html",
+      "detail": "Standalone dependency-explorer runtime loaded by the inline DependencyExplorerFrame implementation.",
+      "hash": "sha256:66b858640d70e8e304cbf0ad0959095d0dedde32693fee512862e3241445a04d",
+      "bytes": 136101
+    },
+    {
+      "path": "public/poc-tracker-components/scenarios/dcc-hackathon.json",
+      "language": "json",
+      "detail": "Local public data or runtime asset imported or loaded directly by the live application source.",
+      "hash": "sha256:ba3f8301908a271537742e084f53fa24db1c56b0b7a5387ed9b2a7b318d656e9",
+      "bytes": 43000
+    },
+    {
+      "path": "public/reusable-component-foundation/component-catalogue.json",
+      "language": "json",
+      "detail": "Local public data or runtime asset imported or loaded directly by the live application source.",
+      "hash": "sha256:4c0a9a4e5013219032f36b176a5b072d0d7bc957078efc8ada4600ef1dbf3783",
+      "bytes": 36325
+    },
+    {
+      "path": "public/reusable-component-foundation/individual-template-catalogue.json",
+      "language": "json",
+      "detail": "Local public data or runtime asset imported or loaded directly by the live application source.",
+      "hash": "sha256:b7f1c55ce369ec7fe3514d2315cb973548d90af4ca024f45052562e0b4b98afb",
+      "bytes": 284560
+    },
+    {
+      "path": "public/reusable-component-foundation/individual-templates/advanced-discovery-pie-chart/template-data.json",
+      "language": "json",
+      "detail": "Local public data or runtime asset imported or loaded directly by the live application source.",
+      "hash": "sha256:d6b1db10a06acf9578fae7fd38b23d8888083979bf4dfeb7d816e1eab9ca6c7a",
+      "bytes": 794
+    },
+    {
+      "path": "public/reusable-component-foundation/individual-templates/dashboard-page/template-data.json",
+      "language": "json",
+      "detail": "Local public data or runtime asset imported or loaded directly by the live application source.",
+      "hash": "sha256:90c46b1e9a56724c7f754a50f233057386117ad7801213fa1fec70244627d127",
+      "bytes": 1435
+    },
+    {
+      "path": "public/reusable-component-foundation/individual-templates/phase-kanban-board/template-data.json",
+      "language": "json",
+      "detail": "Local public data or runtime asset imported or loaded directly by the live application source.",
+      "hash": "sha256:83e2f29c8c60e330e298ff9318c8f3a595c3d9046b9dfd8aeedc135c1d44e5e6",
+      "bytes": 1022
+    },
+    {
+      "path": "public/reusable-component-foundation/template-data/template-data.json",
+      "language": "json",
+      "detail": "Local public data or runtime asset imported or loaded directly by the live application source.",
+      "hash": "sha256:64ce3b1f6f2a998d473d93b779017b609269c3a6cad56f302b8b431f1799f1b8",
+      "bytes": 22389
+    },
+    {
+      "path": "tsconfig.json",
+      "language": "json",
+      "detail": "TypeScript compiler, module-resolution, JSX, path, and strictness settings for the live source.",
+      "hash": "sha256:be18523b23b78b6e1a876ddd107d330f0168bddf09d751b57e0b5edce69c66f3",
+      "bytes": 666
+    }
+  ]
+}

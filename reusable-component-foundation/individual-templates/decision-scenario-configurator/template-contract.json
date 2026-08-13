@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "1.0",
+  "id": "decision-scenario-configurator",
+  "capabilityId": "decision-screen",
+  "title": "Decision scenario configurator",
+  "layer": "composite",
+  "purpose": "Let decision makers change BU/product actions and immediately recalculate the scenario.",
+  "drivers": [
+    {
+      "name": "renderDecisionScenarioConfigurator",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionScenarioConfigurator(",
+      "startLine": 27663,
+      "endLine": 27678,
+      "codeFile": "app--renderDecisionScenarioConfigurator.reference.js"
+    },
+    {
+      "name": "renderDecisionScenarioBu",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionScenarioBu(",
+      "startLine": 27680,
+      "endLine": 27697,
+      "codeFile": "app--renderDecisionScenarioBu.reference.js"
+    },
+    {
+      "name": "renderDecisionProductControl",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionProductControl(",
+      "startLine": 27699,
+      "endLine": 27748,
+      "codeFile": "app--renderDecisionProductControl.reference.js"
+    },
+    {
+      "name": "getDecisionScenarioSummary",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getDecisionScenarioSummary(",
+      "startLine": 26933,
+      "endLine": 27021,
+      "codeFile": "app--getDecisionScenarioSummary.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU models",
+    "Current scenario actions"
+  ],
+  "outputs": [
+    "Scenario action changes",
+    "Recalculated summary"
+  ],
+  "behaviour": [
+    "Let decision makers change BU/product actions and immediately recalculate the scenario.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Decision screen and scenario layout",
+  "templateDataPath": "template-data/template-data.json#decision",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/07-outputs-decision.css"
+  ],
+  "inheritedStates": [
+    "baseline",
+    "scenario changed",
+    "unsaved scenario",
+    "recommended",
+    "conditional",
+    "not recommended",
+    "decision ready",
+    "blocked"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Scenario action changes. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

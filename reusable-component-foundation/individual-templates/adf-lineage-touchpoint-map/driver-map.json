@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "adf-lineage-touchpoint-map",
+  "purpose": "Show pipeline touchpoints across datasets, activities and Databricks assets.",
+  "drivers": [
+    {
+      "name": "renderAdfLineageTouchpointMap",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfLineageTouchpointMap(",
+      "startLine": 12419,
+      "endLine": 12496,
+      "codeFile": "app--renderAdfLineageTouchpointMap.reference.js"
+    },
+    {
+      "name": "buildAdfPipelineTouchpointGraph",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function buildAdfPipelineTouchpointGraph(",
+      "startLine": 12498,
+      "endLine": 12601,
+      "codeFile": "app--buildAdfPipelineTouchpointGraph.reference.js"
+    }
+  ]
+}

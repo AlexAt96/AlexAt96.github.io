@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "1.0",
+  "id": "adf-pipeline-story",
+  "capabilityId": "adf-pipeline-charts-and-graphs",
+  "title": "ADF pipeline story and lane",
+  "layer": "composite",
+  "purpose": "Order activities by dependency level and render the full pipeline as a connected lane.",
+  "drivers": [
+    {
+      "name": "getAdfPipelineStepFlows",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getAdfPipelineStepFlows(",
+      "startLine": 11781,
+      "endLine": 11840,
+      "codeFile": "app--getAdfPipelineStepFlows.reference.js"
+    },
+    {
+      "name": "orderAdfPipelineActivities",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function orderAdfPipelineActivities(",
+      "startLine": 11842,
+      "endLine": 11877,
+      "codeFile": "app--orderAdfPipelineActivities.reference.js"
+    },
+    {
+      "name": "getAdfActivityDependencyLevels",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getAdfActivityDependencyLevels(",
+      "startLine": 11879,
+      "endLine": 11907,
+      "codeFile": "app--getAdfActivityDependencyLevels.reference.js"
+    },
+    {
+      "name": "renderAdfPipelineStory",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfPipelineStory(",
+      "startLine": 12103,
+      "endLine": 12169,
+      "codeFile": "app--renderAdfPipelineStory.reference.js"
+    },
+    {
+      "name": "renderAdfPipelineLaneSvg",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfPipelineLaneSvg(",
+      "startLine": 12229,
+      "endLine": 12274,
+      "codeFile": "app--renderAdfPipelineLaneSvg.reference.js"
+    }
+  ],
+  "inputs": [
+    "Pipeline",
+    "All flows",
+    "Activities",
+    "Dependencies"
+  ],
+  "outputs": [
+    "Ordered step lane",
+    "Selected step"
+  ],
+  "behaviour": [
+    "Order activities by dependency level and render the full pipeline as a connected lane.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "adf-activity-step-card"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "ADF pipeline charts, graphs and step explorer",
+  "templateDataPath": "template-data/template-data.json#adfPipeline",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/06-analysis-workflows.css",
+    "app/styles/11-system-map-visuals.css"
+  ],
+  "inheritedStates": [
+    "no pipeline",
+    "pipeline selected",
+    "step selected",
+    "branching",
+    "fan-in",
+    "Databricks activity",
+    "missing endpoint evidence"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: Ordered step lane. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

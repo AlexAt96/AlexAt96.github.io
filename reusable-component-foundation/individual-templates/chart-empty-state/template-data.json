@@ -1,0 +1,55 @@
+{
+  "lineSeries": [
+    {
+      "label": "W1",
+      "value": 20
+    },
+    {
+      "label": "W2",
+      "value": 44
+    },
+    {
+      "label": "W3",
+      "value": 61
+    },
+    {
+      "label": "W4",
+      "value": 72
+    }
+  ],
+  "distribution": [
+    {
+      "label": "Complete",
+      "value": 18,
+      "color": "#22c55e"
+    },
+    {
+      "label": "In review",
+      "value": 5,
+      "color": "#f2a200"
+    },
+    {
+      "label": "Missing",
+      "value": 2,
+      "color": "#e31937"
+    }
+  ],
+  "waterfall": [
+    {
+      "label": "Baseline cost",
+      "value": 820000
+    },
+    {
+      "label": "Cloud saving",
+      "value": -210000
+    },
+    {
+      "label": "Migration cost",
+      "value": 95000
+    },
+    {
+      "label": "Target cost",
+      "value": 705000
+    }
+  ]
+}

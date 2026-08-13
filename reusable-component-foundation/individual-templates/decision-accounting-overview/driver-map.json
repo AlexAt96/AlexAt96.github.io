@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "decision-accounting-overview",
+  "purpose": "Summarise savings, migration cost, net benefit and BU economics.",
+  "drivers": [
+    {
+      "name": "renderDecisionAccountingOverview",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionAccountingOverview(",
+      "startLine": 27750,
+      "endLine": 27778,
+      "codeFile": "app--renderDecisionAccountingOverview.reference.js"
+    },
+    {
+      "name": "renderDecisionAccountingBars",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionAccountingBars(",
+      "startLine": 27780,
+      "endLine": 27786,
+      "codeFile": "app--renderDecisionAccountingBars.reference.js"
+    },
+    {
+      "name": "renderDecisionSavingsSummaryTable",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionSavingsSummaryTable(",
+      "startLine": 27829,
+      "endLine": 27842,
+      "codeFile": "app--renderDecisionSavingsSummaryTable.reference.js"
+    }
+  ]
+}

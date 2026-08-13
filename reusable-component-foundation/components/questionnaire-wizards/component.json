@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0",
+  "id": "questionnaire-wizards",
+  "title": "Questionnaire and multi-step wizard patterns",
+  "requestedCoverage": "Questionnaire wizards",
+  "summary": "Accessible multi-step modal wizards for product questionnaires, script outputs, Terraform metadata and multi-document uploads.",
+  "routes": [
+    "app/document.html?phase=bu-data-collection&section=questionnaire-response&bu=:businessUnitId",
+    "/api/business-units/:businessUnitId/questionnaire/products",
+    "/api/business-units/:businessUnitId/questionnaire/responses"
+  ],
+  "symbols": [
+    {
+      "file": "app/src/app.js",
+      "names": [
+        "renderWizard",
+        "renderQuestionnaireResponse",
+        "renderQuestionnaireAnswerWizard",
+        "renderQuestionnaireAnswersModal",
+        "wireQuestionnaireAnswerWizard",
+        "saveQuestionnaireAnswers",
+        "renderTerraformExporterWizard",
+        "renderScriptOutputWizard",
+        "renderMultiDocumentUploadWizard",
+        "openAccessibleModal",
+        "closeAccessibleModal"
+      ]
+    }
+  ],
+  "styles": [
+    "app/styles/05-collection-workflows.css",
+    "app/styles/01-foundation.css"
+  ],
+  "states": [
+    "closed",
+    "step active",
+    "step complete",
+    "validation error",
+    "draft saved",
+    "submitted",
+    "read-only answers"
+  ],
+  "dataContracts": [
+    "wizard definition",
+    "step",
+    "question",
+    "answer",
+    "product context",
+    "submission status"
+  ],
+  "templateKey": "questionnaire",
+  "boundaries": [
+    "Wizard",
+    "WizardStep",
+    "QuestionField",
+    "WizardProgress",
+    "WizardNavigation",
+    "AnswerReview",
+    "SubmissionConfirmation"
+  ]
+}

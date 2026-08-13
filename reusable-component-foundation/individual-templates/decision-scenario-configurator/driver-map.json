@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "decision-scenario-configurator",
+  "purpose": "Let decision makers change BU/product actions and immediately recalculate the scenario.",
+  "drivers": [
+    {
+      "name": "renderDecisionScenarioConfigurator",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionScenarioConfigurator(",
+      "startLine": 27663,
+      "endLine": 27678,
+      "codeFile": "app--renderDecisionScenarioConfigurator.reference.js"
+    },
+    {
+      "name": "renderDecisionScenarioBu",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionScenarioBu(",
+      "startLine": 27680,
+      "endLine": 27697,
+      "codeFile": "app--renderDecisionScenarioBu.reference.js"
+    },
+    {
+      "name": "renderDecisionProductControl",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderDecisionProductControl(",
+      "startLine": 27699,
+      "endLine": 27748,
+      "codeFile": "app--renderDecisionProductControl.reference.js"
+    },
+    {
+      "name": "getDecisionScenarioSummary",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getDecisionScenarioSummary(",
+      "startLine": 26933,
+      "endLine": 27021,
+      "codeFile": "app--getDecisionScenarioSummary.reference.js"
+    }
+  ]
+}

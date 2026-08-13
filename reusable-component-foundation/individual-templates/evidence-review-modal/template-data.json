@@ -1,0 +1,34 @@
+{
+  "filters": {
+    "status": "All",
+    "environment": "All",
+    "artifactType": "All"
+  },
+  "items": [
+    {
+      "id": "review-1",
+      "artifactType": "Upload",
+      "title": "Production metadata export",
+      "environments": [
+        "Production"
+      ],
+      "status": "Accepted",
+      "confidence": "High",
+      "reviewer": "Data Engineer",
+      "notes": "Resource inventory parsed successfully."
+    },
+    {
+      "id": "review-2",
+      "artifactType": "Questionnaire",
+      "title": "Product questionnaire",
+      "environments": [
+        "Production",
+        "Development"
+      ],
+      "status": "More info needed",
+      "confidence": "Medium",
+      "followUpQuestion": "Confirm the month-end freeze dates.",
+      "buAnswer": "Freeze is business days 1-3."
+    }
+  ]
+}

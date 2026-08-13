@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "dora-metric-card",
+  "purpose": "Show one DORA value, true/proxy/missing status, confidence and low-medium-high gauge.",
+  "drivers": [
+    {
+      "name": "renderDoraMetricCard",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function renderDoraMetricCard(",
+      "startLine": 8152,
+      "endLine": 8171,
+      "codeFile": "interactive-system-map--renderDoraMetricCard.reference.html"
+    },
+    {
+      "name": "doraGaugeModel",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function doraGaugeModel(",
+      "startLine": 8173,
+      "endLine": 8191,
+      "codeFile": "interactive-system-map--doraGaugeModel.reference.html"
+    },
+    {
+      "name": "doraMetricBoundaryDefaults",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function doraMetricBoundaryDefaults(",
+      "startLine": 8220,
+      "endLine": 8246,
+      "codeFile": "interactive-system-map--doraMetricBoundaryDefaults.reference.html"
+    },
+    {
+      "name": "doraBandForMetric",
+      "file": "docs/reports/interactive-system-map.html",
+      "role": "System Map UI renderer",
+      "signature": "function doraBandForMetric(",
+      "startLine": 8248,
+      "endLine": 8255,
+      "codeFile": "interactive-system-map--doraBandForMetric.reference.html"
+    }
+  ]
+}

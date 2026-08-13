@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0",
+  "id": "adf-lineage-explorer",
+  "capabilityId": "data-lineage-screen",
+  "title": "ADF lineage explorer",
+  "layer": "screen",
+  "purpose": "Compose pipeline, touchpoint and full-lineage views with focus/navigation state.",
+  "drivers": [
+    {
+      "name": "getAdfLineageModel",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function getAdfLineageModel(",
+      "startLine": 11543,
+      "endLine": 11770,
+      "codeFile": "app--getAdfLineageModel.reference.js"
+    },
+    {
+      "name": "renderAdfLineageExplorer",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfLineageExplorer(",
+      "startLine": 11983,
+      "endLine": 12014,
+      "codeFile": "app--renderAdfLineageExplorer.reference.js"
+    },
+    {
+      "name": "renderAdfLineageExplorerLaunch",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function renderAdfLineageExplorerLaunch(",
+      "startLine": 12016,
+      "endLine": 12031,
+      "codeFile": "app--renderAdfLineageExplorerLaunch.reference.js"
+    }
+  ],
+  "inputs": [
+    "BU",
+    "ADF lineage model",
+    "Active view/focus"
+  ],
+  "outputs": [
+    "View change",
+    "Pipeline/activity focus"
+  ],
+  "behaviour": [
+    "Compose pipeline, touchpoint and full-lineage views with focus/navigation state.",
+    "Render explicit empty, populated and read-only states.",
+    "Expose app/server interaction through callbacks or adapters rather than global state."
+  ],
+  "dependencies": [
+    "adf-lineage-touchpoint-map",
+    "adf-lineage-map"
+  ],
+  "apiEndpoints": [],
+  "selectors": [],
+  "notes": [],
+  "capabilityTitle": "Data lineage and dependency explorer",
+  "templateDataPath": "template-data/template-data.json#dataLineage",
+  "localTemplateData": "template-data.json",
+  "styles": [
+    "app/styles/11-system-map-visuals.css",
+    "app/styles/06-analysis-workflows.css"
+  ],
+  "inheritedStates": [
+    "no lineage",
+    "partial",
+    "complete",
+    "pipeline focus",
+    "activity focus",
+    "source focus",
+    "target focus",
+    "evidence caveat"
+  ],
+  "demoScenarios": [
+    {
+      "id": "default",
+      "title": "Default populated",
+      "instruction": "Render the supplied mock data and show the normal ready state."
+    },
+    {
+      "id": "primary-interaction",
+      "title": "Primary interaction",
+      "instruction": "Exercise the main output: View change. Show the state change immediately."
+    },
+    {
+      "id": "validation-or-empty",
+      "title": "Validation or empty",
+      "instruction": "Demonstrate missing/invalid input with useful inline guidance and no browser-native alert."
+    },
+    {
+      "id": "readonly-or-complete",
+      "title": "Read-only or complete",
+      "instruction": "Demonstrate the completed/locked form of the same component without hiding its context."
+    }
+  ]
+}

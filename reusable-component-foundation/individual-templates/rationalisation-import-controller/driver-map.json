@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "templateId": "rationalisation-import-controller",
+  "purpose": "Parse spreadsheet rows, map them into rationalisation records and refresh every diagram.",
+  "drivers": [
+    {
+      "name": "parseEnvironmentRationalisationImportFile",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "async function parseEnvironmentRationalisationImportFile(",
+      "startLine": 40573,
+      "endLine": 40575,
+      "codeFile": "app--parseEnvironmentRationalisationImportFile.reference.js"
+    },
+    {
+      "name": "applyEnvironmentRationalisationImportRows",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function applyEnvironmentRationalisationImportRows(",
+      "startLine": 36850,
+      "endLine": 36873,
+      "codeFile": "app--applyEnvironmentRationalisationImportRows.reference.js"
+    },
+    {
+      "name": "refreshProposedTopologyDiagrams",
+      "file": "app/src/app.js",
+      "role": "UI renderer/controller",
+      "signature": "function refreshProposedTopologyDiagrams(",
+      "startLine": 36905,
+      "endLine": 36910,
+      "codeFile": "app--refreshProposedTopologyDiagrams.reference.js"
+    }
+  ]
+}
