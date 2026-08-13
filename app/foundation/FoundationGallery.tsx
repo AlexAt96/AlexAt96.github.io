@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import PortfolioBrand from "../PortfolioBrand";
+import { ShowroomSwitcher } from "../PortfolioChrome";
+import { showroomHref } from "../portfolioRoutes";
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import CompassPatternWorkbench from "../CompassPatternWorkbench";
 import { ActionButton, Segmented } from "./templates/shared";
@@ -84,14 +86,15 @@ export default function FoundationGallery({ initialScenario }: { initialScenario
     if (scroll) requestAnimationFrame(() => document.getElementById("template-stage")?.scrollIntoView({ behavior:"smooth", block:"start" }));
   };
 
-  return <main className={styles.page}>
-    <header className={styles.topbar}>
+  return <main className={styles.page} data-aa-active-showroom-index="0">
+    <header className={`${styles.topbar} aa-site-topbar aa-gallery-topbar`}>
       <PortfolioBrand className={styles.brand} section={dccMode ? "DCC scenario library" : "Pattern library"} />
-      <nav aria-label="Showroom navigation"><span className={styles.isolationBadge}><i /> {dccMode ? "DCC Hackathon data" : "Approved collection"}</span><Link href="/poc-tracker">Tracker gallery</Link><Link href={dccMode ? "/?system=compass&scenario=dcc-hackathon" : "/?system=compass"}>Full Migration Compass showroom</Link></nav>
+      <ShowroomSwitcher active="compass" scenarioId={scenarioId} className="aa-gallery-showroom-switcher" />
+      <nav className="aa-gallery-actions" aria-label="Showroom navigation"><span className={styles.isolationBadge}><i /> {dccMode ? "DCC Hackathon data" : "Approved collection"}</span><Link href={dccMode ? "/poc-tracker?scenario=dcc-hackathon" : "/poc-tracker"} data-aa-showroom-id="tracker" data-aa-showroom-index="1" data-aa-showroom-label="PoC Tracker">Tracker gallery</Link><Link href={showroomHref("compass",scenarioId)}>Full showroom</Link></nav>
     </header>
 
     <section className={styles.intro}>
-      <div><p className={styles.eyebrow}>{dccMode ? "DCC Hackathon · Recommended pattern library" : "Compass pattern library"}</p><h1>{dccMode ? <>Assurance patterns.<br /><em>DCC scenario data.</em></> : <>Built for real work.<br /><em>Ready to reuse.</em></>}</h1><p>{dccMode ? `${galleryStarredPatternIds.length} starred gallery patterns are brought to the top for the documentation-assurance journey. Their examples use standards, uploaded documents, AI findings, human review and report data.` : "Explore polished, interactive patterns for planning, data collection, analysis, evidence and reporting. Every example uses safe sample content and includes carefully designed empty and read-only states."}</p><div className={styles.introActions}><a href="#template-library">Explore patterns <span>↓</span></a><Link href={dccMode ? "/?system=compass&scenario=dcc-hackathon" : "/?system=compass"}>View the full showroom</Link></div></div>
+      <div><p className={styles.eyebrow}>{dccMode ? "DCC Hackathon · Recommended pattern library" : "Compass pattern library"}</p><h1>{dccMode ? <>Assurance patterns.<br /><em>DCC scenario data.</em></> : <>Built for real work.<br /><em>Ready to reuse.</em></>}</h1><p>{dccMode ? `${galleryStarredPatternIds.length} starred gallery patterns are brought to the top for the documentation-assurance journey. Their examples use standards, uploaded documents, AI findings, human review and report data.` : "Explore polished, interactive patterns for planning, data collection, analysis, evidence and reporting. Every example uses safe sample content and includes carefully designed empty and read-only states."}</p><div className={styles.introActions}><a href="#template-library">Explore patterns <span>↓</span></a><Link href={showroomHref("compass",scenarioId)}>View the full showroom</Link></div></div>
       <dl><div><dt>Patterns</dt><dd>{items.length}</dd><small>interactive patterns</small></div><div><dt>Workflow areas</dt><dd>{groupNames.length - 1}</dd><small>from planning to reporting</small></div><div><dt>Preview states</dt><dd>3</dd><small>standard, empty and read-only</small></div></dl>
     </section>
 
@@ -179,7 +182,7 @@ export default function FoundationGallery({ initialScenario }: { initialScenario
       })}</div>
     </section>
 
-    <footer className={styles.pageFooter}><span>AA Portfolio · approved pattern library</span><div><Link href="/poc-tracker">Tracker gallery</Link><Link href={dccMode ? "/?system=compass&scenario=dcc-hackathon" : "/?system=compass"}>Full Migration Compass showroom</Link></div></footer>
+    <footer className={styles.pageFooter}><span>AA Portfolio · approved pattern library</span><div><Link href={dccMode ? "/poc-tracker?scenario=dcc-hackathon" : "/poc-tracker"} data-aa-showroom-id="tracker" data-aa-showroom-index="1" data-aa-showroom-label="PoC Tracker">Tracker gallery</Link><Link href={showroomHref("compass",scenarioId)}>Full Migration Compass showroom</Link></div></footer>
 
     {technicalOpen && <CompassPatternWorkbench pattern={selected} onClose={() => setTechnicalOpen(false)} />}
   </main>;

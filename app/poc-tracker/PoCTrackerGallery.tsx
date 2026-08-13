@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import PortfolioBrand from "../PortfolioBrand";
+import { RetroThemeSwitch, ShowroomSwitcher } from "../PortfolioChrome";
+import { showroomHref } from "../portfolioRoutes";
 import styles from "./gallery.module.css";
 import { usePersistentDarkMode } from "../usePersistentTheme";
 import { useScenario } from "../useScenario";
@@ -167,18 +169,19 @@ export default function PoCTrackerGallery({ initialScenario }: { initialScenario
   },[scenarioId,starredPatternIds]);
 
   return (
-    <main className={styles.page} data-theme={dark ? "dark" : "light"} data-scenario={dccMode ? "dcc-hackathon" : "base"}>
-      <header className={styles.topbar}>
+    <main className={styles.page} data-theme={dark ? "dark" : "light"} data-scenario={dccMode ? "dcc-hackathon" : "base"} data-aa-active-showroom-index="1">
+      <header className={`${styles.topbar} aa-site-topbar aa-gallery-topbar`}>
         <PortfolioBrand className={styles.brand} section="PoC Tracker" />
-        <div className={styles.topActions}>
-          <Link className={styles.backLink} href={dccMode ? "/?system=tracker&scenario=dcc-hackathon" : "/?system=tracker"}>
+        <ShowroomSwitcher active="tracker" scenarioId={scenarioId} className="aa-gallery-showroom-switcher" />
+        <div className={`${styles.topActions} aa-gallery-actions`}>
+          <Link className={styles.backLink} href={showroomHref("tracker",scenarioId)}>
             <span aria-hidden="true">←</span>
             <span className={styles.navLabel}>Full Tracker showroom</span>
           </Link>
-          <Link className={`${styles.backLink} ${styles.secondaryLink}`} href={dccMode ? "/foundation?scenario=dcc-hackathon" : "/foundation"}>
+          <Link className={`${styles.backLink} ${styles.secondaryLink}`} href={dccMode ? "/foundation?scenario=dcc-hackathon" : "/foundation"} data-aa-showroom-id="compass" data-aa-showroom-index="0" data-aa-showroom-label="Migration Compass">
             All Migration Compass patterns <span aria-hidden="true">→</span>
           </Link>
-          <button className={styles.themeButton} onClick={() => setDark((value) => !value)} aria-label={`Switch to ${dark ? "light" : "dark"} theme`} aria-pressed={dark}>{dark ? "☀" : "◐"}</button>
+          <RetroThemeSwitch className={styles.themeButton} dark={dark} onToggle={() => setDark((value) => !value)} />
         </div>
       </header>
 
@@ -306,7 +309,7 @@ export default function PoCTrackerGallery({ initialScenario }: { initialScenario
 
       <footer className={styles.pageFooter}>
         <span>AA Portfolio · PoC Tracker showcase · Updated 5 August 2026</span>
-        <Link href={dccMode ? "/?system=compass&scenario=dcc-hackathon" : "/?system=compass"}>Open full Migration Compass showroom</Link>
+        <Link href={showroomHref("compass",scenarioId)} data-aa-showroom-id="compass" data-aa-showroom-index="0" data-aa-showroom-label="Migration Compass">Open full Migration Compass showroom</Link>
       </footer>
     </main>
   );

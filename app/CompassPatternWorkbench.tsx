@@ -35,31 +35,78 @@ const tabs: readonly { id: WorkbenchTab; number: string; label: string; detail: 
 
 const sourceBase = sitePath("/reusable-component-foundation/showroom-templates");
 
+const templateFamilyFiles = [
+  ["PlanningTemplates.tsx", "PlanningTemplates.module.css"],
+  ["CollectionTemplates.tsx", "CollectionTemplates.module.css"],
+  ["ImportExportCsvTemplate.tsx", "ImportExportCsvTemplate.module.css"],
+  ["AnalysisTemplates.tsx", "AnalysisTemplates.module.css"],
+  ["OutcomeTemplates.tsx", "OutcomeTemplates.module.css"],
+] as const;
+
+const importedFixtureAssets: readonly SourceAsset[] = [
+  {
+    name: "dashboard.example.json",
+    href: sitePath("/reusable-component-foundation/individual-templates/dashboard-page/template-data.json"),
+    detail: "Planning import · public/reusable-component-foundation/individual-templates/dashboard-page/template-data.json",
+    language: "json",
+  },
+  {
+    name: "charts.example.json",
+    href: sitePath("/reusable-component-foundation/individual-templates/advanced-discovery-pie-chart/template-data.json"),
+    detail: "Planning import · public/reusable-component-foundation/individual-templates/advanced-discovery-pie-chart/template-data.json",
+    language: "json",
+  },
+  {
+    name: "kanban.example.json",
+    href: sitePath("/reusable-component-foundation/individual-templates/phase-kanban-board/template-data.json"),
+    detail: "Planning import · public/reusable-component-foundation/individual-templates/phase-kanban-board/template-data.json",
+    language: "json",
+  },
+  {
+    name: "outcomes.example.json",
+    href: sitePath("/reusable-component-foundation/template-data/template-data.json"),
+    detail: "Outcome import · public/reusable-component-foundation/template-data/template-data.json",
+    language: "json",
+  },
+];
+
 function sourceAssetsFor(pattern: CompassPattern): SourceAsset[] {
   const sourceName = compassPatternSourceFiles[pattern.templateKey];
   const styleName = compassPatternStyleFiles[pattern.templateKey];
-  const assets: SourceAsset[] = [
-    { name: sourceName, href: `${sourceBase}/${sourceName}`, detail: `${compassPatternComponentNames[pattern.templateKey]} implementation`, language: "tsx" },
-    { name: styleName, href: `${sourceBase}/${styleName}`, detail: "Pattern-family CSS Module", language: "css" },
+  const orderedFamilies = [
+    ...templateFamilyFiles.filter(([familySource]) => familySource === sourceName),
+    ...templateFamilyFiles.filter(([familySource]) => familySource !== sourceName),
+  ];
+  const familyAssets: SourceAsset[] = orderedFamilies.flatMap(([familySource, familyStyle]) => [
+    {
+      name: familySource,
+      href: `${sourceBase}/${familySource}`,
+      detail: familySource === sourceName
+        ? `${compassPatternComponentNames[pattern.templateKey]} implementation · selected pattern`
+        : "TemplatePreview dependency · template-family implementation",
+      language: "tsx",
+    },
+    {
+      name: familyStyle,
+      href: `${sourceBase}/${familyStyle}`,
+      detail: familyStyle === styleName
+        ? "Selected pattern-family CSS Module"
+        : "TemplatePreview dependency · template-family CSS Module",
+      language: "css",
+    },
+  ]);
+
+  return [
+    ...familyAssets,
     { name: "shared.tsx", href: `${sourceBase}/shared.tsx`, detail: "Accessible UI primitives", language: "tsx" },
     { name: "shared.module.css", href: `${sourceBase}/shared.module.css`, detail: "Shared primitive styles", language: "css" },
-    { name: "types.ts", href: `${sourceBase}/types.ts`, detail: "Showroom prop types", language: "ts" },
+    { name: "types.ts", href: `${sourceBase}/types.ts`, detail: "Showroom prop types · imports ScenarioId", language: "ts" },
+    { name: "scenarios.ts", href: `${sourceBase}/scenarios.ts`, detail: "ScenarioId dependency · copy to app/scenarios.ts", language: "ts" },
     { name: "TemplatePreview.tsx", href: `${sourceBase}/TemplatePreview.tsx`, detail: "Composition and import map", language: "tsx" },
+    ...importedFixtureAssets,
+    { name: "README.md", href: `${sourceBase}/README.md`, detail: "File layout, setup and theming guidance", language: "md" },
+    { name: "COMPASS-UI-EXPORT-README.md", href: sitePath("/reusable-component-foundation/COMPASS-UI-EXPORT-README.md"), detail: "Complete export setup and host-app boundary", language: "md" },
   ];
-
-  if (sourceName === "PlanningTemplates.tsx") {
-    assets.push(
-      { name: "dashboard.example.json", href: sitePath("/reusable-component-foundation/individual-templates/dashboard-page/template-data.json"), detail: "Dashboard and planning seed", language: "json" },
-      { name: "charts.example.json", href: sitePath("/reusable-component-foundation/individual-templates/advanced-discovery-pie-chart/template-data.json"), detail: "Chart series seed", language: "json" },
-      { name: "kanban.example.json", href: sitePath("/reusable-component-foundation/individual-templates/phase-kanban-board/template-data.json"), detail: "Board and list seed", language: "json" },
-    );
-  }
-
-  if (sourceName === "OutcomeTemplates.tsx") {
-    assets.push({ name: "template-data.json", href: sitePath("/reusable-component-foundation/template-data/template-data.json"), detail: "Report and outcome seed data", language: "json" });
-  }
-
-  return assets;
 }
 
 function downloadContent(filename: string, content: string, language: string) {
@@ -205,10 +252,6 @@ export default function CompassPatternWorkbench({ pattern, onClose }: CompassPat
     </div>;
   }
 
-  const activeTabIndex = tabs.findIndex((tab) => tab.id === activeTab);
-  const activeTabId = `compass-workbench-${pattern.id}-tab-${activeTab}`;
-  const activePanelId = `compass-workbench-${pattern.id}-panel-${activeTab}`;
-
   return <AccessibleModal
     title={pattern.title}
     description="Working source, example data and an honest integration contract for this Compass pattern."
@@ -249,14 +292,16 @@ export default function CompassPatternWorkbench({ pattern, onClose }: CompassPat
         </button>)}
       </div>
 
-      <div
+      {tabs.map((tab) => <div
         className={styles.panel}
-        key={activeTab}
-        id={activePanelId}
+        key={tab.id}
+        id={`compass-workbench-${pattern.id}-panel-${tab.id}`}
         role="tabpanel"
-        aria-labelledby={activeTabId}
-        tabIndex={activeTabIndex >= 0 ? 0 : undefined}
+        aria-labelledby={`compass-workbench-${pattern.id}-tab-${tab.id}`}
+        tabIndex={activeTab === tab.id ? 0 : -1}
+        hidden={activeTab !== tab.id}
       >
+        {activeTab === tab.id && <>
         {activeTab === "overview" && <div className={styles.overview}>
           <div className={styles.overviewGrid}>
             <article><span>01</span><h3>Implementation</h3><ul>
@@ -279,13 +324,13 @@ export default function CompassPatternWorkbench({ pattern, onClose }: CompassPat
             <section><small>Reusable boundaries</small><div>{pattern.boundaries.map((boundary) => <code key={boundary}>{boundary}</code>)}</div></section>
             <section><small>Supported states</small><div>{pattern.states.map((state) => <Badge key={state}>{state}</Badge>)}</div></section>
             <section><small>Data contracts</small><ul>{pattern.dataContracts.map((contract) => <li key={contract}>{contract}</li>)}</ul></section>
-            <section><small>Files included</small><p>{assets.length} implementation, style, shared and fixture files are available in the Component tab. The complete source download keeps their working folder structure.</p></section>
+            <section><small>Files included</small><p>{assets.length} implementation, style, shared, fixture and setup files are available in the Component tab. The selected pattern family appears first; the remaining files close the composition map’s imports.</p></section>
           </div>
         </div>}
 
         {activeTab === "component" && <div className={styles.sourceWorkspace}>
           <aside aria-label="Component source files">
-            <p>COMPONENT FILES</p>
+            <p>RECREATION FILES · {assets.length}</p>
             {assets.map((asset) => <button
               type="button"
               key={asset.href}
@@ -311,7 +356,8 @@ export default function CompassPatternWorkbench({ pattern, onClose }: CompassPat
           <div className={styles.generatedNote}><strong>Exact source props + recommended adapter</strong><span>The reference source currently accepts three showroom props. The generic data and event contract below is the production handoff, not a claim that those callbacks are already wired.</span></div>
           {renderCodePanel(apiContent, apiFileName, "tsx")}
         </div>}
-      </div>
+        </>}
+      </div>)}
     </div>
     <p className={styles.liveRegion} role="status" aria-live="polite" aria-atomic="true">{announcement}</p>
   </AccessibleModal>;

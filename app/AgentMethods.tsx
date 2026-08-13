@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { usePersistentDarkMode } from "./usePersistentTheme";
+import { portfolioHref, showroomHref } from "./portfolioRoutes";
 
 export type ProjectKey = "compass" | "tracker" | "mar";
 export type Category = "Governance" | "Evidence" | "Delivery" | "Safety" | "Quality";
@@ -1069,7 +1070,7 @@ export default function AgentMethods() {
 
   return <div className="agent-showroom" data-theme={dark ? "dark" : "light"}>
     <aside className="agent-sidebar">
-      <Link className="agent-brand" href="/"><span>✦</span><div><strong>Agent use cases</strong><small>Operating catalogue</small></div></Link>
+      <Link className="agent-brand" href={portfolioHref}><span>✦</span><div><strong>Agent use cases</strong><small>Operating catalogue</small></div></Link>
       <div className="agent-side-intro"><small>SHOWROOM 03</small><strong>How we manage AI-assisted delivery</strong><p>{methods.length} specific methods across three project sources.</p></div>
       <nav aria-label="Agent delivery use case sections">
         <a href="#overview"><span>01</span> Control loop</a>
@@ -1079,13 +1080,13 @@ export default function AgentMethods() {
         <a href="#selection"><span>05</span> Pick list</a>
       </nav>
       <div className="agent-project-legend"><small>PROJECT SOURCES</small>{(Object.keys(projects) as ProjectKey[]).map((key) => <button className={project === key ? "active" : ""} onClick={() => setProject(project === key ? "all" : key)} key={key}><i style={{background:projects[key].colour}} /><span><b>{projects[key].name}</b><em>{methods.filter((method) => method.projects.includes(key)).length} use cases</em></span></button>)}</div>
-      <Link className="back-to-library" href="/">← Component showroom</Link>
+      <Link className="back-to-library" href="/components">← Component showroom</Link>
     </aside>
 
     <main>
       <header className="agent-topbar">
         <div><span>Library</span><b>/</b><strong>Agent delivery use cases</strong></div>
-        <aside><div className="agent-system-switch" role="group" aria-label="Choose library collection"><Link className="compass-choice" href="/?system=compass"><i />Migration Compass</Link><Link className="tracker-choice" href="/?system=tracker"><i />PoC Tracker</Link><Link className="generic-choice" href="/components"><i />Individual Components</Link><Link className="agent-choice active" href="/methods" aria-current="page"><i />Agent Methods</Link></div><span className="agent-live"><i /> 3 sources mapped</span><a href="#catalogue">Browse catalogue</a><button onClick={() => setDark((value) => !value)} aria-label={`Switch to ${dark ? "light" : "dark"} theme`}>{dark ? "☀" : "◐"}</button></aside>
+        <aside><div className="agent-system-switch" role="group" aria-label="Choose library collection"><Link className="compass-choice" href={showroomHref("compass")}><i />Migration Compass</Link><Link className="tracker-choice" href={showroomHref("tracker")}><i />PoC Tracker</Link><Link className="generic-choice" href="/components"><i />Individual Components</Link><Link className="agent-choice active" href="/methods" aria-current="page"><i />Agent Methods</Link></div><span className="agent-live"><i /> 3 sources mapped</span><a href="#catalogue">Browse catalogue</a><button onClick={() => setDark((value) => !value)} aria-label={`Switch to ${dark ? "light" : "dark"} theme`}>{dark ? "☀" : "◐"}</button></aside>
       </header>
 
       <section className="agent-hero" id="overview">
@@ -1172,7 +1173,7 @@ export default function AgentMethods() {
         <footer><span><i /> Document-backed use case with project-specific maturity</span><div><button className={shortlist.includes(selected.id) ? "picked" : ""} onClick={() => toggleShortlist(selected.id)}>{shortlist.includes(selected.id) ? "✓ In pick list" : "+ Add to pick list"}</button><button onClick={() => setDetailOpen(false)}>Done</button></div></footer>
       </section></div>}
 
-      <footer className="agent-footer"><Link className="agent-brand" href="/"><span>✦</span><div><strong>Architecture Component Library</strong><small>Three operating models · {methods.length} detailed methods</small></div></Link><p>Controls are distilled and consolidated from the supplied operating-model portfolios.</p><a href="#overview">Back to top ↑</a></footer>
+      <footer className="agent-footer"><Link className="agent-brand" href={portfolioHref}><span>✦</span><div><strong>Architecture Component Library</strong><small>Three operating models · {methods.length} detailed methods</small></div></Link><p>Controls are distilled and consolidated from the supplied operating-model portfolios.</p><a href="#overview">Back to top ↑</a></footer>
     </main>
   </div>;
 }

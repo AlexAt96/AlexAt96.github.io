@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -191,8 +192,44 @@ function templateContracts(source) {
   return [...block.matchAll(/^\s{2}(\w+):\s*(\w+),$/gm)].map(([, key, component]) => [key, component]);
 }
 
+test("portfolio navigation has a dedicated route and rejects ambiguous showroom queries", async () => {
+  const [homeResponse,portfolioResponse,invalidResponse,scenarioOnlyResponse,legacyCompassResponse] = await Promise.all([
+    render("/"),
+    render("/portfolio"),
+    render("/?system=not-a-showroom"),
+    render("/?scenario=dcc-hackathon"),
+    render("/?system=compass"),
+  ]);
+  [homeResponse,portfolioResponse,invalidResponse,scenarioOnlyResponse,legacyCompassResponse].forEach((response) => assert.equal(response.status,200));
+
+  const [homeHtml,portfolioHtml,invalidHtml,scenarioOnlyHtml,legacyCompassHtml] = await Promise.all([
+    homeResponse.text(),
+    portfolioResponse.text(),
+    invalidResponse.text(),
+    scenarioOnlyResponse.text(),
+    legacyCompassResponse.text(),
+  ]);
+
+  for (const html of [homeHtml,portfolioHtml,invalidHtml,scenarioOnlyHtml]) {
+    assert.match(html,/class="portfolio-home"/);
+    assert.match(html,/Alex(?:<!-- -->)?[\s\S]*Atkinson/);
+    assert.match(html,/href="\/compass"/);
+    assert.match(html,/href="\/tracker"/);
+    assert.doesNotMatch(html,/data-system="compass"|data-system="tracker"/);
+  }
+  assert.match(portfolioHtml,/href="\/portfolio"/);
+  assert.match(legacyCompassHtml,/data-system="compass"/);
+
+  const layoutSource = readFileSync(`${projectRoot}/app/layout.tsx`, "utf8");
+  const portfolioStyles = ["portfolio-system.css", "minimal-brand.css"];
+  for (const stylesheet of portfolioStyles) {
+    assert.match(layoutSource,new RegExp(`import "\\./${stylesheet.replace(".", "\\.")}"`),`${stylesheet} is included in every rendered route`);
+    assert.match(readFileSync(`${projectRoot}/app/${stylesheet}`, "utf8"),/\.portfolio-home\s*\{/,`${stylesheet} contains the portfolio layout layer`);
+  }
+});
+
 test("server-renders the Compass UI component library", async () => {
-  const response = await render();
+  const response = await render("/compass");
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
@@ -207,7 +244,7 @@ test("server-renders the Compass UI component library", async () => {
   assert.match(html, /PoC Tracker/);
   assert.match(html, /Individual Components/);
   assert.match(html, /Agent Methods/);
-  assert.match(html, /href="\/?\?system=compass"[^>]*aria-current="page"/);
+  assert.match(html, /href="\/compass"[^>]*aria-current="page"/);
   assert.match(html, /href="\/foundation"[^>]*>.*Focused gallery/s);
   assert.match(html, /View focused gallery/);
   assert.doesNotMatch(html, /gallery-view-link/);
@@ -294,7 +331,7 @@ test("server-renders the Compass UI component library", async () => {
 });
 
 test("all twenty-six Compass Tech details actions share the complete developer workbench", async () => {
-  const response = await render("/?system=compass");
+  const response = await render("/compass");
   assert.equal(response.status, 200);
   const html = await response.text();
 
@@ -333,6 +370,11 @@ test("all twenty-six Compass Tech details actions share the complete developer w
   assert.match(workbenchSource, /role="tab"/);
   assert.match(workbenchSource, /aria-selected=/);
   assert.match(workbenchSource, /role="tabpanel"/);
+  assert.match(
+    workbenchSource,
+    /tabs\.map\(\(tab\) => <div[\s\S]*?id=\{`compass-workbench-\$\{pattern\.id\}-panel-\$\{tab\.id\}`\}[\s\S]*?hidden=\{activeTab !== tab\.id\}/,
+    "all four tabpanel targets stay in the DOM so every aria-controls reference resolves",
+  );
   for (const [label, purpose] of [
     ["Overview", "implementation guidance"],
     ["Component", "rendered React and TypeScript source"],
@@ -346,8 +388,35 @@ test("all twenty-six Compass Tech details actions share the complete developer w
   assert.match(workbenchSource, /<pre[\s\S]*?<code/, "developer artefacts are readable directly in a code panel");
   assert.match(workbenchSource, /fetch\(/, "the component view loads the real downloadable pattern source");
   assert.match(workbenchSource, /\.text\(\)/, "the fetched React source is rendered rather than merely linked");
-  for (const requiredAsset of ["compassPatternStyleFiles", "shared.tsx", "shared.module.css", "types.ts", "TemplatePreview.tsx"]) {
+  for (const requiredAsset of [
+    "PlanningTemplates.tsx",
+    "PlanningTemplates.module.css",
+    "CollectionTemplates.tsx",
+    "CollectionTemplates.module.css",
+    "ImportExportCsvTemplate.tsx",
+    "ImportExportCsvTemplate.module.css",
+    "AnalysisTemplates.tsx",
+    "AnalysisTemplates.module.css",
+    "OutcomeTemplates.tsx",
+    "OutcomeTemplates.module.css",
+    "shared.tsx",
+    "shared.module.css",
+    "types.ts",
+    "scenarios.ts",
+    "TemplatePreview.tsx",
+    "README.md",
+    "COMPASS-UI-EXPORT-README.md",
+  ]) {
     assert.match(workbenchSource, new RegExp(requiredAsset.replaceAll(".", "\\.")), `${requiredAsset} is included in the recreate-this-pattern source handoff`);
+  }
+  assert.match(workbenchSource, /orderedFamilies[\s\S]*?familySource === sourceName/, "the selected pattern family remains first in the complete source list");
+  for (const requiredFixturePath of [
+    "individual-templates/dashboard-page/template-data.json",
+    "individual-templates/advanced-discovery-pie-chart/template-data.json",
+    "individual-templates/phase-kanban-board/template-data.json",
+    "template-data/template-data.json",
+  ]) {
+    assert.match(workbenchSource, new RegExp(requiredFixturePath.replaceAll(".", "\\.")), `${requiredFixturePath} is visible for every pattern because a supplied template family imports it`);
   }
   assert.match(workbenchSource, /Download complete source/, "developers can also take the complete working source bundle");
   assert.doesNotMatch(workbenchSource, /href="[^"]*\$\{pattern\.[^}]+\}[^"]*"/, "pattern-specific guidance links are interpolated instead of emitted as literal placeholders");
@@ -395,6 +464,13 @@ test("downloadable Compass source stays aligned with the live workbench dependen
     );
   }
 
+  assert.equal(
+    readFileSync(`${publicRoot}/scenarios.ts`, "utf8"),
+    readFileSync(`${projectRoot}/app/scenarios.ts`, "utf8"),
+    "the visible ScenarioId dependency mirrors app/scenarios.ts",
+  );
+  assert.equal(existsSync(`${publicRoot}/README.md`), true, "the visible source set includes setup and file-layout guidance");
+
   const archive = readFileSync(`${projectRoot}/public/reusable-component-foundation/compass-ui-code.zip`).toString("latin1");
   for (const includedPath of [
     "compass-ui/app/CompassPatternWorkbench.tsx",
@@ -414,7 +490,7 @@ test("downloadable Compass source stays aligned with the live workbench dependen
 });
 
 test("Base preserves the original showroom copy and semantics across every template family", async () => {
-  const response = await render("/?system=compass");
+  const response = await render("/compass");
   assert.equal(response.status, 200);
   const html = await response.text();
   const snapshotRoot = `${projectRoot}/public/reusable-component-foundation/showroom-templates`;
@@ -488,7 +564,7 @@ test("Base preserves the original showroom copy and semantics across every templ
 });
 
 test("DCC supplies contextual fixtures through the same original template contracts", async () => {
-  const response = await render("/?scenario=dcc-hackathon");
+  const response = await render("/compass?scenario=dcc-hackathon");
   assert.equal(response.status, 200);
   const html = await response.text();
   const contextualPatterns = [
@@ -545,7 +621,7 @@ test("scenario routing retains the original 26-component preview map without rep
 });
 
 test("server-renders the DCC hackathon scenario with its curated assurance journey", async () => {
-  const response = await render("/?scenario=dcc-hackathon");
+  const response = await render("/compass?scenario=dcc-hackathon");
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
@@ -628,8 +704,8 @@ test("server-renders the DCC hackathon scenario with its curated assurance journ
 });
 
 test("Base and DCC use one dependency explorer with a scenario launch payload", async () => {
-  const baseResponse = await render("/?system=compass");
-  const dccResponse = await render("/?scenario=dcc-hackathon");
+  const baseResponse = await render("/compass");
+  const dccResponse = await render("/compass?scenario=dcc-hackathon");
   assert.equal(baseResponse.status, 200);
   assert.equal(dccResponse.status, 200);
   const baseHtml = await baseResponse.text();
@@ -699,7 +775,7 @@ test("the shared dependency explorer prevents dangling edges after filtering or 
 });
 
 test("main showroom includes every PoC Tracker screen", async () => {
-  const response = await render("/?system=tracker");
+  const response = await render("/tracker");
   assert.equal(response.status, 200);
 
   const html = await response.text();
@@ -716,7 +792,7 @@ test("main showroom includes every PoC Tracker screen", async () => {
   assert.match(html, /Planning backlog/);
   assert.match(html, /Chatbot assistant/);
   assert.match(html, /Architecture map/);
-  assert.match(html, /href="\/?\?system=tracker"[^>]*aria-current="page"/);
+  assert.match(html, /href="\/tracker"[^>]*aria-current="page"/);
   assert.match(html, /Edit colours/);
   assert.match(html, /Reset defaults/);
   assert.match(html, /href="\/poc-tracker"[^>]*>.*Focused gallery/s);
@@ -735,7 +811,7 @@ test("main showroom includes every PoC Tracker screen", async () => {
 });
 
 test("Base preserves the original seven PoC Tracker screen contracts and copy", async () => {
-  const response = await render("/?system=tracker");
+  const response = await render("/tracker");
   assert.equal(response.status, 200);
   const html = await response.text();
 
@@ -768,8 +844,8 @@ test("Base preserves the original seven PoC Tracker screen contracts and copy", 
 
 test("DCC supplies Tracker fixtures through the same seven section and iframe contracts", async () => {
   const [baseResponse, dccResponse] = await Promise.all([
-    render("/?system=tracker"),
-    render("/?system=tracker&scenario=dcc-hackathon"),
+    render("/tracker"),
+    render("/tracker?scenario=dcc-hackathon"),
   ]);
   assert.equal(baseResponse.status, 200);
   assert.equal(dccResponse.status, 200);
@@ -778,7 +854,7 @@ test("DCC supplies Tracker fixtures through the same seven section and iframe co
   assert.match(dccHtml, /data-system="tracker"/);
   assert.match(dccHtml, /data-scenario="dcc-hackathon"/);
   assert.match(dccHtml, /aria-label="Change demo scenario"[^>]*aria-controls="scenario-popover"[^>]*aria-expanded="false"/);
-  assert.match(dccHtml, /href="\/\?system=tracker&amp;scenario=dcc-hackathon"[^>]*aria-current="page"/);
+  assert.match(dccHtml, /href="\/tracker\?scenario=dcc-hackathon"[^>]*aria-current="page"/);
   assert.match(dccHtml, /href="\/poc-tracker\?scenario=dcc-hackathon"[^>]*>.*Focused gallery/s);
 
   for (const contract of trackerScreenContracts) {
@@ -800,8 +876,8 @@ test("DCC supplies Tracker fixtures through the same seven section and iframe co
 
 test("Tracker and Compass recommendations remain collection-specific in DCC", async () => {
   const [trackerResponse, compassResponse] = await Promise.all([
-    render("/?system=tracker&scenario=dcc-hackathon"),
-    render("/?system=compass&scenario=dcc-hackathon"),
+    render("/tracker?scenario=dcc-hackathon"),
+    render("/compass?scenario=dcc-hackathon"),
   ]);
   assert.equal(trackerResponse.status, 200);
   assert.equal(compassResponse.status, 200);
@@ -986,7 +1062,7 @@ test("server-renders the consolidated agent use-case catalogue", async () => {
   assert.match(methodsPageSource, /data-method-slide=\{page\.id\}/, "the five complete slide panels have a stable test hook");
   assert.match(methodsPageSource, /const renderedMethods = filtered;/, "opening a method keeps the surrounding catalogue rendered");
   assert.match(methodsPageSource, /<dialog className="method-presentation"/, "method detail opens in a native modal presentation");
-  assert.match(methodsPageSource, /role="dialog" aria-modal="true" aria-labelledby="method-presentation-title" aria-describedby="method-presentation-subtitle"/, "the presentation exposes complete modal semantics");
+  assert.match(methodsPageSource, /role="dialog" aria-modal="true" aria-labelledby="method-presentation-title" aria-describedby="method-presentation-subtitle(?: method-presentation-zoom-help)?"/, "the presentation exposes complete modal semantics");
   assert.match(methodsPageSource, /aria-haspopup="dialog" aria-controls="method-presentation-dialog"/, "method cards announce that they open a dialog");
   assert.match(methodsPageSource, /if \(!dialog\.open\) dialog\.showModal\(\)/, "the reader uses the browser's modal layer");
   assert.match(methodsPageSource, /event\.target === event\.currentTarget/, "only a direct backdrop press closes the presentation");
@@ -1002,6 +1078,30 @@ test("server-renders the consolidated agent use-case catalogue", async () => {
   assert.match(methodsPageSource, /event\.key === "PageUp"/, "Page Up remains an optional keyboard shortcut");
   assert.match(methodsPageSource, /onPointerDown=\{handleSlidePointerDown\}/, "the presentation keeps horizontal swipe navigation");
   assert.match(methodsPageSource, /onPointerUp=\{handleSlidePointerUp\}/, "the presentation completes horizontal swipe navigation");
+  assert.match(methodsPageSource, /aria-label="Zoom out"/, "the slide viewer exposes a labelled zoom-out control");
+  assert.match(methodsPageSource, /aria-label="Zoom in"/, "the slide viewer exposes a labelled zoom-in control");
+  assert.match(methodsPageSource, /Reset zoom and position\. Current zoom/, "the zoom percentage also resets and recentres the slide");
+  assert.match(methodsPageSource, /<output aria-live="polite">/, "zoom changes are announced without moving focus");
+  assert.match(methodsPageSource, /event\.key === "\+" \|\| event\.key === "="/, "plus keys zoom in");
+  assert.match(methodsPageSource, /event\.key === "-" \|\| event\.key === "_"/, "minus keys zoom out");
+  assert.match(methodsPageSource, /event\.key === "0"/, "zero resets the slide view");
+  assert.match(methodsPageSource, /onPointerMove=\{handleSlidePointerMove\}/, "zoomed slides follow captured pointer movement");
+  assert.match(methodsPageSource, /Math\.hypot\(deltaX,deltaY\) < 6/, "a deliberate drag is separated from a diagram-node click or tap");
+  assert.match(methodsPageSource, /addEventListener\("wheel",handleTrackpad,\{passive:false\}\)/, "trackpad gestures use a non-passive native wheel listener");
+  assert.match(methodsPageSource, /if \(event\.ctrlKey\)/, "trackpad pinch is recognised separately from two-finger movement");
+  assert.match(methodsPageSource, /Math\.exp\(exponent\)/, "trackpad pinch changes zoom continuously");
+  assert.match(methodsPageSource, /Math\.max\(-\.25,Math\.min\(\.25,-event\.deltaY\*deltaScale\*\.01\)\)/, "trackpad pinch deltas are normalised and safely bounded");
+  assert.match(methodsPageSource, /pointX-\(pointX-currentPan\.x\)\*ratio/, "trackpad pinch keeps the point under the pointer in place");
+  assert.match(methodsPageSource, /TWO-FINGER SCROLL TO PAN/, "the viewer explains its trackpad gesture directly in the interface");
+  assert.doesNotMatch(methodsPageSource, /onWheel=\{handleSlideWheel\}/, "the passive React wheel handler is not used for trackpad gestures");
+  assert.match(methodsPageSource, /setPointerCapture\(event\.pointerId\)/, "panning remains stable when the pointer leaves its start point");
+  assert.match(methodsPageSource, /mode:"pan"/, "zoomed pointer gestures enter pan mode");
+  assert.match(methodsPageSource, /mode:"swipe"/, "fit-to-screen touch gestures retain slide swipe mode");
+  assert.match(methodsPageSource, /if \(gesture\.mode !== "swipe"\) return;/, "a pan can never turn into slide navigation");
+  assert.match(methodsPageSource, /data-method-zoom-surface/, "zoom transforms a nested canvas rather than the slide strip");
+  assert.match(methodsPageSource, /data-zoomed=\{slideZoom > 1/, "the stage exposes its zoom interaction state");
+  assert.match(methodsPageSource, /data-gesturing=\{isTrackpadGesturing/, "the stage exposes active trackpad movement so it can respond without animation lag");
+  assert.match(methodsPageSource, /function changePage\([\s\S]*?resetSlideView\(\);[\s\S]*?setActivePage\(bounded\);/, "changing slides restores the fitted view before moving on");
   assert.match(methodsPageSource, /id="method-focus-back"/, "the presentation exposes one persistent close control");
   assert.match(methodsPageSource, /catalogueAnchorRef/, "the catalogue records the originating card position");
   assert.match(methodsPageSource, /trigger\.focus\(\{preventScroll:true\}\)/, "closing returns focus without moving the catalogue");
@@ -1016,6 +1116,10 @@ test("server-renders the consolidated agent use-case catalogue", async () => {
   assert.match(methodsCss, /\.method-node-tooltip__content\{[^}]*max-height:calc\(100dvh - 24px\)/, "tooltip content stays within the visible viewport");
   assert.match(methodsCss, /\.compass-methods-v5 \.method-presentation__stage\{[^}]*overflow:hidden/, "normal presentation pages never scroll vertically");
   assert.match(methodsCss, /transform:translate3d\(calc\(var\(--method-page-index\) \* -100%\),0,0\)/, "pages move as a horizontal slide strip");
+  assert.match(methodsCss, /\.compass-methods-v5 \.method-presentation__zoom-surface\{[\s\S]*?transform:translate3d\(var\(--method-pan-x,0\),var\(--method-pan-y,0\),0\) scale\(var\(--method-zoom,1\)\)/, "the active slide has an independently transformed zoom canvas");
+  assert.match(methodsCss, /\.compass-methods-v5 \.method-presentation__stage\[data-zoomed="true"\]\{touch-action:none;cursor:grab\}/, "zoomed touch gestures pan the canvas instead of changing slides");
+  assert.match(methodsCss, /\.method-presentation__stage\[data-gesturing="true"\] \.method-presentation__zoom-surface\{transition:none\}/, "trackpad movement follows the gesture without a trailing transition");
+  assert.doesNotMatch(methodsCss, /\.compass-methods-v5 \.method-presentation__strip\{[^}]*scale\(/, "zoom never overwrites slide-strip navigation");
   assert.match(methodsCss, /\.compass-methods-v5 \.method-presentation::backdrop/, "the presentation separates itself from the catalogue with a backdrop");
   assert.match(methodsCss, /@media\(max-width:620px\)[\s\S]*\.compass-methods-v5 \.method-presentation\{width:100vw;height:100dvh/, "small screens receive a full-screen presentation");
   assert.match(methodsCss, /@media\(max-height:620px\)[\s\S]*overflow-y:auto/, "very short or highly zoomed views retain an accessibility fallback");
@@ -1125,8 +1229,8 @@ test("the common component page covers every approved boundary without duplicati
   assert.doesNotMatch(styles, /--atelier-lime|#b5d63b|#c6e95b/);
   assert.doesNotMatch(styles, /\.showcase\[data-system="compass"\]\[data-collection="generic"\]/);
 
-  const compassResponse = await render("/?system=compass");
-  const trackerResponse = await render("/?system=tracker");
+  const compassResponse = await render("/compass");
+  const trackerResponse = await render("/tracker");
   const compassHtml = await compassResponse.text();
   const trackerHtml = await trackerResponse.text();
   for (const [route, html] of [["Compass", compassHtml], ["Tracker", trackerHtml]]) {
@@ -1162,7 +1266,7 @@ test("server-renders the isolated PoC Tracker component gallery", async () => {
   assert.match(html, /data-scenario="base"/);
   assert.match(html, /src="\/poc-tracker-components\/01-dashboard\/demo\.html"/);
   assert.doesNotMatch(html, /demo\.html\?scenario=/);
-  assert.match(html, /☆ Star pattern/);
+  assert.match(html, /☆[\s\S]*Star pattern/);
   assert.doesNotMatch(html, /Review queue|RAID log/);
 });
 
@@ -1178,11 +1282,11 @@ test("focused PoC Tracker gallery promotes DCC recommendations while reusing its
   assert.match(dccHtml, /data-scenario="dcc-hackathon"/);
   assert.match(dccHtml, /DCC Hackathon data|DCC scenario library/);
   assert.match(dccHtml, /4 (?:starred|recommended)/i);
-  assert.match(dccHtml, /href="\/\?system=tracker&amp;scenario=dcc-hackathon"/);
-  assert.match(dccHtml, /href="\/\?system=compass&amp;scenario=dcc-hackathon"/);
+  assert.match(dccHtml, /href="\/tracker\?scenario=dcc-hackathon"/);
+  assert.match(dccHtml, /href="\/compass\?scenario=dcc-hackathon"/);
   assert.match(dccHtml, /href="\/poc-tracker-components\/01-dashboard\/demo\.html\?scenario=dcc-hackathon"/);
   assert.match(dccHtml, /src="\/poc-tracker-components\/01-dashboard\/demo\.html\?scenario=dcc-hackathon"/);
-  assert.match(dccHtml, /★ Recommended/);
+  assert.match(dccHtml, /★[\s\S]*Recommended/);
 
   const baseFrame = baseHtml.match(/<iframe\b[^>]*title="Dashboard interactive experience"[^>]*>/)?.[0] ?? "";
   const dccFrame = dccHtml.match(/<iframe\b[^>]*title="Dashboard interactive experience"[^>]*>/)?.[0] ?? "";
@@ -1377,10 +1481,12 @@ test("foundation gallery brings DCC recommendations to the top with assurance ex
   assert.match(html, /4 starred gallery patterns are brought to the top/);
   assert.match(html, /DCC recommended first/);
   assert.match(html, /26(?:<!-- -->)? of (?:<!-- -->)?26/);
-  assert.match(html, /href="\/\?system=compass&amp;scenario=dcc-hackathon"/);
+  assert.match(html, /href="\/poc-tracker\?scenario=dcc-hackathon"/, "the gallery keeps DCC selected when opening Tracker");
+  assert.match(html, /href="\/compass\?scenario=dcc-hackathon"/);
   const footerStart = html.indexOf("AA Portfolio · approved pattern library");
   assert.ok(footerStart >= 0, "the focused gallery footer is rendered");
-  assert.match(html.slice(footerStart), /href="\/\?system=compass&amp;scenario=dcc-hackathon"/, "the footer keeps the selected scenario when returning to the showroom");
+  assert.match(html.slice(footerStart), /href="\/poc-tracker\?scenario=dcc-hackathon"/, "the footer keeps DCC selected when opening Tracker");
+  assert.match(html.slice(footerStart), /href="\/compass\?scenario=dcc-hackathon"/, "the footer keeps the selected scenario when returning to the showroom");
 
   const catalogStart = html.indexOf("DCC recommended first");
   const stageStart = html.indexOf('id="template-stage"', catalogStart);
@@ -1537,4 +1643,189 @@ test("foundation templates retain the contracted interactions without legacy app
   assert.match(showroom, /from "\.\/CompassPatternSections"/);
   assert.doesNotMatch(showroom, /from "\.\/CompassTemplateGallery"/);
   assert.doesNotMatch(combined, /originalCompassRoutes|\/api\/business-units|<iframe/i);
+});
+
+test("all shared-showroom Tech details use complete source handoffs instead of legacy snippets", async () => {
+  const response = await render("/components");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  const showcase = readFileSync(`${projectRoot}/app/Showcase.tsx`, "utf8");
+  const workbench = readFileSync(`${projectRoot}/app/ShowcaseDeveloperWorkbench.tsx`, "utf8");
+
+  const componentNames = attributeValues(html, "data-individual-component-name");
+  assert.equal(componentNames.length, 172, "the complete canonical component catalogue is under the shared handoff");
+  assert.equal(new Set(componentNames).size, 172, "every canonical component has one handoff entry point");
+  assert.equal(
+    (html.match(/<footer><button[^>]*>View details<\/button><button class="download"[^>]*>[^<]*Download code<\/button><\/footer>/g) ?? []).length,
+    172,
+    "every individual component exposes details and a complete-package action",
+  );
+
+  assert.match(showcase, /import ShowcaseDeveloperWorkbench,[\s\S]*?downloadShowcaseDeveloperHandoff[\s\S]*?from "\.\/ShowcaseDeveloperWorkbench"/);
+  assert.match(showcase, /const activeHandoff = techPanel \? handoffFor\(techPanel\) : null/);
+  assert.match(showcase, /\{activeHandoff && <ShowcaseDeveloperWorkbench[^>]*handoff=\{activeHandoff\}/);
+  assert.equal((showcase.match(/<ShowcaseDeveloperWorkbench\b/g) ?? []).length, 1, "there is one visible shared modal path");
+  assert.doesNotMatch(showcase, /<section className="tech-modal tech-workbench-modal"/, "Showcase no longer retains its old inline modal");
+  assert.doesNotMatch(showcase, /\b(?:getComponentCode|workbenchContent|workbenchFile|activeStructure|activeComponent|trackerScreenSources|dependencySource)\b/);
+  assert.doesNotMatch(showcase, /(?:componentCatalog\[[^\]]+\]|activeComponent|component)\.code\b/, "legacy illustrative .code fields are not read by the visible modal or download action");
+  assert.match(showcase, /async function downloadComponentCode\(componentKey:ComponentKey\) \{[\s\S]*?const handoff = handoffFor\(componentKey\);[\s\S]*?downloadShowcaseDeveloperHandoff\(handoff\)/);
+  assert.doesNotMatch(
+    showcase.match(/async function downloadComponentCode\(componentKey:ComponentKey\) \{[\s\S]*?\n  \}/)?.[0] ?? "",
+    /new Blob|\.code\b/,
+    "card downloads cannot fall back to a one-file snippet",
+  );
+
+  assert.match(showcase, /individualComponents\.forEach\(\(item\) => \{[\s\S]*?componentCatalog\[item\.key\][\s\S]*?componentStructures\[item\.key\]/, "all generated entries receive metadata and a typed contract");
+  assert.match(showcase, /items\.map\(\(item,index\) => <article[\s\S]*?onDetails\(item\.key\)[\s\S]*?onDownload\(item\.key\)/, "every catalogue card passes its own key to both handoff actions");
+  assert.match(showcase, /sourceAssets:sourceAssetsForComponent\(componentKey\)/);
+  assert.match(showcase, /if \(componentKey === "upload"\) return architectureSourceAssets\(\)/);
+  assert.match(showcase, /if \(componentKey === "dependency"\) return \[[\s\S]*?dependency-explorer\.html[\s\S]*?DependencyExplorer\.README\.md[\s\S]*?Showcase\.tsx[\s\S]*?scenarios\.ts[\s\S]*?package\.json[\s\S]*?\n  \];/);
+  assert.match(showcase, /if \(componentKey\.startsWith\("tracker-screen-"\)\) return trackerSourceAssets\(componentKey\)/);
+  assert.match(showcase, /return legacyLiveSourceAssets\(componentKey\)/);
+
+  const legacyBaseAssets = showcase.match(/function legacyLiveSourceAssets[\s\S]*?const assets:DeveloperSourceAsset\[\] = \[([\s\S]*?)\n  \];/)?.[1] ?? "";
+  assert.ok((legacyBaseAssets.match(/(?:sourceAsset\(|\{ name:)/g) ?? []).length >= 6, "every default shared handoff starts with a multi-file live source and integrity package");
+  for (const requiredAsset of ["Showcase.tsx", "globals.css", "package.json", "tsconfig.json", "manifest.json"]) {
+    assert.match(legacyBaseAssets, new RegExp(requiredAsset.replaceAll(".", "\\.")), `${requiredAsset} is present in every default handoff`);
+  }
+  assert.match(showcase, /if \(\["critical","flow"\]\.includes\(componentKey\)\) \{[\s\S]*?trackerScenarioFixtures\.ts/);
+  for (const componentKey of ["controls", "feedback", "upload", "dependency", "critical", "flow"]) {
+    assert.match(showcase, new RegExp(`<ComponentActions componentKey="${componentKey}"`), `${componentKey} is wired to complete handoff actions`);
+  }
+  assert.match(showcase, /const componentKey = `tracker-screen-\$\{example\.id\}`[\s\S]*?<ComponentActions componentKey=\{componentKey\}/, "all Tracker screens use screen-specific handoffs");
+
+  assert.match(workbench, /handoff\.sourceAssets\.map\(/, "the Source files tab lists every supplied asset");
+  assert.match(workbench, /async function resolveAsset[\s\S]*?fetch\(asset\.href\)/, "linked source is loaded into the code viewer");
+  assert.match(workbench, /sourceFiles = await Promise\.all\(handoff\.sourceAssets\.map/, "downloads resolve every source file");
+  assert.match(workbench, /\.\.\.sourceFiles,[\s\S]*?handoff\.example\.name[\s\S]*?handoff\.contract\.name/, "generated packages combine source, data and the typed contract");
+  for (const requiredDetail of ["Package & dependencies", "Complete working source", "Valid TypeScript contract", "Download complete package"]) {
+    assert.match(workbench, new RegExp(requiredDetail.replace("&", "&")));
+  }
+});
+
+test("Architecture upload exposes its complete standalone package and a valid TypeScript contract", () => {
+  const showcase = readFileSync(`${projectRoot}/app/Showcase.tsx`, "utf8");
+  const architectureRoot = `${projectRoot}/public/developer-handoffs/architecture-upload`;
+  const assetBlock = showcase.match(/function architectureSourceAssets\(\):DeveloperSourceAsset\[\] \{[\s\S]*?return \[([\s\S]*?)\n  \];\n\}/)?.[1] ?? "";
+  const visibleAssets = [...assetBlock.matchAll(/sourceAsset\("([^"]+)"/g)].map((match) => match[1]);
+  const expectedVisibleAssets = [
+    "ArchitectureUploadWizard.tsx",
+    "ArchitectureUploadWizard.module.css",
+    "ArchitectureUploadWizard.module.css.d.ts",
+    "architecture-upload.types.ts",
+    "architecture-upload.fixtures.ts",
+    "architecture-upload.adapter.ts",
+    "architecture-upload.contract.ts",
+    "StatusDot.tsx",
+    "ArchitectureUploadWizard.example.tsx",
+    "ArchitectureUploadWizard.test.tsx",
+    "index.ts",
+    "README.md",
+    "package.json",
+    "tsconfig.json",
+    "vitest.config.ts",
+    "setupTests.ts",
+  ];
+  assert.deepEqual(visibleAssets, expectedVisibleAssets, "the workbench names all eleven implementation files and five build/test support files");
+  for (const filename of expectedVisibleAssets) {
+    const path = `${architectureRoot}/${filename}`;
+    assert.equal(existsSync(path), true, `${filename} exists`);
+    assert.ok(readFileSync(path).length > 0, `${filename} is not an empty placeholder`);
+  }
+
+  const standaloneFiles = readdirSync(architectureRoot).sort();
+  for (const supportFile of ["ArchitectureUploadWizard.module.css.d.ts", "index.ts", "setupTests.ts", "tsconfig.json", "vitest.config.ts"]) {
+    assert.ok(standaloneFiles.includes(supportFile), `${supportFile} completes the runnable standalone package`);
+  }
+  assert.equal(standaloneFiles.length, 16, "the eleven visible files and five build/test support files are packaged together");
+
+  const packageContract = JSON.parse(readFileSync(`${architectureRoot}/package.json`, "utf8"));
+  assert.equal(packageContract.name, "@migration-compass/architecture-upload-handoff");
+  assert.equal(packageContract.scripts.check, "tsc --noEmit");
+  assert.equal(packageContract.peerDependencies.react, ">=18.2.0 <20");
+  assert.equal(packageContract.peerDependencies["react-dom"], ">=18.2.0 <20");
+
+  const contract = readFileSync(`${architectureRoot}/architecture-upload.contract.ts`, "utf8");
+  for (const exportedContract of ["ArchitectureUploadBootstrapResponse", "ArchitectureUploadDraftRequest", "ArchitectureUploadCompletionRequest", "ArchitectureUploadCompletionResponse", "ArchitectureUploadAdapter"]) {
+    assert.match(contract, new RegExp(`export interface ${exportedContract}\\b`));
+  }
+  for (const operation of ["load", "uploadEvidence", "saveDraft", "complete"]) assert.match(contract, new RegExp(`\\b${operation}\\(`));
+  assert.match(contract, /assertArchitectureUploadBootstrap[\s\S]*?asserts value is ArchitectureUploadBootstrapResponse/);
+
+  const typecheck = spawnSync(process.execPath, [
+    `${projectRoot}/node_modules/typescript/bin/tsc`, "--pretty", "false", "--noEmit", "--strict", "--skipLibCheck",
+    "--target", "ES2022", "--module", "ESNext", "--moduleResolution", "Bundler", "--lib", "ES2022,DOM,DOM.Iterable",
+    `${architectureRoot}/architecture-upload.contract.ts`, `${architectureRoot}/architecture-upload.types.ts`,
+  ], { cwd:projectRoot, encoding:"utf8" });
+  assert.equal(typecheck.status, 0, `Architecture contract must type-check:\n${typecheck.stdout}${typecheck.stderr}`);
+});
+
+test("every Tracker screen handoff includes its runnable screen, foundations, bootstrap and scenario", () => {
+  const showcase = readFileSync(`${projectRoot}/app/Showcase.tsx`, "utf8");
+  const assetBlock = showcase.match(/function trackerSourceAssets\(componentKey:ComponentKey\):DeveloperSourceAsset\[\] \{[\s\S]*?return \[([\s\S]*?)\n  \];\n\}/)?.[1] ?? "";
+  assert.deepEqual([...assetBlock.matchAll(/sourceAsset\("([^"]+)"/g)].map((match) => match[1]), [
+    "component.js", "component.css", "README.md", "demo.html", "tokens.css", "base.css", "components.css", "scenario-bootstrap.js", "dcc-hackathon.json",
+  ]);
+  for (const relativePath of ["00-foundations/tokens.css", "00-foundations/base.css", "00-foundations/components.css", "scenario-bootstrap.js", "scenarios/dcc-hackathon.json"]) {
+    const path = `${projectRoot}/public/poc-tracker-components/${relativePath}`;
+    assert.equal(existsSync(path), true, `${relativePath} exists`);
+    assert.ok(readFileSync(path).length > 0, `${relativePath} is not empty`);
+  }
+  for (const { folder, title } of trackerScreenContracts) {
+    for (const filename of ["component.js", "component.css", "README.md", "demo.html"]) {
+      const path = `${projectRoot}/public/poc-tracker-components/${folder}/${filename}`;
+      assert.equal(existsSync(path), true, `${title} includes ${filename}`);
+      assert.ok(readFileSync(path).length > 0, `${title} ${filename} is not empty`);
+    }
+  }
+});
+
+test("the generated live-source manifest and archive match their recorded hashes and bytes", () => {
+  const handoffRoot = `${projectRoot}/public/developer-handoffs`;
+  const liveRoot = `${handoffRoot}/live-source`;
+  const manifestPath = `${liveRoot}/manifest.json`;
+  const archivePath = `${handoffRoot}/live-source-complete.tar`;
+  assert.equal(existsSync(manifestPath), true, "the synchronized manifest exists");
+  assert.equal(existsSync(archivePath), true, "the complete source archive exists");
+
+  const manifestBuffer = readFileSync(manifestPath);
+  const manifest = JSON.parse(manifestBuffer.toString("utf8"));
+  assert.equal(manifest.version, 1);
+  assert.equal(manifest.generator, "scripts/sync-developer-handoffs.mjs");
+  assert.equal(manifest.root, "public/developer-handoffs/live-source");
+  assert.ok(manifest.files.length >= 67, "the complete synchronized source graph is recorded");
+  assert.equal(new Set(manifest.files.map(({ path }) => path)).size, manifest.files.length, "manifest paths are unique");
+
+  for (const entry of manifest.files) {
+    assert.doesNotMatch(entry.path, /^(?:\/|\.\.?(?:\/|$))/, "manifest paths stay inside the package");
+    assert.ok(entry.language && entry.detail, `${entry.path} records language and purpose metadata`);
+    assert.match(entry.hash, /^sha256:[a-f0-9]{64}$/);
+    assert.ok(Number.isInteger(entry.bytes) && entry.bytes > 0, `${entry.path} records a positive byte count`);
+    const mirrored = readFileSync(`${liveRoot}/${entry.path}`);
+    assert.deepEqual(mirrored, readFileSync(`${projectRoot}/${entry.path}`), `${entry.path} is synchronized with the authoritative source`);
+    assert.equal(mirrored.length, entry.bytes, `${entry.path} byte metadata matches`);
+    assert.equal(`sha256:${createHash("sha256").update(mirrored).digest("hex")}`, entry.hash, `${entry.path} hash metadata matches`);
+  }
+
+  const archive = readFileSync(archivePath);
+  assert.ok(archive.length > 1024);
+  const archiveEntries = new Map();
+  let offset = 0;
+  while (offset + 512 <= archive.length) {
+    const header = archive.subarray(offset, offset + 512);
+    if (header.every((byte) => byte === 0)) break;
+    const field = (start, length) => header.subarray(start, start + length).toString("utf8").replace(/\0.*$/, "").trim();
+    const name = field(0, 100);
+    const prefix = field(345, 155);
+    const size = Number.parseInt(field(124, 12) || "0", 8);
+    assert.ok(Number.isSafeInteger(size) && size >= 0);
+    const path = prefix ? `${prefix}/${name}` : name;
+    const contentStart = offset + 512;
+    archiveEntries.set(path, archive.subarray(contentStart, contentStart + size));
+    offset = contentStart + Math.ceil(size / 512) * 512;
+  }
+  assert.deepEqual(archiveEntries.get("live-source/manifest.json"), manifestBuffer, "the archive carries the checked manifest");
+  for (const entry of manifest.files) {
+    assert.deepEqual(archiveEntries.get(`live-source/${entry.path}`), readFileSync(`${liveRoot}/${entry.path}`), `${entry.path} archive entry matches the mirror`);
+  }
 });

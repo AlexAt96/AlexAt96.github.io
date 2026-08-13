@@ -4,13 +4,24 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties, type Keyboard
 import type React from "react";
 import Link from "next/link";
 import PortfolioBrand from "./PortfolioBrand";
+import { RetroThemeSwitch, ShowroomSwitcher, TopbarIdentity } from "./PortfolioChrome";
+import { showroomHref } from "./portfolioRoutes";
 import { usePersistentDarkMode } from "./usePersistentTheme";
 import { usePersistentSidebar } from "./usePersistentSidebar";
 import ClassicBlueprintHero, { type ClassicBlueprintItem } from "./ClassicBlueprintHero";
 import CompassPatternSections from "./CompassPatternSections";
 import PatternBoundarySpecimen from "./PatternBoundarySpecimen";
+import ShowcaseDeveloperWorkbench, {
+  downloadShowcaseDeveloperHandoff,
+  type DeveloperSourceAsset,
+  type ShowcaseDeveloperHandoff,
+} from "./ShowcaseDeveloperWorkbench";
 import dccTrackerScenario from "../public/poc-tracker-components/scenarios/dcc-hackathon.json";
-import { compassPatterns } from "./foundation/patternCatalogue";
+import {
+  compassPatternSourceFiles,
+  compassPatternStyleFiles,
+  compassPatterns,
+} from "./foundation/patternCatalogue";
 import { useScenario } from "./useScenario";
 import {
   trackerDccPatternDescriptions,
@@ -157,7 +168,7 @@ export function ArchitectureUploadWizard() {
     <button disabled={step === 2 && !fileName} onClick={() => setStep(Math.min(4, step + 1))}>Continue</button>
   </section>;
 }` },
-  dependency:{ name:"Dependency explorer", summary:"A focused environment visualiser for exploring, editing, importing, and exporting system relationships.", fileName:"dependency-explorer.html", stack:["Standalone HTML", "CSS + browser JavaScript", "No runtime dependencies"], behaviour:["Search, filters, focus, pan, and zoom", "Environment editing plus import and export", "Representative data and a complete visual language"], accessibility:["Named controls and visible selection states", "Keyboard-operable toolbar actions", "Text details accompany the visual graph"], code:"" },
+  dependency:{ name:"Dependency explorer", summary:"A focused environment visualiser for exploring, editing, importing, and exporting system relationships.", fileName:"dependency-explorer.html", stack:["Standalone HTML, CSS and browser JavaScript", "SheetJS 0.18.5 for spreadsheet import/export", "Optional Google Fonts and a replaceable /api/workspace adapter"], behaviour:["Search, filters, focus, pan, and zoom", "Environment editing plus import and export", "Representative data and a complete visual language"], accessibility:["Named controls and visible selection states", "Keyboard-operable toolbar actions", "Text details accompany the visual graph"], code:"" },
   critical:{ name:"Critical-path planner", summary:"An interactive dependency canvas and readiness list with editable links and automatic layout.", fileName:"CriticalPathPlanner.tsx", stack:["React + TypeScript", "SVG dependency edges", "Derived DAG layout"], behaviour:["Task and phase aggregation", "Remove, add, validate, and reset dependencies", "Canvas and list presentations with combined filters"], accessibility:["Dependency controls have text labels", "List view provides a non-canvas equivalent", "Status always includes a written label"], code:String.raw`import { useMemo, useState } from "react";
 
 type Task = { id:string; title:string; dependencies:string[] };
@@ -326,30 +337,67 @@ export interface NoticeProps {
   "runId": "ARC-2026-018",
   "step": 3,
   "environments": ["Production"],
+  "documentType": "Architecture and data flow diagram",
   "evidence": {
     "fileName": "current-state-architecture-v4.pdf",
+    "mimeType": "application/pdf",
+    "size": 2481130,
     "pages": 18,
     "status": "processed"
   },
   "findings": [
-    { "id": "apim", "title": "Azure API Management", "confidence": 0.94, "decision": "pending" }
-  ]
-}`, apiFile:"architecture-upload.api.ts", api:String.raw`POST /api/architecture/runs
-Content-Type: multipart/form-data
+    { "id": "apim", "title": "Azure API Management", "kind": "suggested-technology", "confidence": 0.94, "decision": "pending", "source": "Page 7 · integration layer" },
+    { "id": "salesforce", "title": "Salesforce CRM", "kind": "external-connection", "confidence": 0.88, "decision": "approved", "source": "Page 11 · external services" }
+  ],
+  "status": "awaiting-human-review",
+  "readOnly": false,
+  "error": null
+}`, apiFile:"architecture-upload.contract.ts", api:String.raw`export type ArchitectureDecision = "pending" | "approved" | "declined" | "needs-evidence";
+export type ArchitectureRunStatus = "draft" | "uploading" | "processing" | "awaiting-human-review" | "ready" | "complete" | "error";
 
-type CreateRunRequest = {
+export interface ArchitectureFinding {
+  id: string;
+  title: string;
+  kind: string;
+  confidence: number;
+  source: string;
+  quote: string;
+  decision: ArchitectureDecision;
+  note?: string;
+}
+
+export interface ArchitectureUploadValue {
+  runId?: string;
+  step: 1 | 2 | 3 | 4;
   environments: string[];
   documentType: string;
-  evidence: File;
-};
+  file: File | null;
+  findings: ArchitectureFinding[];
+  status: ArchitectureRunStatus;
+}
 
-type ReviewFindingRequest = {
-  findingId: string;
-  decision: "approved" | "declined";
-  note?: string;
-};
+export interface ArchitectureUploadWizardProps {
+  value?: ArchitectureUploadValue;
+  initialValue?: Partial<ArchitectureUploadValue>;
+  availableEnvironments: Array<{ id:string; label:string; description?:string }>;
+  documentTypes: string[];
+  loading?: boolean;
+  readOnly?: boolean;
+  error?: string | null;
+  onChange?(value: ArchitectureUploadValue): void;
+  onFileSelected?(file: File, documentType: string): void | Promise<void>;
+  onDecision?(findingId: string, decision: ArchitectureDecision, note?: string): void | Promise<void>;
+  onRequestEvidence?(findingId: string): void;
+  onComplete?(value: ArchitectureUploadValue): void | Promise<void>;
+  onRetry?(): void;
+}
 
-PATCH /api/architecture/runs/:runId/findings/:findingId` },
+export interface ArchitectureUploadAdapter {
+  createRun(input: { environments:string[]; documentType:string; file:File }): Promise<{ runId:string; status:ArchitectureRunStatus }>;
+  getRun(runId:string): Promise<ArchitectureUploadValue>;
+  reviewFinding(runId:string, findingId:string, decision:ArchitectureDecision, note?:string): Promise<ArchitectureFinding>;
+  completeRun(runId:string): Promise<ArchitectureUploadValue>;
+}` },
   dependency:{ dataFile:"dependency-landscape.mock-data.json", data:String.raw`{
   "environment": "Production",
   "systems": [
@@ -359,17 +407,18 @@ PATCH /api/architecture/runs/:runId/findings/:findingId` },
   "dependencies": [
     { "sourceId": "salesforce", "targetId": "gateway", "type": "synchronises-with" }
   ]
-}`, apiFile:"dependency-landscape.api.ts", api:String.raw`GET /api/environments/:environmentId/landscape
+}`, apiFile:"dependency-landscape.contract.ts", api:String.raw`export interface SystemRecord { id:string; name:string; owner:string; external:boolean; }
+export interface DependencyRecord { id:string; sourceId:string; targetId:string; type:string; }
+export interface LandscapeResponse { systems:SystemRecord[]; dependencies:DependencyRecord[]; updatedAt:string; }
+export interface LandscapeImportResult { systemsAdded:number; dependenciesAdded:number; warnings:string[]; }
 
-type LandscapeResponse = {
-  systems: SystemRecord[];
-  dependencies: DependencyRecord[];
-  updatedAt: string;
-};
-
-PUT /api/environments/:environmentId/dependencies/:dependencyId
-DELETE /api/environments/:environmentId/dependencies/:dependencyId
-POST /api/environments/:environmentId/import` },
+export interface DependencyLandscapeAdapter {
+  load(environmentId:string, signal?:AbortSignal): Promise<LandscapeResponse>;
+  saveDependency(environmentId:string, dependency:DependencyRecord): Promise<DependencyRecord>;
+  removeDependency(environmentId:string, dependencyId:string): Promise<void>;
+  importFile(environmentId:string, file:File): Promise<LandscapeImportResult>;
+  exportFile(environmentId:string, format:"json"|"xlsx"): Promise<Blob>;
+}` },
   critical:{ dataFile:"critical-path.mock-data.json", data:String.raw`{
   "planId": "retail-modernisation",
   "tasks": [
@@ -379,18 +428,18 @@ POST /api/environments/:environmentId/import` },
   "dependencies": [
     { "id": "scope-data", "sourceId": "scope", "targetId": "data" }
   ]
-}`, apiFile:"critical-path.api.ts", api:String.raw`GET /api/plans/:planId/critical-path
+}`, apiFile:"critical-path.contract.ts", api:String.raw`export type CriticalPathStatus = "Not started" | "In progress" | "In review" | "Blocked" | "Complete";
+export interface CriticalPathTask { id:string; code:string; title:string; owner:string; phase:string; progress:number; status:CriticalPathStatus; critical:boolean; }
+export interface CriticalPathDependency { id:string; sourceId:string; targetId:string; }
+export interface CriticalPathModel { planId:string; tasks:CriticalPathTask[]; dependencies:CriticalPathDependency[]; }
+export interface ValidationResult { valid:boolean; errors:Array<{ code:"missing-target"|"duplicate"|"cycle"; dependencyId?:string; message:string }>; }
 
-type DependencyMutation = {
-  sourceId: string;
-  targetId: string;
-};
-
-POST /api/plans/:planId/dependencies
-DELETE /api/plans/:planId/dependencies/:dependencyId
-
-// Server validates missing targets, duplicates, and cycles.
-type ValidationResult = { valid:boolean; errors:string[] };` },
+export interface CriticalPathAdapter {
+  load(planId:string, signal?:AbortSignal): Promise<CriticalPathModel>;
+  addDependency(planId:string, dependency:Omit<CriticalPathDependency,"id">): Promise<{ dependency:CriticalPathDependency; validation:ValidationResult }>;
+  removeDependency(planId:string, dependencyId:string): Promise<ValidationResult>;
+  saveTask(planId:string, task:CriticalPathTask): Promise<CriticalPathTask>;
+}` },
   flow:{ dataFile:"process-flow.mock-data.json", data:String.raw`{
   "route": "standard",
   "stages": [
@@ -398,15 +447,23 @@ type ValidationResult = { valid:boolean; errors:string[] };` },
     { "id": "C", "title": "Prototype", "owner": "Delivery team", "status": "in-progress" },
     { "id": "E", "title": "Assure", "owner": "Assurance", "status": "blocked" }
   ]
-}`, apiFile:"process-flow.api.ts", api:String.raw`GET /api/delivery-routes/:routeId
+}`, apiFile:"process-flow.contract.ts", api:String.raw`export type FlowStatus = "complete" | "in-progress" | "required" | "blocked" | "conditional" | "not-started" | "skipped";
+export interface FlowStage { id:string; title:string; owner:string; entry:string; action:string; exit:string; status:FlowStatus; }
+export interface DeliveryRoute { id:string; label:string; description:string; stages:FlowStage[]; }
+export interface StageStatusUpdate { stageId:string; status:FlowStatus; }
 
-export interface StageStatusUpdate {
-  stageId: string;
-  status: "complete" | "in-progress" | "required" | "blocked" | "conditional" | "not-started" | "skipped";
+export interface ProcessFlowAdapter {
+  loadRoute(routeId:string, signal?:AbortSignal): Promise<DeliveryRoute>;
+  updateStage(routeId:string, update:StageStatusUpdate): Promise<FlowStage>;
 }
 
-PATCH /api/delivery-routes/:routeId/stages/:stageId
-Body: StageStatusUpdate` },
+export interface ProcessFlowProps {
+  route:DeliveryRoute;
+  selectedStageId?:string;
+  readOnly?:boolean;
+  onSelect?(stageId:string):void;
+  onStatusChange?(update:StageStatusUpdate):void | Promise<void>;
+}` },
   actions:{ dataFile:"actions.mock-data.json", data:String.raw`{"tone":"primary","size":"medium","loading":false,"disabled":false,"label":"Save changes"}`, apiFile:"actions.contract.ts", api:String.raw`export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   tone?: "primary" | "secondary" | "quiet" | "danger";
   size?: "small" | "medium" | "large";
@@ -709,13 +766,26 @@ export function ${componentName}({ children, state = "default", variant = "defau
     {children}
   </div>;
 }` };
-  componentStructures[item.key] = { dataFile:`${item.id}.mock-data.json`, data:JSON.stringify({ id:`demo-${item.id}`, component:item.name, aliases:item.aliases ?? [], variants, category:item.category, state:"default", interactive:true, source:item.source },null,2), apiFile:`${item.id}.contract.ts`, api:String.raw`export interface ${componentName}Props {
+  componentStructures[item.key] = { dataFile:`${item.id}.mock-data.json`, data:JSON.stringify({ id:`demo-${item.id}`, component:item.name, aliases:item.aliases ?? [], variants, category:item.category, state:"default", interactive:true, source:item.source },null,2), apiFile:`${item.id}.contract.ts`, api:String.raw`export type ${componentName}State = "default" | "active" | "disabled" | "error";
+export type ${componentName}Value = string | number | boolean | null;
+
+export interface ${componentName}Action {
+  type: "select" | "change" | "open" | "close" | "submit" | "remove";
   id?: string;
-  state?: "default" | "active" | "disabled" | "error";
+  value?: ${componentName}Value;
+}
+
+export interface ${componentName}Props {
+  id?: string;
+  state?: ${componentName}State;
   variant?: ${variantType};
   disabled?: boolean;
+  readOnly?: boolean;
+  loading?: boolean;
+  error?: string | null;
   className?: string;
-  onChange?(value: unknown): void;
+  onChange?(value: ${componentName}Value): void;
+  onAction?(action: ${componentName}Action): void;
 }` };
 });
 
@@ -779,6 +849,158 @@ export interface PoCTrackerScreenModule {
 }`,
   };
 });
+
+const developerHandoffBase = sitePath("/developer-handoffs");
+const liveSourceBase = `${developerHandoffBase}/live-source`;
+const compassSourceBase = sitePath("/reusable-component-foundation/showroom-templates");
+
+function sourceAsset(name:string, href:string, detail:string, language:string):DeveloperSourceAsset {
+  return { name,href,detail,language };
+}
+
+function generatedReadme(componentKey:ComponentKey) {
+  const component = componentCatalog[componentKey];
+  const individual = individualComponents.find((item) => item.key === componentKey);
+  const sourceContext = individual
+    ? `This specimen is used across ${individual.source}. ${individual.origin === "pattern" ? "Its rendered boundary and the first matching production pattern family are included alongside the complete showroom source." : "Its authoritative specimen is implemented in Showcase.tsx and styled in globals.css."}`
+    : "The authoritative live showroom source and its styling are included; search for the component key shown below to reach the rendered entry point.";
+  return `# ${component.name} developer handoff
+
+${component.summary}
+
+## Authoritative implementation
+
+Component key: \`${componentKey}\`
+
+${sourceContext}
+
+The Source files view deliberately shows the real implementation files rather than a shortened illustrative snippet. The complete package includes the full local import graph, project dependencies, TypeScript settings, styles, representative data and the host contract.
+
+## Integration boundary
+
+- Keep network, storage, routing and analytics in the host application.
+- Replace showroom fixtures at the documented props/adapter boundary.
+- Preserve keyboard behaviour, written status labels, loading, empty, error, read-only and success states.
+- Run the supplied project with the React and TypeScript versions declared in package.json.
+`;
+}
+
+function architectureSourceAssets():DeveloperSourceAsset[] {
+  const base = `${developerHandoffBase}/architecture-upload`;
+  return [
+    sourceAsset("ArchitectureUploadWizard.tsx",`${base}/ArchitectureUploadWizard.tsx`,"Complete four-step React implementation","tsx"),
+    sourceAsset("ArchitectureUploadWizard.module.css",`${base}/ArchitectureUploadWizard.module.css`,"Responsive, themeable pattern styles","css"),
+    sourceAsset("ArchitectureUploadWizard.module.css.d.ts",`${base}/ArchitectureUploadWizard.module.css.d.ts`,"CSS Module type declarations","ts"),
+    sourceAsset("architecture-upload.types.ts",`${base}/architecture-upload.types.ts`,"Domain, state and callback types","ts"),
+    sourceAsset("architecture-upload.fixtures.ts",`${base}/architecture-upload.fixtures.ts`,"Base and DCC-safe fixtures","ts"),
+    sourceAsset("architecture-upload.adapter.ts",`${base}/architecture-upload.adapter.ts`,"Host API adapter boundary","ts"),
+    sourceAsset("architecture-upload.contract.ts",`${base}/architecture-upload.contract.ts`,"Validated production contract","ts"),
+    sourceAsset("StatusDot.tsx",`${base}/StatusDot.tsx`,"Accessible shared status primitive","tsx"),
+    sourceAsset("ArchitectureUploadWizard.example.tsx",`${base}/ArchitectureUploadWizard.example.tsx`,"Working integration example","tsx"),
+    sourceAsset("ArchitectureUploadWizard.test.tsx",`${base}/ArchitectureUploadWizard.test.tsx`,"Behaviour and accessibility tests","tsx"),
+    sourceAsset("index.ts",`${base}/index.ts`,"Public package exports","ts"),
+    sourceAsset("README.md",`${base}/README.md`,"Install, adapt and test guidance","md"),
+    sourceAsset("package.json",`${base}/package.json`,"Runtime and test dependencies","json"),
+    sourceAsset("tsconfig.json",`${base}/tsconfig.json`,"Standalone TypeScript settings","json"),
+    sourceAsset("vitest.config.ts",`${base}/vitest.config.ts`,"Standalone test configuration","ts"),
+    sourceAsset("setupTests.ts",`${base}/setupTests.ts`,"Test environment cleanup","ts"),
+  ];
+}
+
+function trackerSourceAssets(componentKey:ComponentKey):DeveloperSourceAsset[] {
+  const example = pocTrackerExamples.find((item) => `tracker-screen-${item.id}` === componentKey);
+  if (!example) return [];
+  const base = sitePath(`/poc-tracker-components/${example.folder}`);
+  const foundation = sitePath("/poc-tracker-components/00-foundations");
+  return [
+    sourceAsset("component.js",`${base}/component.js`,"Complete interactive screen module","js"),
+    sourceAsset("component.css",`${base}/component.css`,"Screen-specific responsive styles","css"),
+    sourceAsset("README.md",`${base}/README.md`,"Mount API and adaptation guidance","md"),
+    sourceAsset("demo.html",`${base}/demo.html`,"Runnable composition example","html"),
+    sourceAsset("tokens.css",`${foundation}/tokens.css`,"Shared design tokens","css"),
+    sourceAsset("base.css",`${foundation}/base.css`,"Shared reset and layout foundation","css"),
+    sourceAsset("components.css",`${foundation}/components.css`,"Shared component primitives","css"),
+    sourceAsset("scenario-bootstrap.js",sitePath("/poc-tracker-components/scenario-bootstrap.js"),"Scenario and fixture loader","js"),
+    sourceAsset("dcc-hackathon.json",sitePath("/poc-tracker-components/scenarios/dcc-hackathon.json"),"DCC representative scenario","json"),
+  ];
+}
+
+function legacyLiveSourceAssets(componentKey:ComponentKey):DeveloperSourceAsset[] {
+  const component = componentCatalog[componentKey];
+  const individual = individualComponents.find((item) => item.key === componentKey);
+  const assets:DeveloperSourceAsset[] = [
+    { name:`${safeComponentName(component.name)}.README.md`, language:"md", detail:"Entry point, setup and integration guidance", content:generatedReadme(componentKey) },
+    sourceAsset("Showcase.tsx",`${liveSourceBase}/app/Showcase.tsx`,"Authoritative live implementation and state","tsx"),
+    sourceAsset("globals.css",`${liveSourceBase}/app/globals.css`,"Authoritative tokens, layout and responsive styles","css"),
+    sourceAsset("package.json",`${liveSourceBase}/package.json`,"Runtime and developer dependencies","json"),
+    sourceAsset("tsconfig.json",`${liveSourceBase}/tsconfig.json`,"TypeScript compiler settings","json"),
+    sourceAsset("manifest.json",`${liveSourceBase}/manifest.json`,"SHA-256 inventory for the complete live-source archive","json"),
+  ];
+
+  if (["critical","flow"].includes(componentKey)) {
+    assets.push(sourceAsset("trackerScenarioFixtures.ts",`${liveSourceBase}/app/trackerScenarioFixtures.ts`,"Task, route and scenario fixtures","ts"));
+  }
+  if (["upload","dependency"].includes(componentKey)) {
+    assets.push(sourceAsset("scenarios.ts",`${liveSourceBase}/app/scenarios.ts`,"Base and DCC scenario records","ts"));
+  }
+  if (individual?.origin === "pattern") {
+    assets.push(
+      sourceAsset("PatternBoundarySpecimen.tsx",`${liveSourceBase}/app/PatternBoundarySpecimen.tsx`,"Authoritative isolated-boundary renderer","tsx"),
+      sourceAsset("patternBoundarySpecimen.module.css",`${liveSourceBase}/app/patternBoundarySpecimen.module.css`,"Isolated boundary styles","css"),
+    );
+    const pattern = compassPatterns.find((candidate) => individual.patternSources?.includes(candidate.title));
+    if (pattern) {
+      const implementation = compassPatternSourceFiles[pattern.templateKey];
+      const styles = compassPatternStyleFiles[pattern.templateKey];
+      assets.push(
+        sourceAsset(implementation,`${compassSourceBase}/${implementation}`,`${pattern.title} production family source`,"tsx"),
+        sourceAsset(styles,`${compassSourceBase}/${styles}`,`${pattern.title} production family styles`,"css"),
+        sourceAsset("shared.tsx",`${compassSourceBase}/shared.tsx`,"Accessible production primitives","tsx"),
+        sourceAsset("shared.module.css",`${compassSourceBase}/shared.module.css`,"Shared production primitive styles","css"),
+        sourceAsset("types.ts",`${compassSourceBase}/types.ts`,"Production template prop types","ts"),
+      );
+    }
+  }
+  return assets;
+}
+
+function sourceAssetsForComponent(componentKey:ComponentKey):DeveloperSourceAsset[] {
+  if (componentKey === "upload") return architectureSourceAssets();
+  if (componentKey === "dependency") return [
+    sourceAsset("dependency-explorer.html",sitePath("/dependency-explorer.html"),"Complete self-contained explorer implementation","html"),
+    { name:"DependencyExplorer.README.md", language:"md", detail:"Runtime, API and embedding guidance", content:generatedReadme(componentKey) },
+    sourceAsset("Showcase.tsx",`${liveSourceBase}/app/Showcase.tsx`,"Authoritative iframe adapter and scenario bridge","tsx"),
+    sourceAsset("scenarios.ts",`${liveSourceBase}/app/scenarios.ts`,"Base and DCC graph fixtures","ts"),
+    sourceAsset("package.json",`${liveSourceBase}/package.json`,"Host application dependencies","json"),
+  ];
+  if (componentKey.startsWith("tracker-screen-")) return trackerSourceAssets(componentKey);
+  return legacyLiveSourceAssets(componentKey);
+}
+
+function dependenciesForComponent(componentKey:ComponentKey):string[] {
+  if (componentKey === "dependency") return [
+    "Browser-native HTML, CSS and JavaScript; no framework runtime.",
+    "SheetJS 0.18.5 is loaded for spreadsheet import/export; pin or self-host it in production.",
+    "Google Fonts is optional; replace it with the host application's font delivery policy.",
+    "The host must provide or replace the documented /api/workspace persistence boundary.",
+  ];
+  if (componentKey.startsWith("tracker-screen-")) return [
+    "Browser-native JavaScript module with no framework dependency.",
+    "Load tokens.css, base.css, components.css and the screen's component.css in that order.",
+    "Mount after component.js; scenario-bootstrap.js is required only for the supplied demo scenarios.",
+  ];
+  if (componentKey === "upload") return [
+    "React 18 or newer and TypeScript 5 or newer.",
+    "CSS Modules; no component, state-machine, upload or tab library is required.",
+    "The supplied adapter keeps HTTP, persistence, analytics and routing outside the visual component.",
+    "Tests use Vitest, Testing Library and jsdom as declared in the package file.",
+  ];
+  return [
+    "Use the React, TypeScript and Next.js versions declared in the supplied package.json.",
+    "Styles and semantic tokens are included; no external UI component library is required.",
+    "The complete live-source archive contains the local import graph used by the rendered showroom.",
+  ];
+}
 
 const libraryNavigation: Array<{ id:string; componentKey:ComponentKey; name:string; type:string; system:"both"|SystemStyle; description:string }> = [
   { id:"controls", componentKey:"controls", name:"Controls", type:"Foundation component", system:"both", description:"Buttons, inputs, selects, checkbox, and toggle." },
@@ -1308,15 +1530,12 @@ export default function Showcase({ initialCollection = "compass", initialScenari
   const [scenarioMenuOpen, setScenarioMenuOpen] = useState(false);
   const [scenarioAnnouncement, setScenarioAnnouncement] = useState("");
   const scenarioTriggerRef = useRef<HTMLButtonElement>(null);
+  const scenarioControlRef = useRef<HTMLDivElement>(null);
   const [colourPreviewOverride, setColourPreviewOverride] = useState<ColourMode | null>(null);
   const [colourTokenOverrides, setColourTokenOverrides] = useState<ColourTokenOverrides>({});
   const [colourEditing, setColourEditing] = useState(false);
   const [typographyPreviewOverride, setTypographyPreviewOverride] = useState<ColourMode | null>(null);
   const [techPanel, setTechPanel] = useState<ComponentKey | null>(null);
-  const [techTab, setTechTab] = useState<"overview"|"component"|"data"|"api">("overview");
-  const [copiedView, setCopiedView] = useState("");
-  const [dependencySource, setDependencySource] = useState("");
-  const [trackerScreenSources, setTrackerScreenSources] = useState<Record<string,string>>({});
   const [librarySearchOpen, setLibrarySearchOpen] = useState(false);
   const [libraryQuery, setLibraryQuery] = useState("");
   const [commandIndex, setCommandIndex] = useState(0);
@@ -1399,16 +1618,13 @@ export default function Showcase({ initialCollection = "compass", initialScenari
   }, []);
 
   useEffect(() => {
-    if (techPanel !== "dependency" || techTab !== "component" || dependencySource) return;
-    fetch(sitePath("/dependency-explorer.html")).then((response) => response.text()).then(setDependencySource).catch(() => setDependencySource("Unable to load the standalone preview. The download remains available."));
-  }, [dependencySource, techPanel, techTab]);
-
-  useEffect(() => {
-    if (!techPanel?.startsWith("tracker-screen-") || techTab !== "component" || trackerScreenSources[techPanel]) return;
-    const example = pocTrackerExamples.find((item) => `tracker-screen-${item.id}` === techPanel);
-    if (!example) return;
-    fetch(sitePath(`/poc-tracker-components/${example.folder}/component.js`)).then((response) => response.text()).then((source) => setTrackerScreenSources((current) => ({...current,[techPanel]:source}))).catch(() => setTrackerScreenSources((current) => ({...current,[techPanel]:"Unable to load this component source."})));
-  }, [techPanel, techTab, trackerScreenSources]);
+    if (!scenarioMenuOpen) return;
+    const closeScenario = (event:PointerEvent) => {
+      if (!scenarioControlRef.current?.contains(event.target as Node)) setScenarioMenuOpen(false);
+    };
+    document.addEventListener("pointerdown",closeScenario);
+    return () => document.removeEventListener("pointerdown",closeScenario);
+  },[scenarioMenuOpen]);
 
   useEffect(() => {
     if (blueprintPaused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -1518,10 +1734,34 @@ export default function Showcase({ initialCollection = "compass", initialScenari
     const scenarioStructure = dccMode ? dccComponentData[componentKey] ?? trackerDccStructure(componentKey) : null;
     return baseStructure && scenarioStructure ? { ...baseStructure,...scenarioStructure } : baseStructure;
   };
-  const activeComponent = techPanel ? componentCatalog[techPanel] : null;
-  const activeStructure = techPanel ? structureFor(techPanel) : null;
-  const workbenchContent = !techPanel || !activeComponent || !activeStructure ? "" : techTab === "component" ? (techPanel === "dependency" ? dependencySource || "Loading the standalone component source…" : techPanel.startsWith("tracker-screen-") ? trackerScreenSources[techPanel] || "Loading the screen component source…" : activeComponent.code) : techTab === "data" ? activeStructure.data : techTab === "api" ? activeStructure.api : "";
-  const workbenchFile = !activeComponent || !activeStructure ? "" : techTab === "component" ? activeComponent.fileName : techTab === "data" ? activeStructure.dataFile : activeStructure.apiFile;
+  const handoffFor = (componentKey:ComponentKey):ShowcaseDeveloperHandoff | null => {
+    const component = componentCatalog[componentKey];
+    const structure = structureFor(componentKey);
+    if (!component || !structure) return null;
+    return {
+      id:componentKey.replace(/[^a-z0-9-]/gi,"-"),
+      name:component.name,
+      summary:component.summary,
+      stack:component.stack,
+      behaviour:component.behaviour,
+      accessibility:component.accessibility,
+      dependencies:dependenciesForComponent(componentKey),
+      sourceAssets:sourceAssetsForComponent(componentKey),
+      example:{ name:structure.dataFile,content:structure.data },
+      contract:{ name:structure.apiFile,content:structure.api },
+      ...(
+        componentKey !== "upload"
+        && componentKey !== "dependency"
+        && !componentKey.startsWith("tracker-screen-")
+          ? {
+            completeArchiveHref:sitePath("/developer-handoffs/live-source-complete.tar"),
+            completeArchiveName:"component-library-live-source-complete.tar",
+          }
+          : {}
+      ),
+    };
+  };
+  const activeHandoff = techPanel ? handoffFor(techPanel) : null;
 
   function toggleEnvironment(name:string) {
     setEnvironments((current) => current.includes(name) ? current.filter((item) => item !== name) : [...current, name]);
@@ -1549,8 +1789,6 @@ export default function Showcase({ initialCollection = "compass", initialScenari
 
   function openTechDetails(componentKey:ComponentKey) {
     setTechPanel(componentKey);
-    setTechTab("overview");
-    setCopiedView("");
   }
 
   function activateBlueprint(focus:BlueprintFocus) {
@@ -1572,52 +1810,14 @@ export default function Showcase({ initialCollection = "compass", initialScenari
     if (event.key === "Enter") { event.preventDefault(); openLibraryItem(matchingLibraryItems[commandIndex]?.id || matchingLibraryItems[0].id); }
   }
 
-  async function getComponentCode(componentKey:ComponentKey) {
-    if (componentKey.startsWith("tracker-screen-")) {
-      const example = pocTrackerExamples.find((item) => `tracker-screen-${item.id}` === componentKey);
-      if (!example) return "Unable to locate this screen component.";
-      return fetch(sitePath(`/poc-tracker-components/${example.folder}/component.js`)).then((response) => response.text());
-    }
-    if (componentKey !== "dependency") return componentCatalog[componentKey].code;
-    if (dependencySource) return dependencySource;
-    const source = await fetch(sitePath("/dependency-explorer.html")).then((response) => response.text());
-    setDependencySource(source);
-    return source;
-  }
-
-  async function copyWorkbenchContent(componentKey:ComponentKey) {
-    const structure = structureFor(componentKey);
-    if (!structure) return;
-    const content = techTab === "component" ? await getComponentCode(componentKey) : techTab === "data" ? structure.data : structure.api;
-    await navigator.clipboard.writeText(content);
-    const copiedKey = `${componentKey}:${techTab}`;
-    setCopiedView(copiedKey);
-    window.setTimeout(() => setCopiedView((current) => current === copiedKey ? "" : current), 1800);
-  }
-
-  async function downloadWorkbenchContent(componentKey:ComponentKey) {
-    if (techTab === "component") { await downloadComponentCode(componentKey); return; }
-    const structure = structureFor(componentKey);
-    if (!structure) return;
-    const content = techTab === "data" ? structure.data : structure.api;
-    const fileName = techTab === "data" ? structure.dataFile : structure.apiFile;
-    const blob = new Blob([content], { type:techTab === "data" ? "application/json" : "text/typescript" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a"); link.href = url; link.download = fileName; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
-  }
-
   async function downloadComponentCode(componentKey:ComponentKey) {
-    const component = componentCatalog[componentKey];
-    const code = await getComponentCode(componentKey);
-    const blob = new Blob([code], { type:component.fileName.endsWith(".html") ? "text/html" : "text/typescript" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = component.fileName;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
+    const handoff = handoffFor(componentKey);
+    if (!handoff) return;
+    try {
+      await downloadShowcaseDeveloperHandoff(handoff);
+    } catch {
+      setTechPanel(componentKey);
+    }
   }
 
   function removeCriticalDependency() {
@@ -1669,7 +1869,7 @@ export default function Showcase({ initialCollection = "compass", initialScenari
   }
 
   return (
-    <div className="showcase" data-theme={dark ? "dark" : "light"} data-system={system} data-collection={genericMode ? "generic" : system} data-component-theme={genericMode ? "atelier" : undefined} data-sidebar={sidebar.collapsed ? "collapsed" : "expanded"} data-scenario={dccMode ? "dcc-hackathon" : "base"} style={genericMode ? undefined : liveThemeStyle}>
+    <div className="showcase" data-theme={dark ? "dark" : "light"} data-system={system} data-collection={genericMode ? "generic" : system} data-component-theme={genericMode ? "atelier" : undefined} data-sidebar={sidebar.collapsed ? "collapsed" : "expanded"} data-scenario={dccMode ? "dcc-hackathon" : "base"} data-aa-active-showroom-index={genericMode ? 2 : system === "compass" ? 0 : 1} style={genericMode ? undefined : liveThemeStyle}>
       <aside className="library-nav">
         <PortfolioBrand className="brand" section={genericMode ? "Individual components" : system === "compass" ? "Migration Compass" : "PoC Tracker"} />
         <div className="sidebar-style-card"><small>CURRENT COLLECTION</small><strong>{genericMode ? "Individual Components" : system === "compass" ? "Migration Compass" : "PoC Tracker"}</strong><span>{genericMode ? "Reusable interface building blocks" : dccMode ? "DCC documentation assurance scenario" : system === "compass" ? "Evidence-led architecture patterns" : "Visible delivery and planning patterns"}</span>{dccMode && <em>DCC HACKATHON DATA</em>}</div>
@@ -1683,16 +1883,17 @@ export default function Showcase({ initialCollection = "compass", initialScenari
 
       <main id="top">
         <header className="topbar">
-          <div className="breadcrumb"><span>AA Portfolio</span><b>/</b><strong>{genericMode ? "Individual Components" : system === "compass" ? "Migration Compass" : "PoC Tracker"}</strong>{dccMode && <em>DCC Hackathon</em>}</div>
-          <div className="system-switch" role="group" aria-label="Choose library collection">
-            <Link className={system === "compass" && !genericMode ? "active compass-choice" : "compass-choice"} href={scenarioId === "dcc-hackathon" ? "/?system=compass&scenario=dcc-hackathon" : "/?system=compass"} aria-current={system === "compass" && !genericMode ? "page" : undefined}><i />Migration Compass</Link>
-            <Link className={system === "tracker" && !genericMode ? "active tracker-choice" : "tracker-choice"} href={scenarioId === "dcc-hackathon" ? "/?system=tracker&scenario=dcc-hackathon" : "/?system=tracker"} aria-current={system === "tracker" && !genericMode ? "page" : undefined}><i />PoC Tracker</Link>
-            <Link className={`generic-choice ${genericMode ? "active" : ""}`} href="/components" aria-current={genericMode ? "page" : undefined}><i />Individual Components</Link>
-            <Link className="agent-choice" href="/methods"><i />Agent Methods</Link>
-          </div>
+          <TopbarIdentity section={genericMode ? "Individual Components" : system === "compass" ? "Migration Compass" : "PoC Tracker"} detail={dccMode ? "DCC working set." : "Puzzles & vibes."} />
+          <ShowroomSwitcher active={genericMode ? "components" : system} scenarioId={scenarioId} />
           <div className="topbar-actions">
-            {!genericMode && <div className="scenario-control"><button ref={scenarioTriggerRef} className={`icon-button scenario-trigger ${dccMode ? "active" : ""}`} type="button" onClick={() => setScenarioMenuOpen((open) => !open)} aria-label="Change demo scenario" aria-controls="scenario-popover" aria-expanded={scenarioMenuOpen} title="Change demo scenario"><span aria-hidden="true">✦</span><i aria-hidden="true" /></button>{scenarioMenuOpen && <section className="scenario-popover" id="scenario-popover" aria-labelledby="scenario-popover-title"><header><div><span>DEMO DATA</span><h2 id="scenario-popover-title">Choose a scenario</h2></div><button type="button" onClick={() => { setScenarioMenuOpen(false); window.requestAnimationFrame(() => scenarioTriggerRef.current?.focus()); }} aria-label="Close scenario switcher">×</button></header><p>Switch the example content without changing the components.</p><div role="group" aria-label="Demo scenario">{(Object.keys(scenarios) as ScenarioId[]).map((id) => { const option = scenarios[id]; return <button type="button" aria-pressed={scenarioId === id} className={scenarioId === id ? "selected" : ""} onClick={() => { selectScenario(id); setScenarioMenuOpen(false); window.requestAnimationFrame(() => scenarioTriggerRef.current?.focus()); }} key={id}><i>{scenarioId === id ? "✓" : ""}</i><span><strong>{option.name}</strong><small>{option.description}</small></span>{id === "dcc-hackathon" && <em>HACKATHON</em>}</button>; })}</div><footer><span>{starredPatternIds.length} starred for {scenario.shortName}</span><button type="button" onClick={resetRecommendations}>Reset recommendations</button></footer></section>}</div>}
-            <button className="icon-button" onClick={() => setDark((value) => !value)} aria-label={`Switch to ${dark ? "light" : "dark"} theme`} aria-pressed={dark}>{dark ? "☀" : "◐"}</button>
+            {!genericMode && <div className="scenario-control" ref={scenarioControlRef}>
+              <button ref={scenarioTriggerRef} className={`scenario-trigger aa-scenario-trigger ${dccMode ? "active" : ""}`} type="button" onClick={() => setScenarioMenuOpen((open) => !open)} aria-label="Change demo scenario" aria-controls="scenario-popover" aria-expanded={scenarioMenuOpen} title={`Choose a working scenario. Current: ${scenario.name}`}>
+                <span className="aa-scenario-trigger__copy" aria-hidden="true"><b>AA / CURRENT PUZZLE</b><strong>{scenario.shortName}</strong></span>
+                <span className="aa-scenario-trigger__status" aria-hidden="true"><i />LIVE SET</span>
+              </button>
+              {scenarioMenuOpen && <section className="scenario-popover aa-scenario-panel" id="scenario-popover" role="dialog" aria-modal="false" aria-labelledby="scenario-popover-title"><header><div><span>ALEX ATKINSON / WORKING CONTEXT</span><small>FIELD SET / {dccMode ? "002" : "001"}</small><h2 id="scenario-popover-title">Choose a scenario</h2></div><button type="button" onClick={() => { setScenarioMenuOpen(false); window.requestAnimationFrame(() => scenarioTriggerRef.current?.focus()); }} aria-label="Close scenario switcher">×</button></header><p>Same kit. Different mess. See what holds up.</p><div role="group" aria-label="Demo scenario">{(Object.keys(scenarios) as ScenarioId[]).map((id) => { const option = scenarios[id]; return <button type="button" aria-pressed={scenarioId === id} className={scenarioId === id ? "selected" : ""} onClick={() => { selectScenario(id); setScenarioMenuOpen(false); window.requestAnimationFrame(() => scenarioTriggerRef.current?.focus()); }} key={id}><i>{scenarioId === id ? "✓" : ""}</i><span><strong>{option.name}</strong><small>{option.description}</small></span>{id === "dcc-hackathon" && <em>FIELD TEST</em>}</button>; })}</div><footer><span>{starredPatternIds.length} starred for {scenario.shortName}</span><button type="button" onClick={resetRecommendations}>Reset recommendations</button></footer></section>}
+            </div>}
+            <RetroThemeSwitch dark={dark} onToggle={() => setDark((value) => !value)} />
           </div>
           <span className="visually-hidden" aria-live="polite">{scenarioAnnouncement}</span>
         </header>
@@ -1845,9 +2046,9 @@ export default function Showcase({ initialCollection = "compass", initialScenari
         </>}
         </>}
 
-        {librarySearchOpen && <div className="library-command-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setLibrarySearchOpen(false); }}><section className="library-command" role="dialog" aria-modal="true" aria-label="Find a component"><header><span aria-hidden="true">⌕</span><input autoFocus value={libraryQuery} onChange={(event) => { setLibraryQuery(event.target.value); setCommandIndex(0); }} onKeyDown={handleLibrarySearchKey} placeholder="Search components, patterns, and behaviour…" /><kbd>ESC</kbd></header><div className="library-command-results"><p>{genericMode ? "INDIVIDUAL COMPONENTS" : system === "compass" ? "MIGRATION COMPASS" : "POC TRACKER"} · {matchingLibraryItems.length} RESULTS</p>{matchingLibraryItems.map((item,index) => <button className={commandIndex === index ? "selected" : ""} onMouseEnter={() => setCommandIndex(index)} onClick={() => openLibraryItem(item.id)} key={item.id}><span>{String(index+1).padStart(2,"0")}</span><div><strong>{item.name}</strong><small>{item.description}</small></div><em>{item.type}</em><b>↗</b></button>)}{!matchingLibraryItems.length && <div className="library-command-empty"><strong>No component found</strong><span>Try “toast”, “table”, “chart”, or “wizard”.</span></div>}</div><footer><span>↑↓ Browse</span><span>↵ Open component</span>{genericMode ? <Link href="/?system=compass">Return to Compass →</Link> : <Link href={system === "compass" ? dccMode ? "/?system=tracker&scenario=dcc-hackathon" : "/?system=tracker" : dccMode ? "/?system=compass&scenario=dcc-hackathon" : "/?system=compass"}>Switch to {system === "compass" ? "Tracker" : "Compass"} →</Link>}</footer></section></div>}
+        {librarySearchOpen && <div className="library-command-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setLibrarySearchOpen(false); }}><section className="library-command" role="dialog" aria-modal="true" aria-label="Find a component"><header><span aria-hidden="true">⌕</span><input autoFocus value={libraryQuery} onChange={(event) => { setLibraryQuery(event.target.value); setCommandIndex(0); }} onKeyDown={handleLibrarySearchKey} placeholder="Search components, patterns, and behaviour…" /><kbd>ESC</kbd></header><div className="library-command-results"><p>{genericMode ? "INDIVIDUAL COMPONENTS" : system === "compass" ? "MIGRATION COMPASS" : "POC TRACKER"} · {matchingLibraryItems.length} RESULTS</p>{matchingLibraryItems.map((item,index) => <button className={commandIndex === index ? "selected" : ""} onMouseEnter={() => setCommandIndex(index)} onClick={() => openLibraryItem(item.id)} key={item.id}><span>{String(index+1).padStart(2,"0")}</span><div><strong>{item.name}</strong><small>{item.description}</small></div><em>{item.type}</em><b>↗</b></button>)}{!matchingLibraryItems.length && <div className="library-command-empty"><strong>No component found</strong><span>Try “toast”, “table”, “chart”, or “wizard”.</span></div>}</div><footer><span>↑↓ Browse</span><span>↵ Open component</span>{genericMode ? <Link href={showroomHref("compass")}>Return to Compass →</Link> : <Link href={showroomHref(system === "compass" ? "tracker" : "compass",dccMode ? "dcc-hackathon" : undefined)}>Switch to {system === "compass" ? "Tracker" : "Compass"} →</Link>}</footer></section></div>}
 
-        {techPanel && activeComponent && activeStructure && <div className="tech-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setTechPanel(null); }}><section className="tech-modal tech-workbench-modal" role="dialog" aria-modal="true" aria-labelledby="tech-modal-title"><header><div><p className="eyebrow">COMPONENT WORKBENCH</p><h2 id="tech-modal-title">{activeComponent.name}</h2><p>{activeComponent.summary}</p><div className="tech-header-badges"><span>Interactive</span><span>{activeComponent.fileName.endsWith(".html") ? "Standalone HTML" : "React + TypeScript"}</span><span>Example data</span></div></div><button autoFocus onClick={() => setTechPanel(null)} aria-label="Close component workbench">×</button></header><div className="tech-modal-tabs" role="tablist" aria-label="Component workbench view">{([{ id:"overview", number:"01", title:"Overview", copy:"Implementation notes" },{ id:"component", number:"02", title:"Component", copy:"Rendered source" },{ id:"data", number:"03", title:"Example data", copy:"Representative payload" },{ id:"api", number:"04", title:"API / Props", copy:"Contract structure" }] as const).map((tab) => <button role="tab" aria-selected={techTab === tab.id} className={techTab === tab.id ? "active" : ""} onClick={() => { setTechTab(tab.id); setCopiedView(""); }} key={tab.id}><span>{tab.number}</span><div><strong>{tab.title}</strong><small>{tab.copy}</small></div></button>)}</div>{techTab === "overview" ? <div className="tech-detail-grid"><article><span>01</span><h3>Implementation</h3><ul>{activeComponent.stack.map((item) => <li key={item}>{item}</li>)}</ul></article><article><span>02</span><h3>Behaviour</h3><ul>{activeComponent.behaviour.map((item) => <li key={item}>{item}</li>)}</ul></article><article><span>03</span><h3>Accessibility</h3><ul>{activeComponent.accessibility.map((item) => <li key={item}>{item}</li>)}</ul></article></div> : <div className="tech-workbench"><aside aria-label="Component files"><p>COMPONENT FILES</p><button className={techTab === "component" ? "active" : ""} onClick={() => setTechTab("component")}><span>TS</span><div><strong>{activeComponent.fileName}</strong><small>UI implementation</small></div></button><button className={techTab === "data" ? "active" : ""} onClick={() => setTechTab("data")}><span>&#123;&#125;</span><div><strong>{activeStructure.dataFile}</strong><small>Example state</small></div></button><button className={techTab === "api" ? "active" : ""} onClick={() => setTechTab("api")}><span>↔</span><div><strong>{activeStructure.apiFile}</strong><small>External contract</small></div></button><div><small>STATUS</small><span><i /> Ready to reuse</span></div></aside><div className="tech-code-panel"><header><div className="code-window-dots" aria-hidden="true"><i /><i /><i /></div><span>{activeComponent.name} <b>/</b> {workbenchFile}</span><div><button onClick={() => copyWorkbenchContent(techPanel)}>{copiedView === `${techPanel}:${techTab}` ? "✓ Copied" : "Copy"}</button><button className="code-download" onClick={() => downloadWorkbenchContent(techPanel)}>↓ Download</button></div></header><pre><code>{workbenchContent.split("\n").map((line,index) => <span className="code-line" key={`${index}-${line}`}><i>{String(index+1).padStart(2,"0")}</i><b>{line || " "}</b></span>)}</code></pre><footer><span>{techTab === "component" ? "UI implementation" : techTab === "data" ? "Example data" : "Illustrative integration contract"}</span><b>{workbenchContent.split("\n").length} lines</b></footer></div></div>}<footer><span><StatusDot tone="success" /> Component, data, and contract are available together</span><button className="button secondary" onClick={() => setTechPanel(null)}>Done</button></footer></section></div>}
+        {activeHandoff && <ShowcaseDeveloperWorkbench key={activeHandoff.id} handoff={activeHandoff} onClose={() => setTechPanel(null)} />}
 
         <footer><PortfolioBrand className="brand" section="Clever stuff. Done properly." /><p>Responsive, interactive patterns designed for real delivery work.</p><a href="#top">Back to top ↑</a></footer>
       </main>

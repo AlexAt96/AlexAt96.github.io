@@ -27,4 +27,4 @@ Import the styling tokens from your app entry point when you want to use the exp
 @import "./styling/colours.css";
 ```
 
-The downloadable source is a starting point rather than a published package, so project-specific routing and data adapters remain yours to connect. It includes the JSON fixtures and scenario types referenced by the templates; the Component Workbench documents the exact reference props and a separate recommended product adapter for each pattern.
+The downloadable source is a starting point rather than a published package, so project-specific routing and data adapters remain yours to connect. It includes the JSON fixtures and scenario types referenced by the templates; the Component Workbench documents the exact reference props and a separate recommended product adapter for each pattern. Its visible source list is dependency-complete: because `TemplatePreview.tsx` imports every template family, every family TSX/CSS pair is supplied even when the selected pattern itself lives in only one of them.

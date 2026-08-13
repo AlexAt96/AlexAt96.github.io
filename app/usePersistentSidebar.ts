@@ -59,9 +59,11 @@ export function usePersistentSidebar() {
 
       const firstLink = sections[0].link;
       const lastLink = sections[sections.length - 1].link;
-      const firstDot = firstLink.offsetTop + firstLink.offsetHeight / 2;
-      const lastDot = lastLink.offsetTop + lastLink.offsetHeight / 2;
-      const currentDot = current.link.offsetTop + current.link.offsetHeight / 2;
+      const navRect = nav.getBoundingClientRect();
+      const dotCentre = (link:HTMLAnchorElement) => link.getBoundingClientRect().top - navRect.top + nav.scrollTop + link.offsetHeight / 2;
+      const firstDot = dotCentre(firstLink);
+      const lastDot = dotCentre(lastLink);
+      const currentDot = dotCentre(current.link);
       nav.style.setProperty("--rail-start", `${firstDot}px`);
       nav.style.setProperty("--rail-height", `${Math.max(0,lastDot - firstDot)}px`);
       nav.style.setProperty("--rail-active", `${Math.max(0,currentDot - firstDot)}px`);

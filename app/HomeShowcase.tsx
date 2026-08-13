@@ -8,9 +8,7 @@ export default function HomeShowcase() {
   const searchParams = useSearchParams();
   const requestedCollection = searchParams.get("system");
   const scenario = searchParams.get("scenario") === "dcc-hackathon" ? "dcc-hackathon" : undefined;
-  if (!requestedCollection && !scenario) return <PortfolioHome />;
+  if (requestedCollection !== "compass" && requestedCollection !== "tracker") return <PortfolioHome />;
 
-  const collection = requestedCollection === "tracker" ? "tracker" : "compass";
-
-  return <Showcase key={`${collection}-${scenario ?? "base"}`} initialCollection={collection} initialScenario={scenario} />;
+  return <Showcase key={`${requestedCollection}-${scenario ?? "base"}`} initialCollection={requestedCollection} initialScenario={scenario} />;
 }

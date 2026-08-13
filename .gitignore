@@ -45,3 +45,7 @@ next-env.d.ts
 /.wrangler/
 /outputs/
 /work/
+
+# generated developer handoff mirror (rebuilt before dev/build/test)
+/public/developer-handoffs/live-source/
+/public/developer-handoffs/live-source-complete.tar

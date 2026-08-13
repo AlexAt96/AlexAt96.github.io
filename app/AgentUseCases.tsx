@@ -3,6 +3,8 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from "react";
 import Link from "next/link";
 import PortfolioBrand from "./PortfolioBrand";
+import { RetroThemeSwitch, ShowroomSwitcher, TopbarIdentity } from "./PortfolioChrome";
+import { showroomHref } from "./portfolioRoutes";
 import { usePersistentDarkMode } from "./usePersistentTheme";
 import { usePersistentSidebar } from "./usePersistentSidebar";
 import ClassicBlueprintHero, { type ClassicBlueprintItem } from "./ClassicBlueprintHero";
@@ -803,7 +805,12 @@ const methodChapters = [
 ] as const;
 type MethodChapterId = (typeof methodChapters)[number]["id"];
 type PresentationSlide = { id:MethodChapterId; number:string; label:string; copy:string };
+type SlidePan = { x:number; y:number };
+type SlideGesture =
+  | { mode:"swipe"; pointerId:number; x:number; y:number }
+  | { mode:"pan"; pointerId:number; x:number; y:number; originX:number; originY:number; captured:boolean };
 const presentationSlides:PresentationSlide[] = methodChapters.map((chapter) => ({...chapter}));
+const slideZoomLevels = [1,1.25,1.5,1.75,2] as const;
 const orderedMethodIds = methodJourneys.flatMap((journey) => journey.ids);
 const journeyById = Object.fromEntries(methodJourneys.flatMap((journey) => journey.ids.map((id) => [id,journey]))) as Record<string,(typeof methodJourneys)[number]>;
 const catalogueMethods = orderedMethodIds.map((id) => {
@@ -827,11 +834,18 @@ export default function AgentUseCases() {
   const [expandedId, setExpandedId] = useState<string|null>(null);
   const [activePage, setActivePage] = useState(0);
   const [slideDirection, setSlideDirection] = useState<"forward"|"back">("forward");
+  const [slideZoom, setSlideZoom] = useState<number>(1);
+  const [slidePan, setSlidePan] = useState<SlidePan>({x:0,y:0});
+  const [isPanning, setIsPanning] = useState(false);
+  const [isTrackpadGesturing, setIsTrackpadGesturing] = useState(false);
   const [navigationRevision, setNavigationRevision] = useState(0);
   const catalogueAnchorRef = useRef<CatalogueAnchor|null>(null);
   const pendingNavigationRef = useRef<PendingNavigation>(null);
   const modalRef = useRef<HTMLDialogElement|null>(null);
-  const slideGestureRef = useRef<{pointerId:number;x:number;y:number}|null>(null);
+  const stageRef = useRef<HTMLDivElement|null>(null);
+  const slideGestureRef = useRef<SlideGesture|null>(null);
+  const slideZoomRef = useRef<number>(1);
+  const slidePanRef = useRef<SlidePan>({x:0,y:0});
 
   const filtered = catalogueMethods
     .filter((method) => journey === "all" || journeyById[method.id].number === journey)
@@ -875,9 +889,56 @@ export default function AgentUseCases() {
     else window.history.replaceState(state,"",url);
   }
 
+  function clampSlidePan(next:SlidePan, zoom=slideZoomRef.current) {
+    if (zoom <= 1) return {x:0,y:0};
+    const surface = stageRef.current?.querySelector<HTMLElement>('[data-active="true"] [data-method-zoom-surface]');
+    if (!surface) return next;
+    const maxX = Math.max(0,(surface.clientWidth * (zoom-1))/2);
+    const maxY = Math.max(0,(surface.clientHeight * (zoom-1))/2);
+    return {x:Math.max(-maxX,Math.min(maxX,next.x)),y:Math.max(-maxY,Math.min(maxY,next.y))};
+  }
+
+  function commitSlidePan(next:SlidePan, zoom=slideZoomRef.current) {
+    const boundedPan = clampSlidePan(next,zoom);
+    slidePanRef.current = boundedPan;
+    setSlidePan(boundedPan);
+  }
+
+  function commitSlideView(nextZoom:number,nextPan:SlidePan) {
+    const boundedZoom = Math.max(slideZoomLevels[0],Math.min(slideZoomLevels[slideZoomLevels.length-1],nextZoom));
+    slideZoomRef.current = boundedZoom;
+    setSlideZoom(boundedZoom);
+    commitSlidePan(boundedZoom <= 1 ? {x:0,y:0} : nextPan,boundedZoom);
+  }
+
+  function changeSlideZoom(step:number) {
+    const currentZoom = slideZoomRef.current;
+    const nextZoom = step > 0
+      ? slideZoomLevels.find((level) => level > currentZoom+.001) ?? slideZoomLevels[slideZoomLevels.length-1]
+      : [...slideZoomLevels].reverse().find((level) => level < currentZoom-.001) ?? slideZoomLevels[0];
+    const ratio = nextZoom/currentZoom;
+    commitSlideView(nextZoom,{x:slidePanRef.current.x*ratio,y:slidePanRef.current.y*ratio});
+  }
+
+  function resetSlideView() {
+    slideGestureRef.current = null;
+    setIsPanning(false);
+    setIsTrackpadGesturing(false);
+    slideZoomRef.current = 1;
+    slidePanRef.current = {x:0,y:0};
+    setSlideZoom(1);
+    setSlidePan({x:0,y:0});
+  }
+
+  function panSlideBy(x:number,y:number) {
+    const current = slidePanRef.current;
+    commitSlidePan({x:current.x+x,y:current.y+y});
+  }
+
   function openMethod(id:string, replaceHistory=false) {
     if (!catalogueMethods.some((method) => method.id === id)) return;
     if (expandedId !== id) catalogueAnchorRef.current = {id};
+    resetSlideView();
     setActivePage(0);
     setSlideDirection("forward");
     writeMethodUrl(id,replaceHistory || Boolean(expandedId) ? "replace" : "push","",0);
@@ -887,6 +948,7 @@ export default function AgentUseCases() {
   function changePage(next:number) {
     const bounded = Math.max(0,Math.min(selectedPages.length-1,next));
     if (bounded === activePage) return;
+    resetSlideView();
     setSlideDirection(bounded > activePage ? "forward" : "back");
     if (expandedId) writeMethodUrl(expandedId,"replace","",bounded);
     setActivePage(bounded);
@@ -913,7 +975,22 @@ export default function AgentUseCases() {
 
   function handlePresentationKey(event:ReactKeyboardEvent<HTMLDialogElement>) {
     if (event.defaultPrevented) return;
-    if (event.key === "PageDown") {
+    const target = event.target instanceof HTMLElement ? event.target : null;
+    const isEditable = Boolean(target?.closest('input,textarea,select,[contenteditable="true"]'));
+    const plainShortcut = !event.ctrlKey && !event.metaKey && !event.altKey && !isEditable;
+    if (plainShortcut && (event.key === "+" || event.key === "=")) {
+      event.preventDefault();
+      changeSlideZoom(1);
+    } else if (plainShortcut && (event.key === "-" || event.key === "_")) {
+      event.preventDefault();
+      changeSlideZoom(-1);
+    } else if (plainShortcut && event.key === "0") {
+      event.preventDefault();
+      resetSlideView();
+    } else if (slideZoom > 1 && plainShortcut && ["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(event.key)) {
+      event.preventDefault();
+      panSlideBy(event.key === "ArrowLeft" ? 44 : event.key === "ArrowRight" ? -44 : 0,event.key === "ArrowUp" ? 44 : event.key === "ArrowDown" ? -44 : 0);
+    } else if (event.key === "PageDown") {
       event.preventDefault();
       changePage(activePage+1);
     } else if (event.key === "PageUp") {
@@ -923,18 +1000,52 @@ export default function AgentUseCases() {
   }
 
   function handleSlidePointerDown(event:ReactPointerEvent<HTMLDivElement>) {
-    if (event.pointerType === "mouse" || (event.target as HTMLElement).closest("button,a,[data-diagram-node]")) return;
-    slideGestureRef.current = {pointerId:event.pointerId,x:event.clientX,y:event.clientY};
+    const target = event.target as HTMLElement;
+    if (target.closest('button,a,input,textarea,select,[data-method-node-tooltip]')) return;
+    if (slideZoom > 1) {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      slideGestureRef.current = {mode:"pan",pointerId:event.pointerId,x:event.clientX,y:event.clientY,originX:slidePanRef.current.x,originY:slidePanRef.current.y,captured:false};
+      return;
+    }
+    if (event.pointerType === "mouse") return;
+    slideGestureRef.current = {mode:"swipe",pointerId:event.pointerId,x:event.clientX,y:event.clientY};
+  }
+
+  function handleSlidePointerMove(event:ReactPointerEvent<HTMLDivElement>) {
+    const gesture = slideGestureRef.current;
+    if (!gesture || gesture.mode !== "pan" || gesture.pointerId !== event.pointerId) return;
+    const deltaX = event.clientX-gesture.x;
+    const deltaY = event.clientY-gesture.y;
+    if (!gesture.captured) {
+      if (Math.hypot(deltaX,deltaY) < 6) return;
+      gesture.captured = true;
+      event.currentTarget.setPointerCapture(event.pointerId);
+      setIsPanning(true);
+    }
+    commitSlidePan({x:gesture.originX+deltaX,y:gesture.originY+deltaY});
+    event.preventDefault();
   }
 
   function handleSlidePointerUp(event:ReactPointerEvent<HTMLDivElement>) {
     const gesture = slideGestureRef.current;
     slideGestureRef.current = null;
     if (!gesture || gesture.pointerId !== event.pointerId) return;
+    if (gesture.mode === "pan") {
+      if (gesture.captured && event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+      setIsPanning(false);
+      return;
+    }
+    if (gesture.mode !== "swipe") return;
     const deltaX = event.clientX-gesture.x;
     const deltaY = event.clientY-gesture.y;
     if (Math.abs(deltaX) < 56 || Math.abs(deltaX) < Math.abs(deltaY)*1.35) return;
     changePage(activePage+(deltaX < 0 ? 1 : -1));
+  }
+
+  function cancelSlidePointer(event:ReactPointerEvent<HTMLDivElement>) {
+    slideGestureRef.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    setIsPanning(false);
   }
 
   function closeMethod() {
@@ -972,12 +1083,14 @@ export default function AgentUseCases() {
     };
     const initialMethod = methodFromLocation();
     const initialNavigation = initialMethod ? window.setTimeout(() => {
+      resetSlideView();
       setActivePage(initialMethod.page);
       setExpandedId(initialMethod.id);
     },0) : null;
     const handlePopState = () => {
       const methodState = methodFromLocation();
       pendingNavigationRef.current = methodState ? null : "restore";
+      resetSlideView();
       if (methodState) setActivePage(methodState.page);
       setExpandedId(methodState?.id ?? null);
     };
@@ -987,6 +1100,74 @@ export default function AgentUseCases() {
       window.removeEventListener("popstate",handlePopState);
     };
   },[]);
+
+  useEffect(() => {
+    if (!expandedId) return;
+    const stage = stageRef.current;
+    if (!stage) return;
+    let gestureEndTimer:number|null = null;
+
+    const clampTrackpadPan = (next:SlidePan,zoom:number) => {
+      if (zoom <= 1) return {x:0,y:0};
+      const surface = stage.querySelector<HTMLElement>('[data-active="true"] [data-method-zoom-surface]');
+      if (!surface) return next;
+      const maxX = Math.max(0,(surface.clientWidth*(zoom-1))/2);
+      const maxY = Math.max(0,(surface.clientHeight*(zoom-1))/2);
+      return {
+        x:Math.max(-maxX,Math.min(maxX,next.x)),
+        y:Math.max(-maxY,Math.min(maxY,next.y)),
+      };
+    };
+    const commitTrackpadView = (nextZoom:number,nextPan:SlidePan) => {
+      const clampedZoom = Math.max(slideZoomLevels[0],Math.min(slideZoomLevels[slideZoomLevels.length-1],nextZoom));
+      const boundedZoom = clampedZoom < 1.01 ? 1 : clampedZoom;
+      const boundedPan = clampTrackpadPan(boundedZoom <= 1 ? {x:0,y:0} : nextPan,boundedZoom);
+      slideZoomRef.current = boundedZoom;
+      slidePanRef.current = boundedPan;
+      setSlideZoom(boundedZoom);
+      setSlidePan(boundedPan);
+    };
+    const markTrackpadGesture = () => {
+      setIsTrackpadGesturing(true);
+      if (gestureEndTimer !== null) window.clearTimeout(gestureEndTimer);
+      gestureEndTimer = window.setTimeout(() => setIsTrackpadGesturing(false),110);
+    };
+    const handleTrackpad = (event:WheelEvent) => {
+      const currentZoom = slideZoomRef.current;
+      const currentPan = slidePanRef.current;
+      if (event.ctrlKey) {
+        event.preventDefault();
+        markTrackpadGesture();
+        const deltaScale = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16 : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? stage.clientHeight : 1;
+        const exponent = Math.max(-.25,Math.min(.25,-event.deltaY*deltaScale*.01));
+        const nextZoom = Math.max(slideZoomLevels[0],Math.min(slideZoomLevels[slideZoomLevels.length-1],currentZoom*Math.exp(exponent)));
+        if (Math.abs(nextZoom-currentZoom) < .001) return;
+        const bounds = stage.getBoundingClientRect();
+        const pointX = event.clientX-bounds.left-bounds.width/2;
+        const pointY = event.clientY-bounds.top-bounds.height/2;
+        const ratio = nextZoom/currentZoom;
+        commitTrackpadView(nextZoom,{
+          x:pointX-(pointX-currentPan.x)*ratio,
+          y:pointY-(pointY-currentPan.y)*ratio,
+        });
+        return;
+      }
+      if (event.metaKey || currentZoom <= 1) return;
+      event.preventDefault();
+      markTrackpadGesture();
+      const deltaScale = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16 : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? stage.clientHeight : 1;
+      commitTrackpadView(currentZoom,{
+        x:currentPan.x-event.deltaX*deltaScale,
+        y:currentPan.y-event.deltaY*deltaScale,
+      });
+    };
+
+    stage.addEventListener("wheel",handleTrackpad,{passive:false});
+    return () => {
+      stage.removeEventListener("wheel",handleTrackpad);
+      if (gestureEndTimer !== null) window.clearTimeout(gestureEndTimer);
+    };
+  },[expandedId]);
 
   useLayoutEffect(() => {
     if (!expandedId) return;
@@ -1074,7 +1255,7 @@ export default function AgentUseCases() {
     </div>;
   }
 
-  return <div className="showcase agent-catalogue compass-methods-v5" data-theme={dark ? "dark" : "light"} data-system="compass" data-sidebar={sidebar.collapsed ? "collapsed" : "expanded"}>
+  return <div className="showcase agent-catalogue compass-methods-v5" data-theme={dark ? "dark" : "light"} data-system="compass" data-sidebar={sidebar.collapsed ? "collapsed" : "expanded"} data-aa-active-showroom-index="3">
     <aside className="library-nav methods-library-nav" data-methods-sidebar aria-label="Methods page navigation" inert={expandedId ? true : undefined} aria-hidden={expandedId ? true : undefined}>
       <PortfolioBrand className="brand" section="AI-assisted delivery" />
       <div className="methods-sidebar-content" id="methods-sidebar-content">
@@ -1100,9 +1281,9 @@ export default function AgentUseCases() {
           </div>
 
           <h2>Other libraries</h2>
-          <Link className="method-sidebar-library" data-library="compass" href="/?system=compass"><i /><span><strong>Migration Compass</strong><small>Architecture patterns</small></span><MethodUiIcon name="arrow-up-right" /></Link>
-          <Link className="method-sidebar-library" data-library="tracker" href="/?system=tracker"><i /><span><strong>PoC Tracker</strong><small>Delivery patterns</small></span><MethodUiIcon name="arrow-up-right" /></Link>
-          <Link className="method-sidebar-library" data-library="components" href="/components"><i /><span><strong>Individual Components</strong><small>Reusable interface parts</small></span><MethodUiIcon name="arrow-up-right" /></Link>
+          <Link className="method-sidebar-library" data-library="compass" data-aa-showroom-id="compass" data-aa-showroom-index="0" data-aa-showroom-label="Migration Compass" href={showroomHref("compass")}><i /><span><strong>Migration Compass</strong><small>Architecture patterns</small></span><MethodUiIcon name="arrow-up-right" /></Link>
+          <Link className="method-sidebar-library" data-library="tracker" data-aa-showroom-id="tracker" data-aa-showroom-index="1" data-aa-showroom-label="PoC Tracker" href={showroomHref("tracker")}><i /><span><strong>PoC Tracker</strong><small>Delivery patterns</small></span><MethodUiIcon name="arrow-up-right" /></Link>
+          <Link className="method-sidebar-library" data-library="components" data-aa-showroom-id="components" data-aa-showroom-index="2" data-aa-showroom-label="Individual Components" href="/components"><i /><span><strong>Individual Components</strong><small>Reusable interface parts</small></span><MethodUiIcon name="arrow-up-right" /></Link>
         </nav>
 
         <div className="nav-footer method-sidebar-footer"><span className="version"><StatusDot /> Practical guidance</span><p>Choose the control level that fits the work.</p></div>
@@ -1111,7 +1292,7 @@ export default function AgentUseCases() {
     </aside>
 
     <main id="top" inert={expandedId ? true : undefined} aria-hidden={expandedId ? true : undefined}>
-      <header className="topbar"><div className="breadcrumb"><span>AA Portfolio</span><b>/</b><strong>Agent Methods</strong></div><div className="system-switch" role="group" aria-label="Choose library collection"><Link className="compass-choice" href="/?system=compass"><i />Migration Compass</Link><Link className="tracker-choice" href="/?system=tracker"><i />PoC Tracker</Link><Link className="generic-choice" href="/components"><i />Individual Components</Link><Link className="agent-choice active" href="/methods" aria-current="page"><i />Agent Methods</Link></div><div className="topbar-actions"><span className="topbar-note">{catalogueMethods.length} methods · 3 portfolios</span><button className="method-theme-toggle" type="button" onClick={() => setDark((value) => !value)} aria-label={`Switch to ${dark ? "light" : "dark"} theme`} aria-pressed={dark}><span className="method-theme-toggle__label">LIGHT</span><span className="method-theme-toggle__track" aria-hidden="true"><i /></span><span className="method-theme-toggle__label">DARK</span></button></div></header>
+      <header className="topbar"><TopbarIdentity section="Agent Methods" detail="Useful AI. Enough governance." /><ShowroomSwitcher active="methods" /><div className="topbar-actions"><span className="topbar-note">{catalogueMethods.length} methods · 3 portfolios</span><RetroThemeSwitch dark={dark} onToggle={() => setDark((value) => !value)} /></div></header>
 
       <section className="hero method-catalogue-hero" id="overview">
         <div className="hero-atmosphere" aria-hidden="true"><i /><i /><i /></div>
@@ -1177,19 +1358,28 @@ export default function AgentUseCases() {
       <footer><PortfolioBrand className="brand" section="Agent methods" /><p>Practical methods organised by delivery stage and control level.</p><a href="#top">Back to top <MethodUiIcon name="arrow-up" /></a></footer>
     </main>
 
-    {selectedMethod && selectedJourney && currentPage && <dialog className="method-presentation" id="method-presentation-dialog" ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="method-presentation-title" aria-describedby="method-presentation-subtitle" data-method-reader-dialog data-direction={slideDirection} onCancel={(event) => { event.preventDefault(); closeMethod(); }} onPointerDown={(event) => { if (event.target === event.currentTarget) closeMethod(); }} onKeyDown={handlePresentationKey}>
+    {selectedMethod && selectedJourney && currentPage && <dialog className="method-presentation" id="method-presentation-dialog" ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="method-presentation-title" aria-describedby="method-presentation-subtitle method-presentation-zoom-help" data-method-reader-dialog data-direction={slideDirection} onCancel={(event) => { event.preventDefault(); closeMethod(); }} onPointerDown={(event) => { if (event.target === event.currentTarget) closeMethod(); }} onKeyDown={handlePresentationKey}>
       <div className="method-presentation__shell">
         <header className="method-presentation__header">
           <div><small>METHOD {String(orderedMethodIds.indexOf(selectedMethod.id)+1).padStart(2,"0")} · {selectedJourney.name.toUpperCase()}</small><strong id="method-presentation-title">{methodTitle(selectedMethod)}</strong><span id="method-presentation-subtitle">{selectedMethod.name}</span></div>
-          <button className="method-presentation__close" id="method-focus-back" type="button" onClick={closeMethod} aria-label="Close method and return to the catalogue"><span aria-hidden="true">×</span><strong>Close</strong><small>ESC</small></button>
+          <div className="method-presentation__actions">
+            <span className="method-presentation__pan-hint visible" aria-hidden="true">{slideZoom > 1 ? "PINCH TO ZOOM · TWO-FINGER SCROLL TO PAN" : "PINCH TO ZOOM"}</span>
+            <div className="method-presentation__zoom" role="group" aria-label="Slide zoom" data-method-zoom-controls>
+              <button type="button" aria-label="Zoom out" aria-keyshortcuts="-" title="Zoom out (−)" disabled={slideZoom <= slideZoomLevels[0]+.001} onClick={() => changeSlideZoom(-1)}><span aria-hidden="true">−</span></button>
+              <button className="method-presentation__zoom-level" type="button" aria-label={`Reset zoom and position. Current zoom ${Math.round(slideZoom*100)} per cent`} aria-keyshortcuts="0" title="Reset zoom and centre (0)" disabled={slideZoom === 1 && slidePan.x === 0 && slidePan.y === 0} onClick={resetSlideView}><output aria-live="polite">{Math.round(slideZoom*100)}%</output></button>
+              <button type="button" aria-label="Zoom in" aria-keyshortcuts="+ =" title="Zoom in (+)" disabled={slideZoom >= slideZoomLevels[slideZoomLevels.length-1]-.001} onClick={() => changeSlideZoom(1)}><span aria-hidden="true">+</span></button>
+            </div>
+            <button className="method-presentation__close" id="method-focus-back" type="button" onClick={closeMethod} aria-label="Close method and return to the catalogue"><span aria-hidden="true">×</span><strong>Close</strong><small>ESC</small></button>
+          </div>
+          <p className="visually-hidden" id="method-presentation-zoom-help">Pinch on a trackpad or use the zoom controls to enlarge the current slide. When zoomed, move with two fingers, drag the slide or use the arrow keys. Press 0 to reset the view.</p>
         </header>
 
         <nav className="method-presentation__chapters" aria-label={`Chapters in ${methodTitle(selectedMethod)}`}>
           <div role="tablist" aria-orientation="horizontal" aria-label="Method guide slides">{methodChapters.map((chapter,chapterIndex) => <button type="button" role="tab" id={`method-chapter-tab-${chapterIndex}`} aria-selected={activeChapterIndex === chapterIndex} aria-controls={`method-page-${chapter.id}`} tabIndex={activeChapterIndex === chapterIndex ? 0 : -1} data-method-slide-tab onClick={() => openChapter(chapter.id)} onKeyDown={(event) => handleSlideTabKey(event,chapterIndex)} key={chapter.id}><span>{chapter.number}</span><strong>{chapter.label}</strong><small>{chapter.copy}</small></button>)}</div>
         </nav>
 
-        <div className="method-presentation__stage" id="method-presentation-stage" onPointerDown={handleSlidePointerDown} onPointerUp={handleSlidePointerUp} onPointerCancel={() => { slideGestureRef.current = null; }}>
-          <div className="method-presentation__strip" style={{"--method-page-index":activePage} as CSSProperties}>{selectedPages.map((page,pageIndex) => <section className="method-presentation__page" id={`method-page-${page.id}`} role="tabpanel" aria-labelledby={`method-chapter-tab-${methodChapters.findIndex((chapter) => chapter.id === page.id)}`} aria-hidden={activePage !== pageIndex} inert={activePage !== pageIndex ? true : undefined} tabIndex={activePage === pageIndex ? 0 : -1} data-active={activePage === pageIndex ? true : undefined} data-method-slide={page.id} key={page.id}>{renderPresentationPage(page)}</section>)}</div>
+        <div className="method-presentation__stage" id="method-presentation-stage" ref={stageRef} data-zoomed={slideZoom > 1 ? "true" : "false"} data-panning={isPanning ? "true" : "false"} data-gesturing={isTrackpadGesturing ? "true" : "false"} onPointerDown={handleSlidePointerDown} onPointerMove={handleSlidePointerMove} onPointerUp={handleSlidePointerUp} onPointerCancel={cancelSlidePointer} onLostPointerCapture={() => { slideGestureRef.current = null; setIsPanning(false); }}>
+          <div className="method-presentation__strip" style={{"--method-page-index":activePage} as CSSProperties}>{selectedPages.map((page,pageIndex) => <section className="method-presentation__page" id={`method-page-${page.id}`} role="tabpanel" aria-labelledby={`method-chapter-tab-${methodChapters.findIndex((chapter) => chapter.id === page.id)}`} aria-hidden={activePage !== pageIndex} inert={activePage !== pageIndex ? true : undefined} tabIndex={activePage === pageIndex ? 0 : -1} data-active={activePage === pageIndex ? true : undefined} data-method-slide={page.id} key={page.id}><div className="method-presentation__zoom-surface" data-method-zoom-surface style={{"--method-zoom":activePage === pageIndex ? slideZoom : 1,"--method-pan-x":`${activePage === pageIndex ? slidePan.x : 0}px`,"--method-pan-y":`${activePage === pageIndex ? slidePan.y : 0}px`} as CSSProperties}>{renderPresentationPage(page)}</div></section>)}</div>
         </div>
       </div>
     </dialog>}

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useMemo, useState, type ReactNode } from "react";
 import PortfolioBrand from "../PortfolioBrand";
+import { ShowroomSwitcher } from "../PortfolioChrome";
+import { portfolioHref, showroomHref } from "../portfolioRoutes";
 import { methods } from "../AgentMethods";
 import {
   compassPatternGroups,
@@ -62,63 +64,63 @@ const trackerPatterns = [
     title: "Critical-path planner",
     category: "Delivery planning",
     summary: "Sequence dependent work, expose blockers and keep the route to a milestone visible.",
-    href: "/?system=tracker#critical-path",
+    href: `${showroomHref("tracker")}#critical-path`,
   },
   {
     id: "process-flow",
     title: "Route-aware process flow",
     category: "Governed workflow",
     summary: "Move work through route-specific stages with explicit owners, gates and status changes.",
-    href: "/?system=tracker#process-flow",
+    href: `${showroomHref("tracker")}#process-flow`,
   },
   {
     id: "poc-dashboard",
     title: "Dashboard",
     category: "Programme insight",
     summary: "Compare delivery, capacity, evidence and quality signals with decision context close at hand.",
-    href: "/?system=tracker#poc-dashboard",
+    href: `${showroomHref("tracker")}#poc-dashboard`,
   },
   {
     id: "poc-planning-backlog",
     title: "Planning backlog",
     category: "Delivery planning",
     summary: "Prioritise, filter and reorder work while keeping estimates, ownership and dependencies in view.",
-    href: "/?system=tracker#poc-planning-backlog",
+    href: `${showroomHref("tracker")}#poc-planning-backlog`,
   },
   {
     id: "poc-gantt-chart",
     title: "Gantt chart",
     category: "Delivery planning",
     summary: "Shape a weekly plan by moving, resizing and regrouping work with clear phase roll-ups.",
-    href: "/?system=tracker#poc-gantt-chart",
+    href: `${showroomHref("tracker")}#poc-gantt-chart`,
   },
   {
     id: "poc-workflow-workbench",
     title: "Workflow workbench",
     category: "Governed workflow",
     summary: "Guide records through stages, measures and supporting evidence with the next action visible.",
-    href: "/?system=tracker#poc-workflow-workbench",
+    href: `${showroomHref("tracker")}#poc-workflow-workbench`,
   },
   {
     id: "poc-chatbot",
     title: "Workspace assistant",
     category: "Assisted workflow",
     summary: "Review source-linked answers and proposed changes before approving, editing or rejecting them.",
-    href: "/?system=tracker#poc-chatbot",
+    href: `${showroomHref("tracker")}#poc-chatbot`,
   },
   {
     id: "poc-earned-value",
     title: "Earned value",
     category: "Performance insight",
     summary: "Compare schedule and cost performance, test scenarios and understand the forecast in plain language.",
-    href: "/?system=tracker#poc-earned-value",
+    href: `${showroomHref("tracker")}#poc-earned-value`,
   },
   {
     id: "poc-architecture-map",
     title: "Architecture map",
     category: "Architecture landscape",
     summary: "Explore a five-layer system landscape and inspect ownership, technology, evidence and interfaces.",
-    href: "/?system=tracker#poc-architecture-map",
+    href: `${showroomHref("tracker")}#poc-architecture-map`,
   },
 ] as const;
 
@@ -173,14 +175,15 @@ export default function LibraryCatalogue() {
   };
 
   return (
-    <main className={styles.page}>
-      <header className={styles.topbar}>
+    <main className={styles.page} data-aa-active-showroom-index="4">
+      <header className={`${styles.topbar} aa-site-topbar aa-gallery-topbar`}>
         <PortfolioBrand className={styles.brand} section="Component & pattern library" />
-        <nav aria-label="Library navigation">
-          <Link href="/">Portfolio</Link>
-          <Link href="/components">Component showroom</Link>
-          <Link href="/foundation">Compass gallery</Link>
-          <Link href="/poc-tracker">Tracker gallery</Link>
+        <ShowroomSwitcher active="library" className="aa-gallery-showroom-switcher" />
+        <nav className="aa-gallery-actions" aria-label="Library navigation">
+          <Link href={portfolioHref}>Portfolio</Link>
+          <Link href="/components" data-aa-showroom-id="components" data-aa-showroom-index="2" data-aa-showroom-label="Individual Components">Component showroom</Link>
+          <Link href="/foundation" data-aa-showroom-id="compass" data-aa-showroom-index="0" data-aa-showroom-label="Migration Compass">Compass gallery</Link>
+          <Link href="/poc-tracker" data-aa-showroom-id="tracker" data-aa-showroom-index="1" data-aa-showroom-label="PoC Tracker">Tracker gallery</Link>
         </nav>
       </header>
 
@@ -253,7 +256,7 @@ export default function LibraryCatalogue() {
                     <article className={styles.card} key={item.id}>
                       <header><span>{String(index + 1).padStart(2,"0")}</span><small>{folder.type}</small></header>
                       <div><p>{item.capabilityTitle}</p><h3>{item.title}</h3><span>{item.purpose}</span></div>
-                      <footer><code>{folderSlug(item.title)}</code><Link href="/components#full-component-index">Open component showroom <span aria-hidden="true">↗</span></Link></footer>
+                      <footer><code>{folderSlug(item.title)}</code><Link href="/components#full-component-index" data-aa-showroom-id="components" data-aa-showroom-index="2" data-aa-showroom-label="Individual Components">Open component showroom <span aria-hidden="true">↗</span></Link></footer>
                     </article>
                   ))}
                 </div>
@@ -272,7 +275,7 @@ export default function LibraryCatalogue() {
                     <article className={styles.card} key={item.id}>
                       <header><span>{String(index + 1).padStart(2,"0")}</span><small>{folder.type}</small></header>
                       <div><p>{item.boundaries.length} component boundaries</p><h3>{item.title}</h3><span>{item.summary}</span></div>
-                      <footer><code>{folderSlug(item.title)}</code><Link href={`/?system=compass#compass-pattern-${item.id}`}>Open live pattern <span aria-hidden="true">↗</span></Link></footer>
+                      <footer><code>{folderSlug(item.title)}</code><Link href={`${showroomHref("compass")}#compass-pattern-${item.id}`} data-aa-showroom-id="compass" data-aa-showroom-index="0" data-aa-showroom-label="Migration Compass">Open live pattern <span aria-hidden="true">↗</span></Link></footer>
                     </article>
                   ))}
                 </div>
@@ -291,7 +294,7 @@ export default function LibraryCatalogue() {
                     <article className={styles.card} key={item.id}>
                       <header><span>{String(index + 1).padStart(2,"0")}</span><small>{folder.type}</small></header>
                       <div><p>Interactive product pattern</p><h3>{item.title}</h3><span>{item.summary}</span></div>
-                      <footer><code>{folderSlug(item.title)}</code><Link href={item.href}>Open live pattern <span aria-hidden="true">↗</span></Link></footer>
+                      <footer><code>{folderSlug(item.title)}</code><Link href={item.href} data-aa-showroom-id="tracker" data-aa-showroom-index="1" data-aa-showroom-label="PoC Tracker">Open live pattern <span aria-hidden="true">↗</span></Link></footer>
                     </article>
                   ))}
                 </div>
@@ -310,7 +313,7 @@ export default function LibraryCatalogue() {
                     <article className={styles.card} key={item.id}>
                       <header><span>{String(index + 1).padStart(2,"0")}</span><small>{folder.type} · {item.adoption}</small></header>
                       <div><p>{item.projects.length} project {item.projects.length === 1 ? "application" : "applications"}</p><h3>{item.name}</h3><span>{item.summary}</span></div>
-                      <footer><code>{folderSlug(item.name)}</code><Link href={`/methods?method=${item.id}`}>Open method guide <span aria-hidden="true">↗</span></Link></footer>
+                      <footer><code>{folderSlug(item.name)}</code><Link href={`/methods?method=${item.id}`} data-aa-showroom-id="methods" data-aa-showroom-index="3" data-aa-showroom-label="Agent Methods">Open method guide <span aria-hidden="true">↗</span></Link></footer>
                     </article>
                   ))}
                 </div>

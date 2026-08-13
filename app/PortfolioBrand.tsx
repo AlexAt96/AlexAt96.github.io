@@ -1,10 +1,21 @@
 import Link from "next/link";
+import { portfolioHref } from "./portfolioRoutes";
 
 type PortfolioBrandProps = {
   className?: string;
   section: string;
   href?: string;
 };
+
+export function PortfolioMark({ className = "" }: { className?: string }) {
+  return (
+    <span className={`${className} aa-brand-mark`.trim()} aria-hidden="true">
+      <b>A</b>
+      <b>A</b>
+      <i />
+    </span>
+  );
+}
 
 export function PortfolioBanner({ className = "" }: { className?: string }) {
   return (
@@ -42,19 +53,15 @@ export function PortfolioBanner({ className = "" }: { className?: string }) {
 export default function PortfolioBrand({
   className = "",
   section,
-  href = "/",
+  href = portfolioHref,
 }: PortfolioBrandProps) {
   return (
     <Link
       className={`${className} aa-brand-lockup`.trim()}
       href={href}
-      aria-label={`AA Portfolio home · ${section}`}
+      aria-label={`AA Portfolio · Alex Atkinson · Principal Technologist · Puzzles & vibes · ${section}`}
     >
-      <span className="aa-brand-mark" aria-hidden="true">
-        <b>A</b>
-        <b>A</b>
-        <i />
-      </span>
+      <PortfolioMark />
       <span className="aa-brand-copy">
         <strong>Alex Atkinson</strong>
         <small>Principal technologist</small>
