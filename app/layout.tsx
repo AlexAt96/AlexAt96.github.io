@@ -9,6 +9,7 @@ import "./install-app.css";
 import "./portfolio-system.css";
 import "./minimal-brand.css";
 import "./showroom-classic-chrome.css";
+import "./showroom-toolbar-polish.css";
 import "./showroom-pan.css";
 
 const sourceSans = localFont({

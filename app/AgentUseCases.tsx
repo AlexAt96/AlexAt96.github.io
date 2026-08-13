@@ -3,7 +3,7 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from "react";
 import Link from "next/link";
 import PortfolioBrand from "./PortfolioBrand";
-import { RetroThemeSwitch, ShowroomSwitcher, TopbarIdentity } from "./PortfolioChrome";
+import { RetroThemeSwitch, ShowroomSwitcher, ShowroomTitle } from "./PortfolioChrome";
 import { showroomHref } from "./portfolioRoutes";
 import { usePersistentDarkMode } from "./usePersistentTheme";
 import { usePersistentSidebar } from "./usePersistentSidebar";
@@ -1292,7 +1292,7 @@ export default function AgentUseCases() {
     </aside>
 
     <main id="top" inert={expandedId ? true : undefined} aria-hidden={expandedId ? true : undefined}>
-      <header className="topbar"><TopbarIdentity section="Agent Methods" detail="Useful AI. Enough governance." /><ShowroomSwitcher active="methods" /><div className="topbar-actions"><span className="topbar-note">{catalogueMethods.length} methods · 3 portfolios</span><RetroThemeSwitch dark={dark} onToggle={() => setDark((value) => !value)} /></div></header>
+      <header className="topbar"><ShowroomTitle section="Agent Methods" detail="Useful AI. Enough governance." /><ShowroomSwitcher active="methods" /><div className="topbar-actions"><span className="topbar-note">{catalogueMethods.length} methods · 3 portfolios</span><RetroThemeSwitch dark={dark} onToggle={() => setDark((value) => !value)} /></div></header>
 
       <section className="hero method-catalogue-hero" id="overview">
         <div className="hero-atmosphere" aria-hidden="true"><i /><i /><i /></div>

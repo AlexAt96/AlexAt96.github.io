@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useMemo, useState, type ReactNode } from "react";
 import PortfolioBrand from "../PortfolioBrand";
-import { ShowroomSwitcher } from "../PortfolioChrome";
-import { portfolioHref, showroomHref } from "../portfolioRoutes";
+import { ShowroomSwitcher, ShowroomTitle } from "../PortfolioChrome";
+import { showroomHref } from "../portfolioRoutes";
 import { methods } from "../AgentMethods";
 import {
   compassPatternGroups,
@@ -177,14 +177,9 @@ export default function LibraryCatalogue() {
   return (
     <main className={styles.page} data-aa-active-showroom-index="4">
       <header className={`${styles.topbar} aa-site-topbar aa-gallery-topbar`}>
-        <PortfolioBrand className={styles.brand} section="Component & pattern library" />
+        <ShowroomTitle section="Component & Pattern Library" detail="Every useful part, connected." />
         <ShowroomSwitcher active="library" className="aa-gallery-showroom-switcher" />
-        <nav className="aa-gallery-actions" aria-label="Library navigation">
-          <Link href={portfolioHref}>Portfolio</Link>
-          <Link href="/components" data-aa-showroom-id="components" data-aa-showroom-index="2" data-aa-showroom-label="Individual Components">Component showroom</Link>
-          <Link href="/foundation" data-aa-showroom-id="compass" data-aa-showroom-index="0" data-aa-showroom-label="Migration Compass">Compass gallery</Link>
-          <Link href="/poc-tracker" data-aa-showroom-id="tracker" data-aa-showroom-index="1" data-aa-showroom-label="PoC Tracker">Tracker gallery</Link>
-        </nav>
+        <div className="aa-gallery-actions"><span className="aa-toolbar-context">{collectionOptions[0].count} entries · complete index</span></div>
       </header>
 
       <section className={styles.hero} aria-labelledby="library-title">
@@ -223,7 +218,7 @@ export default function LibraryCatalogue() {
           <p>The cards below point back to their live showroom, full pattern or detailed method.</p>
         </header>
 
-        <div className={styles.toolbar}>
+        <div className={`${styles.toolbar} aa-library-filter-toolbar`}>
           <label className={styles.search}>
             <span aria-hidden="true">⌕</span>
             <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search names, capabilities, states or use cases" aria-label="Search the complete library" />

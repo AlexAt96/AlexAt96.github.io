@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties, type Keyboard
 import type React from "react";
 import Link from "next/link";
 import PortfolioBrand from "./PortfolioBrand";
+import { RetroThemeSwitch, ShowroomSwitcher, ShowroomTitle } from "./PortfolioChrome";
 import { showroomHref } from "./portfolioRoutes";
 import { usePersistentDarkMode } from "./usePersistentTheme";
 import { usePersistentSidebar } from "./usePersistentSidebar";
@@ -1882,19 +1883,14 @@ export default function Showcase({ initialCollection = "compass", initialScenari
 
       <main id="top">
         <header className="topbar">
-          <div className="breadcrumb"><span>AA Portfolio</span><b>/</b><strong>{genericMode ? "Individual Components" : system === "compass" ? "Migration Compass" : "PoC Tracker"}</strong>{dccMode && <em>DCC Hackathon</em>}</div>
-          <div className="system-switch" role="group" aria-label="Choose library collection">
-            <Link className={system === "compass" && !genericMode ? "active compass-choice" : "compass-choice"} href={showroomHref("compass",scenarioId)} aria-current={system === "compass" && !genericMode ? "page" : undefined}><i />Migration Compass</Link>
-            <Link className={system === "tracker" && !genericMode ? "active tracker-choice" : "tracker-choice"} href={showroomHref("tracker",scenarioId)} aria-current={system === "tracker" && !genericMode ? "page" : undefined}><i />PoC Tracker</Link>
-            <Link className={`generic-choice ${genericMode ? "active" : ""}`} href={showroomHref("components")} aria-current={genericMode ? "page" : undefined}><i />Individual Components</Link>
-            <Link className="agent-choice" href={showroomHref("methods")}><i />Agent Methods</Link>
-          </div>
+          <ShowroomTitle section={genericMode ? "Individual Components" : system === "compass" ? "Migration Compass" : "PoC Tracker"} detail={dccMode ? "DCC working set." : "Puzzles & vibes."} />
+          <ShowroomSwitcher active={genericMode ? "components" : system} scenarioId={scenarioId} />
           <div className="topbar-actions">
             {!genericMode && <div className="scenario-control" ref={scenarioControlRef}>
               <button ref={scenarioTriggerRef} className={`icon-button scenario-trigger ${dccMode ? "active" : ""}`} type="button" onClick={() => setScenarioMenuOpen((open) => !open)} aria-label="Change demo scenario" aria-controls="scenario-popover" aria-expanded={scenarioMenuOpen} title="Change demo scenario"><span aria-hidden="true">✦</span><i aria-hidden="true" /></button>
               {scenarioMenuOpen && <section className="scenario-popover" id="scenario-popover" role="dialog" aria-modal="false" aria-labelledby="scenario-popover-title"><header><div><span>DEMO DATA</span><h2 id="scenario-popover-title">Choose a scenario</h2></div><button type="button" onClick={() => { setScenarioMenuOpen(false); window.requestAnimationFrame(() => scenarioTriggerRef.current?.focus()); }} aria-label="Close scenario switcher">×</button></header><p>Switch the example content without changing the components.</p><div role="group" aria-label="Demo scenario">{(Object.keys(scenarios) as ScenarioId[]).map((id) => { const option = scenarios[id]; return <button type="button" aria-pressed={scenarioId === id} className={scenarioId === id ? "selected" : ""} onClick={() => { selectScenario(id); setScenarioMenuOpen(false); window.requestAnimationFrame(() => scenarioTriggerRef.current?.focus()); }} key={id}><i>{scenarioId === id ? "✓" : ""}</i><span><strong>{option.name}</strong><small>{option.description}</small></span>{id === "dcc-hackathon" && <em>HACKATHON</em>}</button>; })}</div><footer><span>{starredPatternIds.length} starred for {scenario.shortName}</span><button type="button" onClick={resetRecommendations}>Reset recommendations</button></footer></section>}
             </div>}
-            <button className="icon-button" onClick={() => setDark((value) => !value)} aria-label={`Switch to ${dark ? "light" : "dark"} theme`} aria-pressed={dark}>{dark ? "☀" : "◐"}</button>
+            <RetroThemeSwitch dark={dark} onToggle={() => setDark((value) => !value)} />
           </div>
           <span className="visually-hidden" aria-live="polite">{scenarioAnnouncement}</span>
         </header>

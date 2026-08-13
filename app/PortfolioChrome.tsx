@@ -37,6 +37,19 @@ export function TopbarIdentity({ section, detail = "Puzzles & vibes." }: { secti
   );
 }
 
+export function ShowroomTitle({ section, detail = "Puzzles & vibes." }: { section:string; detail?:string }) {
+  return (
+    <Link
+      className="breadcrumb aa-showroom-title"
+      href={portfolioHref}
+      aria-label={`AA Portfolio · ${section} · Home`}
+      title={`${section} · ${detail}`}
+    >
+      <span>AA Portfolio</span><b aria-hidden="true">/</b><strong>{section}</strong>
+    </Link>
+  );
+}
+
 export function ShowroomSwitcher({ active, scenarioId, className = "" }: { active:ShowroomId; scenarioId?:string; className?:string }) {
   const pathname = usePathname();
   const activeIndex = showrooms.findIndex((showroom) => showroom.id === active);
