@@ -1,8 +1,11 @@
-.aa-install-app{
+.aa-install-card{
   position:fixed;
   right:18px;
   bottom:18px;
   z-index:10000;
+  animation:aa-install-enter .28s cubic-bezier(.2,.8,.2,1) both;
+}
+.aa-install-app{
   min-width:214px;
   min-height:54px;
   padding:8px 10px;
@@ -17,7 +20,6 @@
   box-shadow:3px 4px 0 #ef3156,0 12px 30px rgba(7,29,51,.28);
   text-align:left;
   cursor:pointer;
-  animation:aa-install-enter .28s cubic-bezier(.2,.8,.2,1) both;
 }
 .aa-install-app img{
   width:32px;
@@ -34,6 +36,24 @@
 .aa-install-app:hover{transform:translateY(-1px);box-shadow:3px 5px 0 #ef3156,0 15px 34px rgba(7,29,51,.32)}
 .aa-install-app:active{transform:translateY(1px);box-shadow:2px 2px 0 #ef3156,0 7px 18px rgba(7,29,51,.24)}
 .aa-install-app:focus-visible{outline:3px solid #79d5ff;outline-offset:3px}
+.aa-install-dismiss{
+  position:absolute;
+  top:-9px;
+  right:-9px;
+  width:25px;
+  height:25px;
+  display:grid;
+  place-items:center;
+  border:1px solid #050d14;
+  border-radius:50%;
+  background:#f7f3e9;
+  color:#071d33;
+  font:900 16px/1 var(--font-source-sans),sans-serif;
+  cursor:pointer;
+  box-shadow:2px 2px 0 #ef3156;
+}
+.aa-install-dismiss:hover{transform:translateY(-1px)}
+.aa-install-dismiss:focus-visible{outline:3px solid #79d5ff;outline-offset:2px}
 @keyframes aa-install-enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .aa-install-help-backdrop{
   position:fixed;
@@ -65,6 +85,6 @@
 .aa-install-help>button{grid-column:2;justify-self:start;min-height:38px;padding:0 16px;border:1px solid #050d14;border-radius:3px;background:#071d33;color:#fff;font:850 10px/1 var(--font-source-sans),sans-serif;cursor:pointer;box-shadow:3px 3px 0 #ef3156}
 .aa-install-help>button:hover{transform:translateY(-1px)}
 .aa-install-help>button:focus-visible{outline:3px solid #2566d4;outline-offset:3px}
-@media(max-width:520px){.aa-install-app{right:12px;bottom:12px;left:12px;width:auto}}
+@media(max-width:520px){.aa-install-card{right:12px;bottom:12px;left:12px}.aa-install-app{width:100%}}
 @media(max-width:520px){.aa-install-help{padding:20px;grid-template-columns:42px minmax(0,1fr);gap:14px}.aa-install-help>img{width:42px;height:42px}.aa-install-help>button{grid-column:1/-1}}
-@media(prefers-reduced-motion:reduce){.aa-install-app{animation:none;transition:none}}
+@media(prefers-reduced-motion:reduce){.aa-install-card{animation:none}.aa-install-app{transition:none}}
